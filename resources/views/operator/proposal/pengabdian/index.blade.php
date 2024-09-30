@@ -40,8 +40,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 20px">No</th>
-                                        <th>Dosen</th>
-                                        <th>Judul</th>
+                                        <th>Proposal</th>
                                         <th class="text-center" style="width: 40px">Opsi</th>
                                     </tr>
                                 </thead>
@@ -49,8 +48,11 @@
                                     @forelse ($proposals as $key => $proposal)
                                         <tr>
                                             <td class="text-center">{{ $proposals->firstItem() + $key }}</td>
-                                            <td>{{ $proposal->user->nama }}</td>
-                                            <td>{{ $proposal->judul }}</td>
+                                            <td>
+                                                {{ $proposal->user->nama }}
+                                                <hr class="my-2">
+                                                {{ $proposal->judul }}
+                                            </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-info btn-sm btn-flat btn-block"
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $proposal->id }}">
@@ -120,6 +122,14 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
+                                <strong>Jenis Pengabdian</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $proposal->jenis_pengabdian->nama }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
                                 <strong>Jenis Pendanaan</strong>
                             </div>
                             <div class="col-md-6">
@@ -153,22 +163,16 @@
                                 </a>
                             </div>
                         </div>
-                        @if ($proposal->anggota_ids)
+                        @if (count($proposal->personels))
                             <div class="row mb-2">
                                 <div class="col-md-6">
                                     <strong>Personel</strong>
-                                    <span class="text-muted">(anggota)</span>
+                                    <small class="text-muted">(anggota)</small>
                                 </div>
                                 <div class="col-md-6">
-                                    @php
-                                        $anggotas = \App\Models\User::whereIn('id', $proposal->anggota_ids)
-                                            ->select('nama', 'nidn')
-                                            ->orderBy('nama')
-                                            ->get();
-                                    @endphp
                                     <ul class="px-3">
-                                        @foreach ($anggotas as $anggota)
-                                            <li>{{ $anggota->nama }}</li>
+                                        @foreach ($proposal->personels as $personel)
+                                            <li>{{ $personel->user->nama }}</li>
                                         @endforeach
                                     </ul>
                                 </div>
@@ -190,7 +194,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ url('operator/proposal-penelitian/' . $proposal->id) }}" method="POST">
+                    <form action="{{ url('operator/proposal-pengabdian/' . $proposal->id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="modal-body">

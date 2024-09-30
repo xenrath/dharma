@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Laporan Proposal')
+@section('title', 'Proposal Penelitian')
 
 @section('loader')
     <!-- Preloader -->
@@ -16,7 +16,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Laporan Proposal</h1>
+                        <h1>Proposal Penelitian</h1>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -35,47 +35,12 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <form action="" method="get" autocomplete="off" id="form-submit">
-                            <div class="row justify-content-end">
-                                <div class="col-12 col-md-8 mb-2">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend d-none d-md-inline">
-                                            <span class="input-group-text rounded-0">Dari</span>
-                                        </div>
-                                        <input type="date" class="form-control rounded-0" id="dari" name="dari"
-                                            value="{{ request()->get('dari') }}" oninput="sampai_set(this.value)">
-                                        <div class="input-group-prepend d-none d-md-inline">
-                                            <span class="input-group-text rounded-0">Sampai</span>
-                                        </div>
-                                        <input type="date" class="form-control rounded-0" id="sampai" name="sampai"
-                                            value="{{ request()->get('sampai') }}" max="{{ date('Y-m-d') }}">
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-primary btn-sm btn-flat" onclick="cari()">
-                                                <i class="fas fa-search"></i>
-                                                <span class="d-none d-md-inline">Cari</span>
-                                            </button>
-                                        </div>
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-secondary btn-sm btn-flat"
-                                                onclick="print()">
-                                                <i class="fas fa-print"></i>
-                                                <span class="d-none d-md-inline">Print</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped mb-4">
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 20px">No</th>
-                                        <th style="width: 200px">Jadwal</th>
-                                        <th>
-                                            Dosen
-                                            <small class="text-muted d-none d-md-inline">(ketua)</small>
-                                        </th>
+                                        <th>Proposal</th>
                                         <th class="text-center" style="width: 40px">Opsi</th>
                                     </tr>
                                 </thead>
@@ -84,15 +49,10 @@
                                         <tr>
                                             <td class="text-center">{{ $proposals->firstItem() + $key }}</td>
                                             <td>
-                                                {{ ucfirst($proposal->jenis) }}
-                                                <hr class="my-2">
-                                                {{ Carbon\Carbon::parse($proposal->tanggal)->translatedFormat('l, d F Y') }}
-                                                <br>
-                                                {{ $proposal->jam }} WIB
-                                            </td>
-                                            <td>
                                                 {{ $proposal->user->nama }}
                                                 <hr class="my-2">
+                                                <strong>{{ ucfirst($proposal->jenis) }}</strong>
+                                                <br>
                                                 {{ $proposal->judul }}
                                             </td>
                                             <td class="text-center">
@@ -135,19 +95,19 @@
                     <div class="modal-body">
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Jenis Proposal</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ ucfirst($proposal->jenis) }}
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
                                 <strong>Dosen</strong>
                                 <small class="text-muted">(ketua)</small>
                             </div>
                             <div class="col-md-6">
                                 {{ $proposal->user->nama }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Jenis Proposal</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ ucfirst($proposal->jenis) }}
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -164,6 +124,14 @@
                             </div>
                             <div class="col-md-6">
                                 {{ $proposal->judul }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Jenis {{ $proposal->jenis == 'penelitian' ? 'Penelitian' : 'Pengabdian' }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $proposal->jenis == 'penelitian' ? $proposal->jenis_penelitian->nama : $proposal->jenis_pengabdian->nama }}
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -201,74 +169,52 @@
                                 </a>
                             </div>
                         </div>
-                        @if (count($proposal->personels))
-                            <div class="row mb-2">
-                                <div class="col-md-6">
-                                    <strong>Personel</strong>
-                                    <small class="text-muted">(anggota)</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <ul class="px-3">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Personel</strong>
+                                <small class="text-muted">(anggota)</small>
+                            </div>
+                            <div class="col-md-6">
+                                @if (count($proposal->personels))
+                                    <ol class="px-3 mb-0">
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
                                         @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                        @endif
-                        <hr class="my-2">
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <strong>Jadwal</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ Carbon\Carbon::parse($proposal->tanggal)->translatedFormat('l, d F Y') }}
-                                <br>
-                                {{ $proposal->jam }} WIB
+                                    </ol>
+                                @else
+                                    -
+                                @endif
                             </div>
                         </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <strong>Reviewer</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ $proposal->peninjau->nama }}
-                            </div>
+                        <div class="alert alert-light text-center rounded-0 mb-2">
+                            @if ($proposal->status == 'menunggu')
+                                <span>- Proposal menunggu dijadwalkan <strong>Operator</strong> -</span>
+                            @endif
+                            @if ($proposal->status == 'proses')
+                                <span>- Proposal telah dijadwalkan <strong>Operator</strong> -</span>
+                            @endif
+                            @if ($proposal->status == 'revisi')
+                                <span>- Proposal dalam tahap revisi oleh <strong>Reviewer</strong> -</span>
+                            @endif
+                            @if ($proposal->status == 'setuju')
+                                <span>- Proposal telah di ACC oleh <strong>Reviewer</strong> -</span>
+                            @endif
+                            @if ($proposal->status == 'revisi2')
+                                <span>- Proposal dalam tahap revisi oleh <strong>Operator</strong> -</span>
+                            @endif
+                            @if ($proposal->status == 'pendanaan')
+                                <span>- Proposal menunggu Dana Disetujui oleh <strong>Ka. LPPM</strong> -</span>
+                            @endif
+                            @if ($proposal->status == 'selesai')
+                                <span>- Proposal telah Selesai -</span>
+                            @endif
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat"
-                            data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
         </div>
     @endforeach
-@endsection
-
-@section('script')
-    <script>
-        sampai_set();
-
-        function sampai_set(dari) {
-            if (dari) {
-                $('#sampai').attr('disabled', false);
-            } else {
-                $('#sampai').attr('disabled', true);
-                $('#sampai').val('');
-            }
-        }
-
-
-
-        function cari() {
-            $('#form-submit').attr('action', "{{ url('operator/proposal-laporan') }}");
-            $('#form-submit').submit();
-        }
-
-        function print() {
-            $('#form-submit').attr('action', "{{ url('operator/proposal-laporan/print') }}");
-            $('#form-submit').submit();
-        }
-    </script>
 @endsection

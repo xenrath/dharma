@@ -8,26 +8,27 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ProposalPengabdianController extends Controller
+class ProposalListController extends Controller
 {
     public function index()
     {
-        $proposals = Proposal::where([
-            ['jenis', 'pengabdian'],
-            ['status', 'menunggu'],
-        ])
+        $proposals = Proposal::where('status', 'menunggu')
             ->select(
                 'id',
+                'jenis',
                 'user_id',
                 'tahun',
                 'judul',
+                'jenis_penelitian_id',
+                'jenis_pengabdian_id',
                 'jenis_pendanaan_id',
                 'dana_sumber',
                 'dana_usulan',
                 'berkas',
-                'status',
             )
             ->with('user:id,nama')
+            ->with('jenis_penelitian:id,nama')
+            ->with('jenis_pengabdian:id,nama')
             ->with('jenis_pendanaan:id,nama')
             ->with('personels', function ($query) {
                 $query->select('proposal_id', 'user_id');
@@ -40,12 +41,11 @@ class ProposalPengabdianController extends Controller
         ])
             ->select('id', 'nama')
             ->orderBy('nama')
-            ->get();
+            ->paginate(10);
 
-        return view('operator.proposal.pengabdian.index', compact('proposals', 'peninjaus'));
+        return view('operator.proposal.list.index', compact('proposals', 'peninjaus'));
     }
 
-    // Konfirmasi
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -53,30 +53,29 @@ class ProposalPengabdianController extends Controller
             'jam' => 'required',
             'peninjau_id' => 'required',
         ], [
-            'tanggal.required' => 'Tanggal harus ditambahkan!',
-            'jam.required' => 'Jam harus ditambahkan!',
+            'tanggal.required' => 'Tanggal harus dipilih!',
+            'jam.required' => 'Jam harus dipilih!',
             'peninjau_id.required' => 'Reviewer harus dipilih!',
         ]);
-
+        // 
         if ($validator->fails()) {
             alert()->error('Error', 'Gagal mengonfirmasi Proposal!');
             return back()->withInput()->withErrors($validator)->with('id', $id);
         }
-
+        // 
         $proposal = Proposal::where('id', $id)->update([
             'tanggal' => $request->tanggal,
             'jam' => $request->jam,
             'peninjau_id' => $request->peninjau_id,
             'status' => 'proses',
         ]);
-
+        // 
         if (!$proposal) {
             alert()->error('Error', 'Gagal mengonfirmasi Proposal!');
             return back();
         }
-
+        // 
         alert()->success('Success', 'Berhasil mengonfirmasi Proposal');
-
         return back();
     }
 }

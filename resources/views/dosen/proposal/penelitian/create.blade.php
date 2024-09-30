@@ -71,6 +71,27 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-2">
+                                        <label for="jenis_penelitian_id">Jenis Penelitian</label>
+                                        <select
+                                            class="custom-select rounded-0 @error('jenis_penelitian_id') is-invalid @enderror"
+                                            name="jenis_penelitian_id" id="jenis_penelitian_id">
+                                            <option value="">- Pilih -</option>
+                                            @foreach ($jenis_penelitians as $jenis_penelitian)
+                                                <option value="{{ $jenis_penelitian->id }}"
+                                                    {{ old('jenis_penelitian_id') == $jenis_penelitian->id ? 'selected' : '' }}>
+                                                    {{ $jenis_penelitian->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('jenis_penelitian_id')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-2">
                                         <label for="jenis_pendanaan_id">Jenis Pendanaan</label>
                                         <select
                                             class="custom-select rounded-0 @error('jenis_pendanaan_id') is-invalid @enderror"
@@ -90,6 +111,8 @@
                                         @enderror
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-2">
                                         <label for="dana_sumber">Sumber Dana</label>
@@ -103,12 +126,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-2">
                                         <label for="dana_usulan">Dana Usulan</label>
-                                        <div class="input-group mb-3">
+                                        <div class="input-group">
                                             <div class="input-group-prepend ">
                                                 <span class="input-group-text rounded-0">Rp</span>
                                             </div>
@@ -123,19 +144,16 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label for="berkas">Berkas</label>
-                                        <input type="file"
-                                            class="form-control rounded-0 @error('berkas') is-invalid @enderror"
-                                            id="berkas" name="berkas" accept=".pdf">
-                                        @error('berkas')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="berkas">Berkas</label>
+                                <input type="file" class="form-control rounded-0 @error('berkas') is-invalid @enderror"
+                                    id="berkas" name="berkas" accept=".pdf">
+                                @error('berkas')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
                                     </div>
-                                </div>
+                                @enderror
                             </div>
                         </div>
                         <!-- /.card-body -->

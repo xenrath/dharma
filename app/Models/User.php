@@ -18,6 +18,7 @@ class User extends Authenticatable
         'username',
         'password',
         'nidn',
+        'nipy',
         'fakultas_id',
         'prodi_id',
         'telp',
@@ -74,5 +75,10 @@ class User extends Authenticatable
     public function isKetua()
     {
         return $this->is_ketua;
+    }
+
+    public function isPeninjau()
+    {
+        return $this->is_peninjau;
     }
 }

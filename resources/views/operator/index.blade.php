@@ -44,20 +44,25 @@
                         </a>
                     </div>
                 @endif
+                <h5>Proposal</h5>
                 <div class="row mb-2">
                     <div class="col-lg-4 col-12">
                         <div class="small-box bg-info rounded-0 mb-2">
                             <div class="inner">
                                 <h3>
-                                    {{ $proposal_penelitian }}
-                                    data
+                                    @if ($proposal_list)
+                                        {{ $proposal_list }}
+                                        data
+                                    @else
+                                        -
+                                    @endif
                                 </h3>
-                                <p>Proposal Penelitian</p>
+                                <p>Data Proposal</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-document-text"></i>
                             </div>
-                            <a href="{{ url('operator/proposal-penelitian') }}" class="small-box-footer">
+                            <a href="{{ url('operator/proposal-list') }}" class="small-box-footer">
                                 Lihat Data
                                 <i class="fas fa-arrow-circle-right"></i>
                             </a>
@@ -67,53 +72,135 @@
                         <div class="small-box bg-info rounded-0 mb-2">
                             <div class="inner">
                                 <h3>
-                                    {{ $proposal_pengabdian }}
-                                    data
+                                    @if ($proposal_pendanaan)
+                                        {{ $proposal_pendanaan }}
+                                        data
+                                    @else
+                                        -
+                                    @endif
                                 </h3>
-                                <p>Proposal Pengabdian</p>
+                                <p>Proposal Pendanaan</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-document-text"></i>
                             </div>
-                            <a href="{{ url('operator/proposal-pengabdian') }}" class="small-box-footer">
+                            <a href="{{ url('operator/proposal-pendanaan') }}" class="small-box-footer">
+                                Lihat Data
+                                <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-12">
+                        <div class="small-box bg-info rounded-0 mb-2">
+                            <div class="inner">
+                                <h3>
+                                    @if ($proposal_riwayat)
+                                        {{ $proposal_riwayat }}
+                                        data
+                                    @else
+                                        -
+                                    @endif
+                                </h3>
+                                <p>Riwayat Proposal</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-document-text"></i>
+                            </div>
+                            <a href="{{ url('operator/proposal-riwayat') }}" class="small-box-footer">
                                 Lihat Data
                                 <i class="fas fa-arrow-circle-right"></i>
                             </a>
                         </div>
                     </div>
                 </div>
+                <h5>Penelitian</h5>
                 <div class="row mb-2">
                     <div class="col-lg-4 col-12">
-                        <div class="small-box bg-success rounded-0 mb-2">
+                        <div class="small-box bg-info rounded-0 mb-2">
                             <div class="inner">
                                 <h3>
-                                    {{ $proposal_penelitian }}
-                                    data
+                                    @if ($penelitian_list)
+                                        {{ $penelitian_list }}
+                                        data
+                                    @else
+                                        -
+                                    @endif
                                 </h3>
                                 <p>Data Penelitian</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-document-text"></i>
                             </div>
-                            <a href="{{ url('operator/proposal-penelitian') }}" class="small-box-footer">
+                            <a href="{{ url('operator/proposal-list') }}" class="small-box-footer">
                                 Lihat Data
                                 <i class="fas fa-arrow-circle-right"></i>
                             </a>
                         </div>
                     </div>
                     <div class="col-lg-4 col-12">
-                        <div class="small-box bg-success rounded-0 mb-2">
+                        <div class="small-box bg-info rounded-0 mb-2">
                             <div class="inner">
                                 <h3>
-                                    {{ $proposal_pengabdian }}
-                                    data
+                                    @if ($penelitian_riwayat)
+                                        {{ $penelitian_riwayat }}
+                                        data
+                                    @else
+                                        -
+                                    @endif
+                                </h3>
+                                <p>Riwayat Penelitian</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-document-text"></i>
+                            </div>
+                            <a href="{{ url('operator/penelitian-riwayat') }}" class="small-box-footer">
+                                Lihat Data
+                                <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <h5>Pengabdian</h5>
+                <div class="row mb-2">
+                    <div class="col-lg-4 col-12">
+                        <div class="small-box bg-info rounded-0 mb-2">
+                            <div class="inner">
+                                <h3>
+                                    @if ($pengabdian_list)
+                                        {{ $pengabdian_list }}
+                                        data
+                                    @else
+                                        -
+                                    @endif
                                 </h3>
                                 <p>Data Pengabdian</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-document-text"></i>
                             </div>
-                            <a href="{{ url('operator/proposal-pengabdian') }}" class="small-box-footer">
+                            <a href="{{ url('operator/pengabdian-list') }}" class="small-box-footer">
+                                Lihat Data
+                                <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-12">
+                        <div class="small-box bg-info rounded-0 mb-2">
+                            <div class="inner">
+                                <h3>
+                                    @if ($pengabdian_riwayat)
+                                        {{ $pengabdian_riwayat }}
+                                        data
+                                    @else
+                                        -
+                                    @endif
+                                </h3>
+                                <p>Riwayat Pengabdian</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-document-text"></i>
+                            </div>
+                            <a href="{{ url('operator/pengabdian-riwayat') }}" class="small-box-footer">
                                 Lihat Data
                                 <i class="fas fa-arrow-circle-right"></i>
                             </a>

@@ -14,11 +14,13 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->string('nidn')->unique()->nullable();
+            $table->string('nipy')->unique()->nullable();
             $table->unsignedBigInteger('prodi_id')->nullable();
             $table->foreign('prodi_id')->references('id')->on('prodis')->restrictOnDelete();
             $table->string('telp')->unique()->nullable();
             $table->boolean('is_ketua')->default(false);
             $table->boolean('is_peninjau')->default(false);
+            $table->string('ttd')->nullable();
             $table->enum('role', ['dev', 'operator', 'dosen']);
             $table->timestamps();
             $table->softDeletes();

@@ -5,54 +5,130 @@
         <p>Dashboard</p>
     </a>
 </li>
+@php
+    $proposal_list = \App\Models\Proposal::where('status', 'menunggu')->count();
+    $proposal_pendanaan = \App\Models\Proposal::where(function ($query) {
+        $query->where('status', 'setuju');
+        $query->orWhere('status', 'revisi2');
+    })->count();
+@endphp
 <li class="nav-header">Menu</li>
-<li class="nav-item">
-    <a href="{{ url('operator/proposal-penelitian') }}"
-        class="nav-link rounded-0 {{ request()->is('operator/proposal-penelitian*') ? 'active' : '' }}">
-        <i class="nav-icon far fa-circle"></i>
+<li
+    class="nav-item {{ request()->is('operator/proposal-list*') || request()->is('operator/proposal-jadwal*') || request()->is('operator/proposal-pendanaan*') || request()->is('operator/proposal-riwayat*') ? 'menu-open' : '' }}">
+    <a href="#"
+        class="nav-link {{ request()->is('operator/proposal-list*') || request()->is('operator/proposal-jadwal*') || request()->is('operator/proposal-pendanaan*') || request()->is('operator/proposal-riwayat*') ? 'active' : '' }} rounded-0">
+        <i class="nav-icon fas fa-clipboard-list"></i>
         <p>
-            Proposal Penelitian
+            Menu Proposal
+            <i class="right fas fa-angle-left"></i>
         </p>
     </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ url('operator/proposal-list') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/proposal-list*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    Data Proposal
+                    @if ($proposal_list)
+                        <span class="right badge badge-info rounded-0">{{ $proposal_list }}</span>
+                    @endif
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('operator/proposal-jadwal') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/proposal-jadwal*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    Jadwal Proposal
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('operator/proposal-pendanaan') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/proposal-pendanaan*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    Pendanaan Proposal
+                    @if ($proposal_pendanaan)
+                        <span class="right badge badge-info rounded-0">{{ $proposal_pendanaan }}</span>
+                    @endif
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('operator/proposal-riwayat') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/proposal-riwayat*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    Riwayat Proposal
+                </p>
+            </a>
+        </li>
+    </ul>
 </li>
-<li class="nav-item">
-    <a href="{{ url('operator/proposal-pengabdian') }}"
-        class="nav-link rounded-0 {{ request()->is('operator/proposal-pengabdian*') ? 'active' : '' }}">
-        <i class="nav-icon far fa-circle"></i>
+<li
+    class="nav-item {{ request()->is('operator/penelitian-list*') || request()->is('operator/penelitian-riwayat*') ? 'menu-open' : '' }}">
+    <a href="#"
+        class="nav-link {{ request()->is('operator/penelitian-list*') || request()->is('operator/penelitian-riwayat*') ? 'active' : '' }} rounded-0">
+        <i class="nav-icon fas fa-clipboard-list"></i>
         <p>
-            Proposal Pengabdian
+            Menu Penelitian
+            <i class="right fas fa-angle-left"></i>
         </p>
     </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ url('operator/penelitian-list') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/penelitian-list*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    Data Penelitian
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('operator/penelitian-riwayat') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/penelitian-riwayat*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    Riwayat Penelitian
+                </p>
+            </a>
+        </li>
+    </ul>
 </li>
-<li class="nav-item">
-    <a href="{{ url('operator/proposal-laporan') }}"
-        class="nav-link rounded-0 {{ request()->is('operator/proposal-laporan*') ? 'active' : '' }}">
-        <i class="nav-icon far fa-circle"></i>
+<li
+    class="nav-item {{ request()->is('operator/pengabdian-list*') || request()->is('operator/pengabdian-riwayat*') ? 'menu-open' : '' }}">
+    <a href="#"
+        class="nav-link {{ request()->is('operator/pengabdian-list*') || request()->is('operator/pengabdian-riwayat*') ? 'active' : '' }} rounded-0">
+        <i class="nav-icon fas fa-clipboard-list"></i>
         <p>
-            Laporan Proposal
+            Menu Pengabdian
+            <i class="right fas fa-angle-left"></i>
         </p>
     </a>
-</li>
-<li class="nav-header">
-    <hr class="m-0 bg-light">
-</li>
-<li class="nav-item">
-    <a href="{{ url('operator/penelitian') }}"
-        class="nav-link rounded-0 {{ request()->is('operator/penelitian*') ? 'active' : '' }}">
-        <i class="nav-icon far fa-circle"></i>
-        <p>
-            Data Penelitian
-        </p>
-    </a>
-</li>
-<li class="nav-item">
-    <a href="{{ url('operator/pengabdian') }}"
-        class="nav-link rounded-0 {{ request()->is('operator/pengabdian*') ? 'active' : '' }}">
-        <i class="nav-icon far fa-circle"></i>
-        <p>
-            Data Pengabdian
-        </p>
-    </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ url('operator/pengabdian-list') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/pengabdian-list*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    Data Pengabdian
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('operator/pengabdian-riwayat') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/pengabdian-riwayat*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    Riwayat Pengabdian
+                </p>
+            </a>
+        </li>
+    </ul>
 </li>
 <li class="nav-header">Lainnya</li>
 <li class="nav-item">

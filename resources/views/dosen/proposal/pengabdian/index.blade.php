@@ -134,6 +134,14 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
+                                <strong>Jenis Pengabdian</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $proposal->jenis_pengabdian->nama }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
                                 <strong>Jenis Pendanaan</strong>
                             </div>
                             <div class="col-md-6">

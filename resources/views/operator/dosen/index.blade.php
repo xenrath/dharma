@@ -82,7 +82,7 @@
                                                 <br>
                                                 {{ $dosen->nidn }}
                                                 @if ($dosen->is_peninjau)
-                                                    <span class="badge badge-primary">Reviewer</span>
+                                                    <span class="badge badge-primary rounded-0">Reviewer</span>
                                                 @endif
                                             </td>
                                             <td class="text-center">
@@ -146,7 +146,7 @@
                             <div class="col-md-6">
                                 {{ $dosen->nidn }}
                                 @if ($dosen->is_peninjau)
-                                    <span class="badge badge-primary">Reviewer</span>
+                                    <span class="badge badge-primary rounded-0">Reviewer</span>
                                 @endif
                             </div>
                         </div>

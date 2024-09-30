@@ -10,10 +10,10 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/fontawesome-free/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css?v=3.2.0') }}">
 
     @yield('css')
 
+    <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css?v=3.2.0') }}">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -41,21 +41,21 @@
                         <strong class="mr-2">{{ substr(auth()->user()->nama, 0, 30) }}</strong>
                         <i class="fas fa-chevron-down"></i>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right rounded-0">
-                        <a href="{{ url('profile') }}" class="dropdown-item">
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-2 rounded-0">
+                        <a href="{{ url('profile') }}"
+                            class="dropdown-item {{ request()->is('profile*') ? 'active' : '' }}">
                             <i class="fas fa-sm fa-user-edit mr-2"></i>
                             <small class="text-bold">Perbarui Profil</small>
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="{{ url('ubah-password') }}" class="dropdown-item">
+                        <div class="dropdown-divider my-2"></div>
+                        <a href="{{ url('ubah-password') }}"
+                            class="dropdown-item {{ request()->is('ubah-password*') ? 'active' : '' }}">
                             <i class="fas fa-sm fa-user-lock mr-2"></i>
                             <small class="text-bold">Ganti Password</small>
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <div class="dropdown-footer">
-                            <button type="button" class="btn btn-danger btn-sm btn-block btn-flat" data-toggle="modal"
-                                data-target="#modal-logout">Keluar</button>
-                        </div>
+                        <div class="dropdown-divider my-2"></div>
+                        <button type="button" class="btn btn-danger btn-sm btn-block btn-flat" data-toggle="modal"
+                            data-target="#modal-logout">Keluar</button>
                     </div>
                 </li>
             </ul>

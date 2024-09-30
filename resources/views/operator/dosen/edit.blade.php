@@ -76,7 +76,7 @@
                             <div class="form-group mb-2">
                                 <label for="telp">
                                     Nomor WhatsApp
-                                    <small class="text-muted">(08xxxxxxxxxx)</small>
+                                    <small class="text-muted">(opsional | 08xxxxxxxxxx)</small>
                                 </label>
                                 <input type="tel" class="form-control rounded-0 @error('telp') is-invalid @enderror"
                                     id="telp" name="telp" value="{{ old('telp', $dosen->telp) }}">

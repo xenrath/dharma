@@ -6,12 +6,12 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Admin
+class Ketua
 {
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            if ($request->user()->isAdmin()) {
+            if ($request->user()->isKetua()) {
                 return $next($request);
             } else {
                 return redirect('/');
