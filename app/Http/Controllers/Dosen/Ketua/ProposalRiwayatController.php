@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Dosen;
+namespace App\Http\Controllers\Dosen\Ketua;
 
 use App\Http\Controllers\Controller;
 use App\Models\Proposal;
-use Illuminate\Http\Request;
 
-class KetuaRiwayatController extends Controller
+class ProposalRiwayatController extends Controller
 {
     public function index()
     {
@@ -23,7 +22,8 @@ class KetuaRiwayatController extends Controller
                 'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'peninjau_id',
                 'jadwal_id',
                 'status',
@@ -44,6 +44,7 @@ class KetuaRiwayatController extends Controller
                 $query->select('proposal_id', 'user_id', 'file', 'keterangan');
                 $query->orderByDesc('id');
             })
+            ->orderByDesc('id')
             ->paginate(10);
 
         return view('dosen.ketua.riwayat.index', compact('proposals'));

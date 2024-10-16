@@ -21,6 +21,7 @@ class PengabdianRiwayatController extends Controller
                 'dana_sumber',
                 'dana_setuju',
                 'file',
+                'mahasiswas',
                 'status',
             )
             ->with('user:id,nama')
@@ -30,6 +31,14 @@ class PengabdianRiwayatController extends Controller
                 $query->select('pengabdian_id', 'keterangan', 'file');
                 $query->orderByDesc('id');
             })
+            ->with('personels', function ($query) {
+                $query->select('pengabdian_id', 'user_id');
+                $query->with('user', function ($query) {
+                    $query->select('id', 'nama');
+                    $query->withTrashed();
+                });
+            })
+            ->orderByDesc('id')
             ->paginate(10);
 
         return view('operator.pengabdian.riwayat.index', compact('pengabdians'));

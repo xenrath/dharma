@@ -14,7 +14,26 @@ class PengabdianListController extends Controller
     {
         $pengabdians = Pengabdian::where('status', 'menunggu')
             ->orWhere('status', 'revisi')
-            ->orderByDesc('id')
+            ->select(
+                'id',
+                'user_id',
+                'tahun',
+                'judul',
+                'jenis_pengabdian_id',
+                'jenis_pendanaan_id',
+                'dana_sumber',
+                'dana_setuju',
+                'file',
+                'mahasiswas',
+                'status',
+            )
+            ->with('user:id,nama')
+            ->with('jenis_pengabdian:id,nama')
+            ->with('jenis_pendanaan:id,nama')
+            ->with('personels', function ($query) {
+                $query->select('pengabdian_id', 'user_id');
+                $query->with('user:id,nama');
+            })
             ->paginate(10);
 
         return view('operator.pengabdian.list.index', compact('pengabdians'));
@@ -29,7 +48,7 @@ class PengabdianListController extends Controller
         ]);
         // 
         if ($validator->fails()) {
-            alert()->error('Error', 'Gagal mengirim revisi Pengabdian!');
+            alert()->error('Error', 'Gagal mengirim revisi Laporan Pengabdian!');
             return back()->withInput()->withErrors($validator->errors())->with('id', $id);
         }
         // 
@@ -48,7 +67,7 @@ class PengabdianListController extends Controller
         ]);
         // 
         if (!$revisi) {
-            alert()->error('Error', 'Gagal mengirim revisi Pengabdian!');
+            alert()->error('Error', 'Gagal mengirim revisi Laporan Pengabdian!');
             return back();
         }
         // 
@@ -57,7 +76,7 @@ class PengabdianListController extends Controller
         ]);
         // 
         if (!$pengabdian) {
-            alert()->error('Error', 'Gagal mengirim revisi Pengabdian!');
+            alert()->error('Error', 'Gagal mengirim revisi Laporan Pengabdian!');
             return back();
         }
         // 
@@ -75,7 +94,7 @@ class PengabdianListController extends Controller
         //     $this->kirim($telp, $message);
         // }
         // 
-        alert()->success('Success', 'Berhasil mengirim revisi Pengabdian');
+        alert()->success('Success', 'Berhasil mengirim revisi Laporan Pengabdian');
         return back();
     }
 

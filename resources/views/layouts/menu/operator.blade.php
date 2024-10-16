@@ -11,12 +11,29 @@
         $query->where('status', 'setuju');
         $query->orWhere('status', 'revisi2');
     })->count();
+    $proposal_mou = \App\Models\Proposal::where('status', 'mou')->count();
+    $penelitian = \App\Models\Penelitian::where('status', 'menunggu')->orWhere('status', 'revisi')->count();
+    $pengabdian = \App\Models\Pengabdian::where('status', 'menunggu')->orWhere('status', 'revisi')->count();
 @endphp
 <li class="nav-header">Menu</li>
 <li
-    class="nav-item {{ request()->is('operator/proposal-list*') || request()->is('operator/proposal-jadwal*') || request()->is('operator/proposal-pendanaan*') || request()->is('operator/proposal-riwayat*') ? 'menu-open' : '' }}">
+    class="nav-item 
+    {{ request()->is('operator/proposal-list*') ||
+    request()->is('operator/proposal-jadwal*') ||
+    request()->is('operator/proposal-pendanaan*') ||
+    request()->is('operator/proposal-mou*') ||
+    request()->is('operator/proposal-riwayat*')
+        ? 'menu-open'
+        : '' }}">
     <a href="#"
-        class="nav-link {{ request()->is('operator/proposal-list*') || request()->is('operator/proposal-jadwal*') || request()->is('operator/proposal-pendanaan*') || request()->is('operator/proposal-riwayat*') ? 'active' : '' }} rounded-0">
+        class="nav-link 
+        {{ request()->is('operator/proposal-list*') ||
+        request()->is('operator/proposal-jadwal*') ||
+        request()->is('operator/proposal-pendanaan*') ||
+        request()->is('operator/proposal-mou*') ||
+        request()->is('operator/proposal-riwayat*')
+            ? 'active'
+            : '' }} rounded-0">
         <i class="nav-icon fas fa-clipboard-list"></i>
         <p>
             Menu Proposal
@@ -58,6 +75,18 @@
             </a>
         </li>
         <li class="nav-item">
+            <a href="{{ url('operator/proposal-mou') }}"
+                class="nav-link rounded-0 {{ request()->is('operator/proposal-mou*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle"></i>
+                <p>
+                    MOU Proposal
+                    @if ($proposal_mou)
+                        <span class="right badge badge-info rounded-0">{{ $proposal_mou }}</span>
+                    @endif
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="{{ url('operator/proposal-riwayat') }}"
                 class="nav-link rounded-0 {{ request()->is('operator/proposal-riwayat*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle"></i>
@@ -85,6 +114,9 @@
                 <i class="nav-icon far fa-circle"></i>
                 <p>
                     Data Penelitian
+                    @if ($penelitian)
+                        <span class="right badge badge-info rounded-0">{{ $penelitian }}</span>
+                    @endif
                 </p>
             </a>
         </li>
@@ -116,6 +148,9 @@
                 <i class="nav-icon far fa-circle"></i>
                 <p>
                     Data Pengabdian
+                    @if ($pengabdian)
+                        <span class="right badge badge-info rounded-0">{{ $pengabdian }}</span>
+                    @endif
                 </p>
             </a>
         </li>

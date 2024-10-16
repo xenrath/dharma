@@ -23,7 +23,8 @@ class ProposalRiwayatController extends Controller
                 'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'peninjau_id',
                 'jadwal_id',
                 'status',
@@ -41,6 +42,7 @@ class ProposalRiwayatController extends Controller
                 $query->select('proposal_id', 'user_id', 'keterangan', 'file');
                 $query->orderByDesc('id');
             })
+            ->orderByDesc('id')
             ->paginate(10);
 
         return view('operator.proposal.riwayat.index', compact('proposals'));

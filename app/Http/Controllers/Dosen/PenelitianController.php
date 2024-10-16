@@ -27,6 +27,7 @@ class PenelitianController extends Controller
                 'dana_sumber',
                 'dana_setuju',
                 'file',
+                'mahasiswas',
                 'status',
             )
             ->with('user:id,nama')
@@ -47,13 +48,13 @@ class PenelitianController extends Controller
         $validator = Validator::make($request->all(), [
             'file' => 'required|mimes:pdf|max:2048',
         ], [
-            'file.required' => 'File Laporan harus ditambahkan!',
-            'file.mimes' => 'File Laporan harus berformat .pdf!',
-            'file.max' => 'File Laporan yang ditambahkan terlalu besar!',
+            'file.required' => 'Laporan Penelitian harus ditambahkan!',
+            'file.mimes' => 'Laporan Penelitian harus berformat .pdf!',
+            'file.max' => 'Laporan Penelitian yang ditambahkan terlalu besar!',
         ]);
         // 
         if ($validator->fails()) {
-            alert()->error('Error', 'Gagal mengunggah File Laporan!');
+            alert()->error('Error', 'Gagal mengunggah Laporan Penelitian!');
             return back()->withInput()->withErrors($validator->errors())->with('id', $id);
         }
         // 
@@ -66,7 +67,7 @@ class PenelitianController extends Controller
         ]);
         // 
         if (!$penelitian) {
-            alert()->error('Error', 'Gagal mengunggah File Laporan!');
+            alert()->error('Error', 'Gagal mengunggah Laporan Penelitian!');
             return back();
         }
         //
@@ -83,7 +84,7 @@ class PenelitianController extends Controller
         //     $this->kirim($telp, $message);
         // }
         // 
-        alert()->success('Success', 'Berhasil mengunggah File Laporan');
+        alert()->success('Success', 'Berhasil mengunggah Laporan Penelitian');
         return back();
     }
 
@@ -93,13 +94,13 @@ class PenelitianController extends Controller
         $validator = Validator::make($request->all(), [
             'file' => 'required|mimes:pdf|max:2048',
         ], [
-            'file.required' => 'File harus ditambahkan!',
-            'file.mimes' => 'File harus berformat .pdf!',
-            'file.max' => 'File yang ditambahkan terlalu besar!',
+            'file.required' => 'File Revisi harus ditambahkan!',
+            'file.mimes' => 'File Revisi harus berformat .pdf!',
+            'file.max' => 'File Revisi yang ditambahkan terlalu besar!',
         ]);
         // 
         if ($validator->fails()) {
-            alert()->error('Error', 'Gagal mengunggah File Laporan!');
+            alert()->error('Error', 'Gagal mengunggah File Revisi!');
             return back()->withInput()->withErrors($validator->errors())->with('id', $id);
         }
         // 
@@ -112,7 +113,7 @@ class PenelitianController extends Controller
         ]);
         // 
         if (!$revisi) {
-            alert()->error('Error', 'Gagal mengunggah File Laporan!');
+            alert()->error('Error', 'Gagal mengunggah File Revisi!');
             return back();
         }
         //
@@ -129,7 +130,7 @@ class PenelitianController extends Controller
         //     $this->kirim($telp, $message);
         // }
         // 
-        alert()->success('Success', 'Berhasil mengunggah File Laporan');
+        alert()->success('Success', 'Berhasil mengunggah File Revisi');
         return back();
     }
 

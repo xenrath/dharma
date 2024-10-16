@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use App\Models\Penelitian;
 use App\Models\PenelitianRevisi;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -25,11 +24,16 @@ class PenelitianListController extends Controller
                 'dana_sumber',
                 'dana_setuju',
                 'file',
+                'mahasiswas',
                 'status',
             )
             ->with('user:id,nama')
             ->with('jenis_penelitian:id,nama')
             ->with('jenis_pendanaan:id,nama')
+            ->with('personels', function ($query) {
+                $query->select('penelitian_id', 'user_id');
+                $query->with('user:id,nama');
+            })
             ->paginate(10);
         // 
         return view('operator.penelitian.list.index', compact('penelitians'));

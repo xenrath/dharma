@@ -62,10 +62,13 @@
                                                     <br>
                                                     <strong>Anggota:</strong>
                                                     <br>
-                                                    @if (count($pengabdian->personels))
+                                                    @if (count($pengabdian->personels) || count($pengabdian->mahasiswas))
                                                         <ol class="px-3 mb-0">
                                                             @foreach ($pengabdian->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
+                                                            @endforeach
+                                                            @foreach ($pengabdian->mahasiswas as $mahasiswa)
+                                                                <li>{{ $mahasiswa }}</li>
                                                             @endforeach
                                                         </ol>
                                                     @else
@@ -136,7 +139,7 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Judul Penelitian</strong>
+                                <strong>Judul Pengabdian</strong>
                             </div>
                             <div class="col-md-6">
                                 {{ $pengabdian->judul }}
@@ -144,7 +147,7 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Jenis Penelitian</strong>
+                                <strong>Jenis Pengabdian</strong>
                             </div>
                             <div class="col-md-6">
                                 {{ $pengabdian->jenis_pengabdian->nama }}
@@ -176,7 +179,7 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Laporan Penelitian</strong>
+                                <strong>Laporan Pengabdian</strong>
                             </div>
                             <div class="col-md-6">
                                 <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}"
@@ -191,10 +194,13 @@
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($pengabdian->personels))
+                                @if (count($pengabdian->personels) || count($pengabdian->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($pengabdian->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($pengabdian->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -213,7 +219,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Revisi Penelitian</h4>
+                        <h4 class="modal-title">Revisi Pengabdian</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

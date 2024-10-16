@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('dana_sumber');
             $table->string('dana_setuju');
             $table->string('file')->nullable();
+            $table->json('mahasiswas')->nullable();
             $table->enum('status', ['menunggu', 'revisi', 'selesai']);
             $table->timestamps();
         });

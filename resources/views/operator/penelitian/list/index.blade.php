@@ -62,10 +62,13 @@
                                                     <br>
                                                     <strong>Anggota:</strong>
                                                     <br>
-                                                    @if (count($penelitian->personels))
+                                                    @if (count($penelitian->personels) || count($penelitian->mahasiswas))
                                                         <ol class="px-3 mb-0">
                                                             @foreach ($penelitian->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
+                                                            @endforeach
+                                                            @foreach ($penelitian->mahasiswas as $mahasiswa)
+                                                                <li>{{ $mahasiswa }}</li>
                                                             @endforeach
                                                         </ol>
                                                     @else
@@ -189,14 +192,31 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
+                                <strong>Laporan Penelitian</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @if ($penelitian->file)
+                                    <a href="{{ asset('storage/uploads/' . $penelitian->file) }}"
+                                        class="btn btn-info btn-xs btn-flat" target="_blank">Lihat Laporan</a>
+                                @else
+                                    <button type="button" class="btn btn-default btn-xs btn-flat"
+                                        style="pointer-events: none">File Laporan belum diunggah</button>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
                                 <strong>Personel</strong>
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($penelitian->personels))
+                                @if (count($penelitian->personels) || count($penelitian->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($penelitian->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($penelitian->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -216,7 +236,8 @@
                         @endif
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
@@ -339,7 +360,7 @@
                         @csrf
                         <div class="modal-body">
                             @if (($penelitian->status == 'menunggu' && $penelitian->file) || ($penelitian->status == 'revisi' && $revisi->file))
-                                Yakin menyetujui Laporan Penelitian dari <strong>{{ $penelitian->user->nama }}</strong>?
+                                Yakin menyetujui laporan penelitian dari <strong>{{ $penelitian->user->nama }}</strong>?
                             @else
                                 <div class="alert alert-light text-center rounded-0 mb-2">
                                     <span class="text-muted">- Menunggu dosen mengunggah file revisi -</span>

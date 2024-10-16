@@ -180,10 +180,10 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Berkas Laporan</strong>
+                                <strong>Laporan Proposal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}"
+                                <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Laporan
                                 </a>
@@ -195,10 +195,13 @@
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($proposal->personels))
+                                @if (count($proposal->personels) || count($proposal->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($proposal->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -236,7 +239,7 @@
                                 <strong>Jadwal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ url('dosen/jadwal/' . $proposal->jadwal_id) }}"
+                                <a href="{{ url('jadwal/' . $proposal->jadwal_id) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Jadwal
                                 </a>
@@ -244,11 +247,11 @@
                         </div>
                         <hr class="my-2">
                         @if (Carbon\Carbon::now()->format('Y-m-d') >= $proposal->tanggal)
-                            <div class="alert alert-light text-center rounded-0 mb-0">
+                            <div class="alert alert-light text-center rounded-0 mb-2">
                                 <span class="text-muted">- Menunggu konfirmasi hasil pengujian dari Anda -</span>
                             </div>
                         @else
-                            <div class="alert alert-light text-center rounded-0 mb-0">
+                            <div class="alert alert-light text-center rounded-0 mb-2">
                                 <span class="text-muted">- Menunggu hari H presentasi proposal -</span>
                             </div>
                         @endif
@@ -292,7 +295,7 @@
                                 <div class="mb-2">
                                     <strong>Laporan Proposal</strong>
                                     <br>
-                                    <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}" target="_blank"
+                                    <a href="{{ asset('storage/uploads/' . $proposal->file) }}" target="_blank"
                                         class="btn btn-secondary btn-xs btn-flat">
                                         Lihat Laporan
                                     </a>
@@ -317,15 +320,13 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            Yakin menyetujui <strong>Proposal
-                                {{ $proposal->jenis == 'penelitian' ? 'Penelitian' : 'Pengabdian' }}</strong> dari
-                            <strong>{{ $proposal->user->nama }}</strong>?
+                            Yakin menyetujui laporan proposal dari <strong>{{ $proposal->user->nama }}</strong>?
                         </div>
                         <div class="modal-body border-top">
                             <div class="mb-2">
                                 <strong>Laporan Proposal</strong>
                                 <br>
-                                <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}" target="_blank"
+                                <a href="{{ asset('storage/uploads/' . $proposal->file) }}" target="_blank"
                                     class="btn btn-secondary btn-xs btn-flat">
                                     Lihat Laporan
                                 </a>

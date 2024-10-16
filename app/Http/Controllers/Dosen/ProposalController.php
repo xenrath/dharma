@@ -7,6 +7,7 @@ use App\Models\JenisPendanaan;
 use App\Models\JenisPenelitian;
 use App\Models\JenisPengabdian;
 use App\Models\Proposal;
+use App\Models\ProposalMou;
 use App\Models\ProposalPersonel;
 use App\Models\ProposalRevisi;
 use App\Models\User;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Webklex\PDFMerger\Facades\PDFMergerFacade;
 
 class ProposalController extends Controller
 {
@@ -35,11 +37,13 @@ class ProposalController extends Controller
                 'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'tanggal',
                 'jam',
                 'peninjau_id',
                 'jadwal_id',
+                'mou',
                 'status',
             )
             ->with('user:id,nama')
@@ -101,7 +105,7 @@ class ProposalController extends Controller
             'jenis_pendanaan_id' => 'required',
             'dana_sumber' => 'required',
             'dana_usulan' => 'required',
-            'berkas' => 'required|mimes:pdf|max:2048',
+            'file' => 'required|mimes:pdf|max:2048',
         ], [
             'tahun.required' => 'Tahun Kegiatan harus diisi!',
             'judul.required' => 'Judul Proposal harus diisi!',
@@ -109,9 +113,9 @@ class ProposalController extends Controller
             'jenis_pendanaan_id.required' => 'Jenis Pendanaan harus dipilih!',
             'dana_sumber.required' => 'Sumber Dana harus diisi!',
             'dana_usulan.required' => 'Dana Usulan harus diisi!',
-            'berkas.required' => 'Berkas harus ditambahkan!',
-            'berkas.mimes' => 'Berkas harus berformat .pdf!',
-            'berkas.max' => 'Berkas yang ditambahkan terlalu besar!',
+            'file.required' => 'Laporan Proposal harus ditambahkan!',
+            'file.mimes' => 'Laporan Proposal harus berformat .pdf!',
+            'file.max' => 'Laporan Proposal yang ditambahkan terlalu besar!',
         ]);
         // 
         if ($validator->fails()) {
@@ -120,8 +124,8 @@ class ProposalController extends Controller
         }
         // 
         $waktu = Carbon::now()->format('ymdhis');
-        $berkas = 'proposal/proposal_' . $waktu . '.' . $request->berkas->getClientOriginalExtension();
-        $request->berkas->storeAs('public/uploads/', $berkas);
+        $file = 'proposal/proposal_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $request->file->storeAs('public/uploads/', $file);
         // 
         $proposal = Proposal::create([
             'jenis' => 'penelitian',
@@ -132,7 +136,8 @@ class ProposalController extends Controller
             'jenis_pendanaan_id' => $request->jenis_pendanaan_id,
             'dana_sumber' => $request->dana_sumber,
             'dana_usulan' => $request->dana_usulan,
-            'berkas' => $berkas,
+            'file' => $file,
+            'mahasiswas' => array_filter($request->mahasiswas),
             'status' => 'menunggu',
         ]);
         // 
@@ -193,7 +198,7 @@ class ProposalController extends Controller
             'jenis_pendanaan_id' => 'required',
             'dana_sumber' => 'required',
             'dana_usulan' => 'required',
-            'berkas' => 'required|mimes:pdf|max:2048',
+            'file' => 'required|mimes:pdf|max:2048',
         ], [
             'tahun.required' => 'Tahun Kegiatan harus diisi!',
             'judul.required' => 'Judul Proposal harus diisi!',
@@ -201,9 +206,9 @@ class ProposalController extends Controller
             'jenis_pendanaan_id.required' => 'Jenis Pendanaan harus dipilih!',
             'dana_sumber.required' => 'Sumber Dana harus diisi!',
             'dana_usulan.required' => 'Dana Usulan harus diisi!',
-            'berkas.required' => 'Berkas harus ditambahkan!',
-            'berkas.mimes' => 'Berkas harus berformat .pdf!',
-            'berkas.max' => 'Berkas yang ditambahkan terlalu besar!',
+            'file.required' => 'Berkas harus ditambahkan!',
+            'file.mimes' => 'Berkas harus berformat .pdf!',
+            'file.max' => 'Berkas yang ditambahkan terlalu besar!',
         ]);
         // 
         if ($validator->fails()) {
@@ -212,8 +217,8 @@ class ProposalController extends Controller
         }
         // 
         $waktu = Carbon::now()->format('ymdhis');
-        $berkas = 'proposal/proposal_' . $waktu . '.' . $request->berkas->getClientOriginalExtension();
-        $request->berkas->storeAs('public/uploads/', $berkas);
+        $file = 'proposal/proposal_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $request->file->storeAs('public/uploads/', $file);
         // 
         $proposal = Proposal::create([
             'jenis' => 'pengabdian',
@@ -224,7 +229,8 @@ class ProposalController extends Controller
             'jenis_pendanaan_id' => $request->jenis_pendanaan_id,
             'dana_sumber' => $request->dana_sumber,
             'dana_usulan' => $request->dana_usulan,
-            'berkas' => $berkas,
+            'file' => $file,
+            'mahasiswas' => array_filter($request->mahasiswas),
             'status' => 'menunggu',
         ]);
         // 
@@ -291,7 +297,8 @@ class ProposalController extends Controller
                 'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'status',
             )
             ->with('user:id,nama')
@@ -320,7 +327,7 @@ class ProposalController extends Controller
             'jenis_pendanaan_id' => 'required',
             'dana_sumber' => 'required',
             'dana_usulan' => 'required',
-            'berkas' => 'nullable|mimes:pdf|max:2048',
+            'file' => 'nullable|mimes:pdf|max:2048',
         ], [
             'tahun.required' => 'Tahun Kegiatan harus diisi!',
             'judul.required' => 'Judul Proposal harus diisi!',
@@ -328,8 +335,8 @@ class ProposalController extends Controller
             'jenis_pendanaan_id.required' => 'Jenis Pendanaan harus dipilih!',
             'dana_sumber.required' => 'Sumber Dana harus diisi!',
             'dana_usulan.required' => 'Dana Usulan harus diisi!',
-            'berkas.mimes' => 'Berkas harus berformat .pdf!',
-            'berkas.max' => 'Berkas yang ditambahkan terlalu besar!',
+            'file.mimes' => 'Berkas harus berformat .pdf!',
+            'file.max' => 'Berkas yang ditambahkan terlalu besar!',
         ]);
         // 
         if ($validator->fails()) {
@@ -337,13 +344,13 @@ class ProposalController extends Controller
             return back()->withInput()->withErrors($validator->errors());
         }
         // 
-        if ($request->berkas) {
-            Storage::disk('local')->delete('public/uploads/' . Proposal::where('id', $id)->value('berkas'));
+        if ($request->file) {
+            Storage::disk('local')->delete('public/uploads/' . Proposal::where('id', $id)->value('file'));
             $waktu = Carbon::now()->format('ymdhis');
-            $berkas = 'proposal/proposal_' . $waktu . '.' . $request->berkas->getClientOriginalExtension();
-            $request->berkas->storeAs('public/uploads/', $berkas);
+            $file = 'proposal/proposal_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+            $request->file->storeAs('public/uploads/', $file);
         } else {
-            $berkas = Proposal::where('id', $id)->value('berkas');
+            $file = Proposal::where('id', $id)->value('file');
         }
         // 
         $proposal = Proposal::where('id', $id)->update([
@@ -353,7 +360,8 @@ class ProposalController extends Controller
             'jenis_pendanaan_id' => $request->jenis_pendanaan_id,
             'dana_sumber' => $request->dana_sumber,
             'dana_usulan' => $request->dana_usulan,
-            'berkas' => $berkas,
+            'file' => $file,
+            'mahasiswas' => array_filter($request->mahasiswas),
         ]);
         // 
         if (!$proposal) {
@@ -405,7 +413,8 @@ class ProposalController extends Controller
                 'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'status',
             )
             ->with('user:id,nama')
@@ -434,7 +443,7 @@ class ProposalController extends Controller
             'jenis_pendanaan_id' => 'required',
             'dana_sumber' => 'required',
             'dana_usulan' => 'required',
-            'berkas' => 'nullable|mimes:pdf|max:2048',
+            'file' => 'nullable|mimes:pdf|max:2048',
         ], [
             'tahun.required' => 'Tahun Kegiatan harus diisi!',
             'judul.required' => 'Judul Proposal harus diisi!',
@@ -442,8 +451,8 @@ class ProposalController extends Controller
             'jenis_pendanaan_id.required' => 'Jenis Pendanaan harus dipilih!',
             'dana_sumber.required' => 'Sumber Dana harus diisi!',
             'dana_usulan.required' => 'Dana Usulan harus diisi!',
-            'berkas.mimes' => 'Berkas harus berformat .pdf!',
-            'berkas.max' => 'Berkas yang ditambahkan terlalu besar!',
+            'file.mimes' => 'Berkas harus berformat .pdf!',
+            'file.max' => 'Berkas yang ditambahkan terlalu besar!',
         ]);
         // 
         if ($validator->fails()) {
@@ -451,13 +460,13 @@ class ProposalController extends Controller
             return back()->withInput()->withErrors($validator->errors());
         }
         // 
-        if ($request->berkas) {
-            Storage::disk('local')->delete('public/uploads/' . Proposal::where('id', $id)->value('berkas'));
+        if ($request->file) {
+            Storage::disk('local')->delete('public/uploads/' . Proposal::where('id', $id)->value('file'));
             $waktu = Carbon::now()->format('ymdhis');
-            $berkas = 'proposal/proposal_' . $waktu . '.' . $request->berkas->getClientOriginalExtension();
-            $request->berkas->storeAs('public/uploads/', $berkas);
+            $file = 'proposal/proposal_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+            $request->file->storeAs('public/uploads/', $file);
         } else {
-            $berkas = Proposal::where('id', $id)->value('berkas');
+            $file = Proposal::where('id', $id)->value('file');
         }
         // 
         $proposal = Proposal::where('id', $id)->update([
@@ -467,7 +476,8 @@ class ProposalController extends Controller
             'jenis_pendanaan_id' => $request->jenis_pendanaan_id,
             'dana_sumber' => $request->dana_sumber,
             'dana_usulan' => $request->dana_usulan,
-            'berkas' => $berkas,
+            'file' => $file,
+            'mahasiswas' => array_filter($request->mahasiswas),
         ]);
         // 
         if (!$proposal) {
@@ -515,7 +525,7 @@ class ProposalController extends Controller
             return back();
         }
 
-        $berkas = $proposal->berkas;
+        $file = $proposal->file;
         $personels = $proposal->personels;
 
         if (count($personels)) {
@@ -524,7 +534,7 @@ class ProposalController extends Controller
 
         $proposal->delete();
 
-        Storage::disk('local')->delete('public/uploads/' . $berkas);
+        Storage::disk('local')->delete('public/uploads/' . $file);
 
         alert()->success('Success', 'Berhasil menghapus Proposal');
         return back();
@@ -587,6 +597,168 @@ class ProposalController extends Controller
         // 
         alert()->success('Success', 'Berhasil mengunggah File Laporan');
         return back();
+    }
+
+    public function mou(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:pdf|max:2048',
+        ], [
+            'file.required' => 'File Persetujuan harus ditambahkan!',
+            'file.mimes' => 'File Persetujuan harus berformat .pdf!',
+            'file.max' => 'File Persetujuan yang ditambahkan terlalu besar!',
+        ]);
+        // 
+        if ($validator->fails()) {
+            alert()->error('Error', 'Gagal mengunggah File Persetujuan!');
+            return back()->withInput()->withErrors($validator->errors())->with('id', $id);
+        }
+        // 
+        $waktu = Carbon::now()->format('ymdhis');
+        $file = 'proposal/file_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $request->file->storeAs('public/uploads/', $file);
+        //
+        $mou_draft = ProposalMou::where('proposal_id', $id)->value('draft');
+        $mou_file = ProposalMou::where('proposal_id', $id)->value('file');
+        // 
+        Storage::disk('local')->delete('public/uploads/' . $mou_file);
+        // 
+        $merge = PDFMergerFacade::init();
+        $merge->addPDF(public_path('storage/uploads/' . $mou_draft), [1, 2, 3]);
+        $merge->addPDF(public_path('storage/uploads/' . $file), [1]);
+        $merge->merge();
+        $nama_file = 'proposal/mou_' . $waktu . '.pdf';
+        $merge->setFileName($nama_file);
+        $merge->save(public_path('storage/uploads/' . $nama_file));
+        // 
+        $proposal_mou = ProposalMou::where('proposal_id', $id)->update([
+            'file' => $nama_file,
+        ]);
+        // 
+        if (!$proposal_mou) {
+            alert()->error('Error', 'Gagal mengunggah File Persetujuan!');
+            return back();
+        }
+        // 
+        Storage::disk('local')->delete('public/uploads/' . $file);
+        // 
+        $message = "SIDHARMA LPPM"  . PHP_EOL;
+        $message .= "----------------------------------"  . PHP_EOL;
+        $message .= "*" . auth()->user()->nama . "* mengunggah file persetujuan MOU" . PHP_EOL;
+        $message .= "----------------------------------"  . PHP_EOL;
+        $message .= "Lihat daftar MOU proposal" . PHP_EOL;
+        $message .= url('operator/proposal-mou');
+        // 
+        $this->kirim('085328481969', $message);
+        // $telp = User::where('role', 'operator')->value('telp');
+        // if ($telp) {
+        //     $this->kirim($telp, $message);
+        // }
+        // 
+        alert()->success('Success', 'Berhasil mengunggah File Persetujuan!');
+        return back();
+    }
+
+    // public function mou($id)
+    // {
+    //     $proposal = Proposal::where('id', $id)->first();
+    //     // 
+    //     // if ($proposal->status != 'selesai') {
+    //     //     return view('error.500');
+    //     // }
+    //     // 
+    //     $ketua = User::where('is_ketua', true)
+    //         ->select(
+    //             'nama',
+    //             'nipy',
+    //             'ttd'
+    //         )->first();
+    //     $dosen = User::where('id', $proposal->user_id)
+    //         ->select(
+    //             'nama',
+    //             'nipy',
+    //             'prodi_id'
+    //         )
+    //         ->with('prodi', function ($query) {
+    //             $query->select('id', 'nama', 'fakultas_id');
+    //             $query->with('fakultas:id,nama');
+    //         })
+    //         ->first();
+    //     $dana_terbilang = $this->terbilang($proposal->dana_usulan) . 'rupiah';
+    //     $tahap_pertama = $proposal->dana_usulan * 75 / 100;
+    //     $tahap_pertama_terbilang = $this->terbilang($tahap_pertama) . 'rupiah';
+    //     $tahap_kedua = $proposal->dana_usulan * 25 / 100;
+    //     $tahap_kedua_terbilang = $this->terbilang($tahap_kedua) . 'rupiah';
+    //     $hari = Carbon::now()->translatedFormat('l');
+    //     $tanggal = substr_replace($this->terbilang((int)Carbon::now()->translatedFormat('d')), "", -1);
+    //     $bulan = Carbon::now()->translatedFormat('F');
+    //     $tahun = substr_replace($this->terbilang(Carbon::now()->translatedFormat('Y')), "", -1);
+    //     if (Carbon::now()->format('m') >= '09') {
+    //         $tahun_akademik = Carbon::now()->format('Y') . '/' . Carbon::now()->addYear()->format('Y');
+    //     } else {
+    //         $tahun_akademik = Carbon::now()->addYears(-1)->format('Y') . '/' . Carbon::now()->format('Y');
+    //     }
+    //     if ($proposal->jenis == 'penelitian') {
+    //         $title = 'MOU Penelitian ' . $dosen->nama;
+    //         $jenis = 'Penelitian';
+    //     } else {
+    //         $title = 'MOU Abdimas ' . $dosen->nama;
+    //         $jenis = 'Pengabdian kepada Masyarakat';
+    //     }
+
+    //     $pdf = Pdf::loadview('dosen.mou', compact(
+    //         'proposal',
+    //         'ketua',
+    //         'dosen',
+    //         'dana_terbilang',
+    //         'tahap_pertama',
+    //         'tahap_pertama_terbilang',
+    //         'tahap_kedua',
+    //         'tahap_kedua_terbilang',
+    //         'hari',
+    //         'tanggal',
+    //         'bulan',
+    //         'tahun',
+    //         'tahun_akademik',
+    //         'title',
+    //         'jenis',
+    //     ));
+    //     // return $pdf->stream($title . '.pdf');
+    //     $mou = $pdf->download()->getOriginalContent();
+
+    //     $oMerger = PDFMergerFacade::init();
+
+    //     $oMerger->addPDF($mou, [1, 2, 3]);
+    //     $oMerger->addPDF(public_path('storage/uploads/' . $proposal->file), 'all');
+
+    //     $oMerger->merge();
+    //     // $oMerger->save('merged_result.pdf');
+    //     $oMerger->setFileName('example.pdf');
+    //     return $oMerger->stream();
+    // }
+
+    public function terbilang($value)
+    {
+        $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+        $space = $value > 0 ? " " : null;
+
+        if ($value < 12) {
+            return $angka[$value] . $space;
+        } elseif ($value < 20) {
+            return $this->terbilang($value - 10) . "belas" . $space;
+        } elseif ($value < 100) {
+            return $this->terbilang($value / 10) . "puluh" . $space . $this->terbilang($value % 10);
+        } elseif ($value < 200) {
+            return "seratus" . $this->terbilang($value - 100);
+        } elseif ($value < 1000) {
+            return $this->terbilang($value / 100) . "ratus" . $space . $this->terbilang($value % 100);
+        } elseif ($value < 2000) {
+            return "seribu" . $this->terbilang($value - 1000);
+        } elseif ($value < 1000000) {
+            return $this->terbilang($value / 1000) . "ribu" . $space . $this->terbilang($value % 1000);
+        } elseif ($value < 1000000000) {
+            return $this->terbilang($value / 1000000) . "juta" . $space . $this->terbilang($value % 1000000);
+        }
     }
 
     public function kirim($telp, $message)

@@ -75,10 +75,6 @@
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $proposal->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-warning btn-sm btn-flat btn-block"
-                                                    data-toggle="modal" data-target="#modal-revisi-{{ $proposal->id }}">
-                                                    <i class="fas fa-clipboard-list"></i>
-                                                </button>
                                                 <button type="button" class="btn btn-primary btn-sm btn-flat btn-block"
                                                     data-toggle="modal" data-target="#modal-selesai-{{ $proposal->id }}">
                                                     <i class="fas fa-check"></i>
@@ -197,11 +193,11 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Berkas Laporan</strong>
+                                <strong>Laporan Proposal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ url('dosen/berkas/' . $proposal->id) }}" class="btn btn-info btn-xs btn-flat"
-                                    target="_blank">
+                                <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
+                                    class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Laporan
                                 </a>
                             </div>
@@ -212,10 +208,13 @@
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($proposal->personels))
+                                @if (count($proposal->personels) || count($proposal->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($proposal->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -237,7 +236,7 @@
                                 <strong>Jadwal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ url('dosen/proposal-laporan/' . $proposal->laporan_id) }}"
+                                <a href="{{ url('jadwal/' . $proposal->jadwal_id) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Jadwal
                                 </a>
@@ -245,7 +244,7 @@
                         </div>
                         <hr class="my-2">
                         <div class="alert alert-light text-center rounded-0 mb-2">
-                            <span class="text-muted">- Menunggu Anda mengonfirmasi pendanaan -</span>
+                            <span class="text-muted">- Menunggu Anda mengonfirmasi MOU Proposal -</span>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -255,51 +254,9 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="modal-revisi-{{ $proposal->id }}">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Revisi Proposal</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @if (count($proposal->proposal_revisis))
-                            @foreach ($proposal->proposal_revisis as $key => $proposal_revisi)
-                                <div class="mb-2">
-                                    <strong>
-                                        Revisi {{ count($proposal->proposal_revisis) - $key }}
-                                        -
-                                        {{ $proposal_revisi->user_id == $proposal->peninjau_id ? 'Reviewer' : 'Operator' }}
-                                    </strong>
-                                    <br>
-                                    <span>{{ $proposal_revisi->keterangan }}</span>
-                                    <br>
-                                    @if ($proposal_revisi->file)
-                                        <a href="{{ asset('storage/uploads/' . $proposal_revisi->file) }}"
-                                            target="_blank" class="btn btn-secondary btn-xs btn-flat">
-                                            Lihat Laporan
-                                        </a>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span>
-                                    Proposal disetujui <strong>tanpa</strong> revisi
-                                    <i class="far fa-thumbs-up"></i>
-                                </span>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat"
-                            data-dismiss="modal">Tutup</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @php
+            $proposal_mou = \App\Models\ProposalMou::where('proposal_id', $proposal->id)->first();
+        @endphp
         <div class="modal fade" id="modal-selesai-{{ $proposal->id }}">
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
@@ -309,53 +266,35 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ url('dosen/ketua/proposal/' . $proposal->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-body">
-                            Yakin menyelesaikan Laporan Proposal dari <strong>{{ $proposal->user->nama }}</strong>?
+                    <div class="modal-body">
+                        Yakin konfirmasi MOU proposal dari <strong>{{ $proposal->user->nama }}</strong>?
+                    </div>
+                    <div class="modal-body border-top">
+                        <div class="mb-2">
+                            <strong>File Persetujuan MOU</strong>
+                            <br>
+                            <a href="{{ asset('storage/uploads/' . $proposal_mou->file) }}"
+                                class="btn btn-secondary btn-xs btn-flat">
+                                Lihat File
+                            </a>
                         </div>
-                        <div class="modal-body border-top">
+                        @if ($proposal_mou->revisi)
                             <div class="mb-2">
-                                <strong>Dana Usulan</strong>
+                                <strong>Keterangan Revisi</strong>
                                 <br>
-                                <span>@rupiah($proposal->dana_usulan)</span>
+                                {{ $proposal_mou->revisi }}
                             </div>
-                            <div class="form-group mb-2">
-                                <label for="dana_setuju">Dana Disetujui</label>
-                                <div class="input-group">
-                                    <input type="number"
-                                        class="form-control rounded-0 @if (session('id') == $proposal->id) @error('dana_setuju') is-invalid @enderror @endif"
-                                        id="dana_setuju-{{ $proposal->id }}" name="dana_setuju"
-                                        value="{{ session('id') == $proposal->id ? old('dana_setuju') : $proposal->dana_setuju }}">
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-secondary btn-sm btn-flat"
-                                            onclick="set_dana_setuju({{ $proposal->dana_usulan }}, {{ $proposal->id }})">Maks</button>
-                                    </div>
-                                </div>
-                                @if (session('id') == $proposal->id)
-                                    @error('dana_setuju')
-                                        <small class="text-danger">
-                                            {{ $message }}
-                                        </small>
-                                    @enderror
-                                @endif
-                            </div>
-                            <div class="mb-2">
-                                <strong>Laporan Proposal</strong>
-                                <br>
-                                <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}" target="_blank"
-                                    class="btn btn-secondary btn-xs btn-flat">
-                                    Lihat Laporan
-                                </a>
-                            </div>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-sm btn-flat"
-                                data-dismiss="modal">Tutup</button>
-                            <button type="submit" class="btn btn-primary btn-sm btn-flat">Selesaikan</button>
-                        </div>
-                    </form>
+                        @endif
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
+                        <form action="{{ url('dosen/ketua/proposal-mou/' . $proposal->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="btn btn-primary btn-sm btn-flat">Konfirmasi</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

@@ -20,12 +20,18 @@ class Proposal extends Model
         'dana_sumber',
         'dana_usulan',
         'dana_setuju',
-        'berkas',
+        'file',
+        'mahasiswas',
         'tanggal',
         'jam',
         'peninjau_id',
         'jadwal_id',
+        'mou',
         'status',
+    ];
+
+    protected $casts = [
+        'mahasiswas' => 'array',
     ];
 
     public function user()

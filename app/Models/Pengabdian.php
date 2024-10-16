@@ -18,7 +18,12 @@ class Pengabdian extends Model
         'dana_sumber',
         'dana_setuju',
         'file',
+        'mahasiswas',
         'status',
+    ];
+
+    protected $casts = [
+        'mahasiswas' => 'array',
     ];
 
     public function user()

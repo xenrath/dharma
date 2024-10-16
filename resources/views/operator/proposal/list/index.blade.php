@@ -62,6 +62,9 @@
                                                             @foreach ($proposal->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
                                                             @endforeach
+                                                            @foreach ($proposal->mahasiswas as $mahasiswa)
+                                                                <li>{{ $mahasiswa }}</li>
+                                                            @endforeach
                                                         </ol>
                                                     @else
                                                         -
@@ -187,7 +190,7 @@
                                 <strong>Laporan Proposal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}"
+                                <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Laporan
                                 </a>
@@ -199,10 +202,13 @@
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($proposal->personels))
+                                @if (count($proposal->personels) || count($proposal->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($proposal->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else

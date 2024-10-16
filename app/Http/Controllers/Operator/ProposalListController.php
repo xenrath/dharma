@@ -24,7 +24,8 @@ class ProposalListController extends Controller
                 'jenis_pendanaan_id',
                 'dana_sumber',
                 'dana_usulan',
-                'berkas',
+                'file',
+                'mahasiswas',
             )
             ->with('user:id,nama')
             ->with('jenis_penelitian:id,nama')

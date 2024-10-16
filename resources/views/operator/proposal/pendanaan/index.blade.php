@@ -51,6 +51,8 @@
                                             <td>
                                                 {{ $proposal->user->nama }}
                                                 <hr class="my-2">
+                                                <strong>{{ ucfirst($proposal->jenis) }}</strong>
+                                                <br>
                                                 {{ $proposal->judul }}
                                             </td>
                                             <td class="text-center">
@@ -166,12 +168,12 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Berkas Laporan</strong>
+                                <strong>Laporan Proposal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ url('operator/berkas/' . $proposal->id) }}"
+                                <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
-                                    Lihat Berkas
+                                    Lihat Laporan
                                 </a>
                             </div>
                         </div>
@@ -181,10 +183,13 @@
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($proposal->personels))
+                                @if (count($proposal->personels) || count($proposal->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($proposal->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -206,14 +211,15 @@
                                 <strong>Jadwal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ url('operator/jadwal/' . $proposal->jadwal_id) }}"
+                                <a href="{{ url('jadwal/' . $proposal->jadwal_id) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Jadwal
                                 </a>
                             </div>
                         </div>
+                        <hr class="my-2">
                         <div class="alert alert-light text-center rounded-0 mb-2">
-                            <span>- Laporan telah <strong>disetujui</strong> oleh <strong>Reviewer</strong> -</span>
+                            <span class="text-muted">- Laporan telah disetujui oleh Reviewer -</span>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -253,9 +259,9 @@
                         <div class="modal-body">
                             @if ($proposal->status == 'setuju')
                                 <div class="mb-2">
-                                    <strong>Berkas Laporan</strong>
+                                    <strong>Laporan Proposal</strong>
                                     <br>
-                                    <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}" target="_blank"
+                                    <a href="{{ asset('storage/uploads/' . $proposal->file) }}" target="_blank"
                                         class="btn btn-secondary btn-xs btn-flat">
                                         Lihat Laporan
                                     </a>
@@ -271,8 +277,8 @@
                                     <br>
                                     @if ($revisi->file)
                                         <div class="mb-2">
-                                            <a href="{{ asset('storage/uploads/' . $revisi->file) }}"
-                                                target="_blank" class="btn btn-secondary btn-xs btn-flat">
+                                            <a href="{{ asset('storage/uploads/' . $revisi->file) }}" target="_blank"
+                                                class="btn btn-secondary btn-xs btn-flat">
                                                 Lihat Laporan
                                             </a>
                                         </div>
@@ -317,9 +323,9 @@
                                     @endforeach
                                 @endif
                                 <div class="mb-2">
-                                    <strong>Berkas Laporan</strong>
+                                    <strong>Laporan Proposal</strong>
                                     <br>
-                                    <a href="{{ url('operator/berkas/' . $proposal->id) }}" target="_blank"
+                                    <a href="{{ asset('storage/uploads/' . $proposal->file) }}" target="_blank"
                                         class="btn btn-secondary btn-xs btn-flat">
                                         Lihat Laporan
                                     </a>
@@ -350,7 +356,7 @@
                         @csrf
                         <div class="modal-body">
                             @if ($proposal->status == 'setuju' || $revisi->file)
-                                Yakin menyetujui Laporan Proposal dari <strong>{{ $proposal->user->nama }}</strong>?
+                                Yakin menyetujui laporan proposal dari <strong>{{ $proposal->user->nama }}</strong>?
                             @else
                                 <div class="alert alert-light text-center rounded-0 mb-2">
                                     <span class="text-muted">- Menunggu dosen mengunggah file revisi -</span>
@@ -397,9 +403,9 @@
                                     </div>
                                 @else
                                     <div class="mb-2">
-                                        <strong>Berkas Laporan</strong>
+                                        <strong>Laporan Proposal</strong>
                                         <br>
-                                        <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}" target="_blank"
+                                        <a href="{{ asset('storage/uploads/' . $proposal->file) }}" target="_blank"
                                             class="btn btn-secondary btn-xs btn-flat">
                                             Lihat Laporan
                                         </a>

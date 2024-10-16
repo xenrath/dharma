@@ -67,17 +67,6 @@ class HomeController extends Controller
         ));
     }
 
-    public function berkas($id)
-    {
-        $berkas = Proposal::where('id', $id)->value('berkas');
-        $judul = Proposal::where('id', $id)->value('judul');
-
-        return response()->make(file_get_contents('public/storage/uploads/' . $berkas), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $judul . '"',
-        ]);
-    }
-
     public function jadwal($id)
     {
         $jadwal = ProposalJadwal::where('id', $id)->select('tanggal', 'nomor', 'perihal', 'kepadas', 'proposal_ids')->first();

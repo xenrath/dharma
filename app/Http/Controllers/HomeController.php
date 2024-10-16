@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fakultas;
 use App\Models\Proposal;
+use App\Models\ProposalJadwal;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -35,18 +38,18 @@ class HomeController extends Controller
 
     public function profile_proses(Request $request)
     {
-        if (auth()->user()->isOperator()) {
+        if (auth()->user()->isOperator() || auth()->user()->isDev()) {
             $validator_nidn = 'nullable';
+            $validator_nipy = 'nullable';
         } else {
             $validator_nidn = 'required';
+            $validator_nipy = 'required';
         }
         // 
         if (auth()->user()->isKetua()) {
             $validator_ttd = 'required';
-            $validator_nipy = 'required';
         } else {
             $validator_ttd = 'nullable';
-            $validator_nipy = 'nullable';
         }
         // 
         $validator = Validator::make($request->all(), [
@@ -73,10 +76,12 @@ class HomeController extends Controller
             return back()->withInput()->withErrors($validator);
         }
         // 
-        if (auth()->user()->isOperator()) {
+        if (auth()->user()->isOperator() || auth()->user()->isDev()) {
             $nidn = auth()->user()->nidn;
+            $nipy = auth()->user()->nipy;
         } else {
             $nidn = $request->nidn;
+            $nipy = $request->nipy;
         }
         // 
         if (auth()->user()->isKetua()) {
@@ -89,8 +94,9 @@ class HomeController extends Controller
         // 
         $user = User::where('id', auth()->user()->id)->update([
             'nama' => $request->nama,
-            'username' => $request->nidn,
-            'nidn' => $request->nidn,
+            'username' => $nidn,
+            'nidn' => $nidn,
+            'nipy' => $nipy,
             'telp' => $request->telp,
         ]);
         // 
@@ -282,5 +288,43 @@ class HomeController extends Controller
         } else {
             return redirect()->away('https://wa.me/+62' . $telp);
         }
+    }
+
+    // ID = PROPOSAL JADWAL ID
+    public function jadwal($id)
+    {
+        $jadwal = ProposalJadwal::where('id', $id)->select('tanggal', 'nomor', 'perihal', 'kepadas', 'proposal_ids')->first();
+        $fakultases = Fakultas::whereIn('id', $jadwal->kepadas)->select('nama')->get();
+        $proposals = Proposal::whereIn('id', $jadwal->proposal_ids)
+            ->select(
+                'id',
+                'jenis',
+                'user_id',
+                'judul',
+                'tanggal',
+                'jam',
+                'peninjau_id',
+                'mahasiswas',
+            )
+            ->with('user', function ($query) {
+                $query->select('id', 'nama', 'prodi_id')->with('prodi:id,nama');
+            })
+            ->with('personels', function ($query) {
+                $query->select('proposal_id', 'user_id');
+                $query->with('user', function ($query) {
+                    $query->select('id', 'nama');
+                    $query->withTrashed();
+                });
+            })
+            ->with('peninjau:id,nama')->get();
+        $ketua = User::where('is_ketua', true)->select('nama', 'nipy')->first();
+        if (Carbon::parse($jadwal->tanggal)->format('m') >= '09') {
+            $tahun_akademik = Carbon::parse($jadwal->tanggal)->format('Y') . '/' . Carbon::parse($jadwal->tanggal)->addYear()->format('Y');
+        } else {
+            $tahun_akademik = Carbon::parse($jadwal->tanggal)->addYears(-1)->format('Y') . '/' . Carbon::parse($jadwal->tanggal)->format('Y');
+        }
+
+        $pdf = Pdf::loadview('jadwal', compact('jadwal', 'fakultases', 'proposals', 'ketua', 'tahun_akademik'));
+        return $pdf->stream('Surat Undangan Presentasi Proposal LP2M - ' . Carbon::parse($jadwal->tanggal)->format('d M Y') . '.pdf');
     }
 }

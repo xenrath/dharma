@@ -29,7 +29,7 @@ class AuthController extends Controller
     public function login()
     {
         if (auth()->check()) {
-            return redirect('check-user');
+            return redirect('/');
         } else {
             return view('login');
         }
@@ -63,20 +63,6 @@ class AuthController extends Controller
     {
         if (auth()->check()) {
             Auth::logout();
-        }
-
-        return redirect('login');
-    }
-
-    public function check_user()
-    {
-        if (auth()->check()) {
-            if (auth()->user()->isAdmin()) {
-                return redirect('admin');
-            }
-            if (auth()->user()->role == 'user') {
-                return redirect('user');
-            }
         }
 
         return redirect('login');

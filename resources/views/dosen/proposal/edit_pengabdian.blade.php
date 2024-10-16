@@ -149,19 +149,19 @@
                                 </div>
                             </div>
                             <div class="form-group mb-2">
-                                <label for="berkas">
-                                    Berkas Laporan
+                                <label for="file">
+                                    Laporan Proposal
                                     <small>(kosongkan jika tidak ingin diganti)</small>
                                 </label>
-                                <input type="file" class="form-control rounded-0 @error('berkas') is-invalid @enderror"
-                                    id="berkas" name="berkas" accept=".pdf">
-                                @error('berkas')
+                                <input type="file" class="form-control rounded-0 @error('file') is-invalid @enderror"
+                                    id="file" name="file" accept=".pdf">
+                                @error('file')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                 @enderror
                             </div>
-                            <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}"
+                            <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                 class="btn btn-info btn-xs btn-flat float-right" target="_blank">
                                 Lihat Berkas
                             </a>
@@ -195,6 +195,25 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    <div class="card rounded-0">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                Personel Mahasiswa
+                                <small>(opsional)</small>
+                            </h3>
+                            <button type="button" class="btn btn-secondary btn-sm btn-flat float-right"
+                                onclick="tambahMahasiswa()">
+                                Tambah
+                            </button>
+                        </div>
+                        <div class="card-body" id="card-mahasiswa">
+                            <div id="mahasiswa-kosong">
+                                <div class="text-center p-4 border rounded-0">
+                                    <span class="text-muted">- Tidak ada mahasiswa yang ditambahkan -</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="text-right pb-4">
@@ -393,6 +412,54 @@
                 });
                 personel_get(true);
             }
+        }
+
+        var old_mahasiswa = @json(old('mahasiswas', $proposal->mahasiswas));
+        var jumlah_mahasiswa = old_mahasiswa == null ? 0 : old_mahasiswa.length;
+        console.log(jumlah_mahasiswa);
+
+        if (old_mahasiswa) {
+            for (let i = 0; i < old_mahasiswa.length; i++) {
+                tambahMahasiswa(old_mahasiswa[i], i + 1);
+            }
+        }
+
+        function tambahMahasiswa(params, urutan) {
+            var nama = "";
+            jumlah_mahasiswa = jumlah_mahasiswa + 1;
+            if (urutan) {
+                nama = params ?? "";
+                jumlah_mahasiswa = urutan
+            }
+            // 
+            $('#mahasiswa-kosong').hide();
+            // 
+            var input_mahasiswa = '<div class="form-group mb-2" id="mahasiswa-' + jumlah_mahasiswa + '">';
+            input_mahasiswa += '<div class="input-group">';
+            input_mahasiswa += '<input type="text" class="form-control rounded-0 mr-2" name="mahasiswas[]" value="' + nama +
+                '">';
+            input_mahasiswa += '<div class="input-group-append">';
+            input_mahasiswa += '<button type="button" class="btn btn-danger btn-flat" onclick="hapusMahasiswa(' +
+                jumlah_mahasiswa + ')">';
+            input_mahasiswa += '<i class="fas fa-trash"></i>';
+            input_mahasiswa += '</button>';
+            input_mahasiswa += '</div>';
+            input_mahasiswa += '</div>';
+            input_mahasiswa += '</div>';
+            // 
+            $('#card-mahasiswa').append(input_mahasiswa);
+            console.log(jumlah_mahasiswa);
+        }
+
+        function hapusMahasiswa(id) {
+            jumlah_mahasiswa -= 1;
+            // 
+            if (!jumlah_mahasiswa) {
+                $('#mahasiswa-kosong').show();
+            }
+            // 
+            $('#mahasiswa-' + id).remove();
+            console.log(jumlah_mahasiswa);
         }
     </script>
 @endsection

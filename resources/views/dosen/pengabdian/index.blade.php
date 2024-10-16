@@ -60,10 +60,13 @@
                                                     <br>
                                                     <strong>Anggota:</strong>
                                                     <br>
-                                                    @if (count($pengabdian->personels))
+                                                    @if (count($pengabdian->personels) || count($pengabdian->mahasiswas))
                                                         <ol class="px-3 mb-0">
                                                             @foreach ($pengabdian->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
+                                                            @endforeach
+                                                            @foreach ($pengabdian->mahasiswas as $mahasiswa)
+                                                                <li>{{ $mahasiswa }}</li>
                                                             @endforeach
                                                         </ol>
                                                     @else
@@ -198,14 +201,31 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
+                                <strong>Laporan Pengabdian</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @if ($pengabdian->file)
+                                    <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}"
+                                        class="btn btn-info btn-xs btn-flat" target="_blank">Lihat Laporan</a>
+                                @else
+                                    <button type="button" class="btn btn-default btn-xs btn-flat"
+                                        style="pointer-events: none">File Laporan belum diunggah</button>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
                                 <strong>Personel</strong>
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($pengabdian->personels))
+                                @if (count($pengabdian->personels) || count($pengabdian->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($pengabdian->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($pengabdian->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -227,12 +247,12 @@
                         @endif
                         @if ($pengabdian->status == 'revisi')
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Penelitian dalam tahap revisi oleh operator -</span>
+                                <span class="text-muted">- Pengabdian dalam tahap revisi oleh Operator -</span>
                             </div>
                         @endif
                         @if ($pengabdian->status == 'selesai')
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Penelitian telah disetujui -</span>
+                                <span class="text-muted">- Pengabdian telah disetujui -</span>
                             </div>
                         @endif
                     </div>
@@ -260,7 +280,7 @@
                             <div class="modal-body">
                                 @if ($pengabdian->file)
                                     <div class="alert alert-light text-center rounded-0 mb-2">
-                                        <span class="text-muted">- Menunggu respon dari operator -</span>
+                                        <span class="text-muted">- Menunggu respon dari Operator -</span>
                                     </div>
                                 @else
                                     <div class="form-group mb-2">
@@ -281,7 +301,7 @@
                             @if ($pengabdian->file)
                                 <div class="modal-body border-top">
                                     <div class="mb-2">
-                                        <strong>Laporan Penelitian</strong>
+                                        <strong>Laporan Pengabdian</strong>
                                         <br>
                                         <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}"
                                             class="btn btn-secondary btn-xs btn-flat" target="_blank">
@@ -329,7 +349,7 @@
                             <div class="modal-body">
                                 @if ($revisi->file)
                                     <div class="alert alert-light text-center rounded-0 mb-2">
-                                        <span class="text-muted">- Menunggu respon dari operator -</span>
+                                        <span class="text-muted">- Menunggu respon dari Operator -</span>
                                     </div>
                                 @else
                                     <div class="mb-2">
@@ -399,15 +419,15 @@
                                             @endif
                                         </div>
                                     @endforeach
-                                    <div class="mb-2">
-                                        <strong>Laporan Penelitian</strong>
-                                        <br>
-                                        <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}"
-                                            class="btn btn-secondary btn-xs btn-flat" target="_blank">
-                                            Lihat Laporan
-                                        </a>
-                                    </div>
                                 @endif
+                                <div class="mb-2">
+                                    <strong>Laporan Pengabdian</strong>
+                                    <br>
+                                    <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}"
+                                        class="btn btn-secondary btn-xs btn-flat" target="_blank">
+                                        Lihat Laporan
+                                    </a>
+                                </div>
                             </div>
                             <div class="modal-footer justify-content-between">
                                 <button type="button" class="btn btn-default btn-sm btn-flat"

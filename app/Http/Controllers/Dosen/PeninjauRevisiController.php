@@ -28,7 +28,8 @@ class PeninjauRevisiController extends Controller
                 'jenis_pendanaan_id',
                 'dana_sumber',
                 'dana_usulan',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'tanggal',
                 'jam',
                 'peninjau_id',
@@ -116,7 +117,7 @@ class PeninjauRevisiController extends Controller
         ])->orderByDesc('id')->first();
         // 
         $proposal = Proposal::where('id', $id)->update([
-            'berkas' => $revisi->file,
+            'file' => $revisi->file,
             'status' => 'setuju',
         ]);
         // 

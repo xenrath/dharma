@@ -60,10 +60,13 @@
                                                     <br>
                                                     <strong>Anggota:</strong>
                                                     <br>
-                                                    @if (count($pengabdian->personels))
+                                                    @if (count($pengabdian->personels) || count($pengabdian->mahasiswas))
                                                         <ol class="px-3 mb-0">
                                                             @foreach ($pengabdian->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
+                                                            @endforeach
+                                                            @foreach ($pengabdian->mahasiswas as $mahasiswa)
+                                                                <li>{{ $mahasiswa }}</li>
                                                             @endforeach
                                                         </ol>
                                                     @else
@@ -81,8 +84,7 @@
                                                     <i class="fas fa-undo"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-primary btn-sm btn-flat btn-block"
-                                                    data-toggle="modal"
-                                                    data-target="#modal-setuju-{{ $pengabdian->id }}">
+                                                    data-toggle="modal" data-target="#modal-setuju-{{ $pengabdian->id }}">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </td>
@@ -188,14 +190,31 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
+                                <strong>Laporan Pengabdian</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @if ($pengabdian->file)
+                                    <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}"
+                                        class="btn btn-info btn-xs btn-flat" target="_blank">Lihat Laporan</a>
+                                @else
+                                    <button type="button" class="btn btn-default btn-xs btn-flat"
+                                        style="pointer-events: none">File Laporan belum diunggah</button>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
                                 <strong>Personel</strong>
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($pengabdian->personels))
+                                @if (count($pengabdian->personels) || count($pengabdian->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($pengabdian->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($pengabdian->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -217,7 +236,8 @@
                         @endif
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
@@ -226,7 +246,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Revisi Penelitian</h4>
+                        <h4 class="modal-title">Revisi Pengabdian</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -236,7 +256,7 @@
                         <div class="modal-body">
                             @if ($pengabdian->status == 'menunggu')
                                 <div class="mb-2">
-                                    <strong>Laporan Penelitian</strong>
+                                    <strong>Laporan Pengabdian</strong>
                                     <br>
                                     @if ($pengabdian->file)
                                         <div class="mb-2">
@@ -307,7 +327,7 @@
                                     @endforeach
                                 @endif
                                 <div class="mb-2">
-                                    <strong>Laporan Penelitian</strong>
+                                    <strong>Laporan Pengabdian</strong>
                                     <br>
                                     <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}" target="_blank"
                                         class="btn btn-secondary btn-xs btn-flat">
@@ -331,7 +351,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Konfirmasi Penelitian</h4>
+                        <h4 class="modal-title">Konfirmasi Pengabdian</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -340,7 +360,7 @@
                         @csrf
                         <div class="modal-body">
                             @if (($pengabdian->status == 'menunggu' && $pengabdian->file) || ($pengabdian->status == 'revisi' && $revisi->file))
-                                Yakin menyetujui Laporan Penelitian dari <strong>{{ $pengabdian->user->nama }}</strong>?
+                                Yakin menyetujui laporan pengabdian dari <strong>{{ $pengabdian->user->nama }}</strong>?
                             @else
                                 <div class="alert alert-light text-center rounded-0 mb-2">
                                     <span class="text-muted">- Menunggu dosen mengunggah file revisi -</span>
@@ -362,7 +382,7 @@
                                     </div>
                                 @else
                                     <div class="mb-2">
-                                        <strong>Laporan Penelitian</strong>
+                                        <strong>Laporan Pengabdian</strong>
                                         <br>
                                         <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}" target="_blank"
                                             class="btn btn-secondary btn-xs btn-flat">

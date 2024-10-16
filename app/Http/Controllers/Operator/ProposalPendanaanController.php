@@ -27,7 +27,8 @@ class ProposalPendanaanController extends Controller
                 'jenis_pendanaan_id',
                 'dana_sumber',
                 'dana_usulan',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'peninjau_id',
                 'jadwal_id',
                 'status',
@@ -130,12 +131,12 @@ class ProposalPendanaanController extends Controller
             ]);
             $file = $revisi->file;
         } else {
-            $file = Proposal::where('id', $id)->value('berkas');
+            $file = Proposal::where('id', $id)->value('file');
         }
         // 
         $proposal = Proposal::where('id', $id)->update([
             'dana_setuju' => $request->dana_setuju,
-            'berkas' => $file,
+            'file' => $file,
             'status' => 'pendanaan',
         ]);
         // 

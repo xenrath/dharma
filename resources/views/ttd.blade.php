@@ -192,11 +192,14 @@
             Kepala LPPM
             <br>
             Universitas Bhamada Slawi
-            @if ($user->ttd)
-                <img src="{{ asset('storage/uploads/' . $user->ttd) }}" style="max-width: 74px; max-height: 36px;">
+            <br>
+            @if (!$user->ttd)
+                <img src="{{ public_path('storage/uploads/' . $user->ttd) }}"
+                    style="max-width: 74px; max-height: 74px;">
             @else
                 <br><br>
             @endif
+            <br>
             <span style="text-decoration: underline;">{{ $user->nama }}</span>
             <br>
             NIPY: {{ $user->nipy }}

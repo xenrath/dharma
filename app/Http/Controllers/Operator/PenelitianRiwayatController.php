@@ -21,6 +21,7 @@ class PenelitianRiwayatController extends Controller
                 'dana_sumber',
                 'dana_setuju',
                 'file',
+                'mahasiswas',
                 'status',
             )
             ->with('user:id,nama')
@@ -29,6 +30,13 @@ class PenelitianRiwayatController extends Controller
             ->with('penelitian_revisis', function ($query) {
                 $query->select('penelitian_id', 'keterangan', 'file');
                 $query->orderByDesc('id');
+            })
+            ->with('personels', function ($query) {
+                $query->select('penelitian_id', 'user_id');
+                $query->with('user', function ($query) {
+                    $query->select('id', 'nama');
+                    $query->withTrashed();
+                });
             })
             ->paginate(10);
         // 

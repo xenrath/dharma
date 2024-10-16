@@ -6,20 +6,22 @@ Route::get('/', [\App\Http\Controllers\AuthController::class, 'index']);
 Route::get('login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login_proses']);
 Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
-
+// 
 Route::get('profile', [\App\Http\Controllers\HomeController::class, 'profile']);
 Route::post('profile', [\App\Http\Controllers\HomeController::class, 'profile_proses']);
 Route::post('ttd', [\App\Http\Controllers\HomeController::class, 'ttd']);
 Route::get('ubah-password', [\App\Http\Controllers\HomeController::class, 'ubah_password']);
 Route::post('ubah-password', [\App\Http\Controllers\HomeController::class, 'ubah_password_proses']);
-
+// 
 Route::post('ketua-search', [\App\Http\Controllers\HomeController::class, 'ketua_search']);
 Route::get('ketua-set/{id}', [\App\Http\Controllers\HomeController::class, 'ketua_set']);
 Route::post('personel-search', [\App\Http\Controllers\HomeController::class, 'personel_search']);
 Route::post('personel-get', [\App\Http\Controllers\HomeController::class, 'personel_get']);
 Route::get('hubungi/{telp}', [\App\Http\Controllers\HomeController::class, 'hubungi']);
 Route::post('proposal-get', [\App\Http\Controllers\HomeController::class, 'proposal_get']);
-
+// 
+Route::get('jadwal/{id}', [\App\Http\Controllers\HomeController::class, 'jadwal']);
+// 
 Route::middleware('dev')->prefix('dev')->group(function () {
     Route::get('/', [\App\Http\Controllers\Dev\HomeController::class, 'index']);
 
@@ -51,8 +53,6 @@ Route::middleware('dev')->prefix('dev')->group(function () {
 
 Route::middleware('operator')->prefix('operator')->group(function () {
     Route::get('/', [\App\Http\Controllers\Operator\HomeController::class, 'index']);
-    Route::get('berkas/{id}', [\App\Http\Controllers\Operator\HomeController::class, 'berkas']);
-    Route::get('jadwal/{id}', [\App\Http\Controllers\Operator\HomeController::class, 'jadwal']);
     // 
     Route::resource('proposal-list', \App\Http\Controllers\Operator\ProposalListController::class);
     // 
@@ -64,6 +64,10 @@ Route::middleware('operator')->prefix('operator')->group(function () {
     Route::post('proposal-pendanaan/perbaikan/{id}', [\App\Http\Controllers\Operator\ProposalPendanaanController::class, 'perbaikan']);
     Route::post('proposal-pendanaan/setujui/{id}', [\App\Http\Controllers\Operator\ProposalPendanaanController::class, 'setujui']);
     Route::resource('proposal-pendanaan', \App\Http\Controllers\Operator\ProposalPendanaanController::class);
+    // 
+    Route::post('proposal-mou/setujui/{id}', [\App\Http\Controllers\Operator\ProposalMouController::class, 'setujui']);
+    Route::post('proposal-mou/perbaikan/{id}', [\App\Http\Controllers\Operator\ProposalMouController::class, 'perbaikan']);
+    Route::resource('proposal-mou', \App\Http\Controllers\Operator\ProposalMouController::class);
     // 
     Route::resource('proposal-riwayat', \App\Http\Controllers\Operator\ProposalRiwayatController::class);
     // 
@@ -83,7 +87,6 @@ Route::middleware('operator')->prefix('operator')->group(function () {
 
 Route::middleware('dosen')->prefix('dosen')->group(function () {
     Route::get('/', [\App\Http\Controllers\Dosen\HomeController::class, 'index']);
-    Route::get('berkas/{id}', [\App\Http\Controllers\Dosen\HomeController::class, 'berkas']);
     Route::get('jadwal/{id}', [\App\Http\Controllers\Dosen\HomeController::class, 'jadwal']);
     //
     Route::get('proposal/penelitian', [\App\Http\Controllers\Dosen\ProposalController::class, 'create_penelitian']);
@@ -97,9 +100,23 @@ Route::middleware('dosen')->prefix('dosen')->group(function () {
     Route::post('proposal/pengabdian/{id}', [\App\Http\Controllers\Dosen\ProposalController::class, 'update_pengabdian']);
     // 
     Route::post('proposal/perbaikan/{id}', [\App\Http\Controllers\Dosen\ProposalController::class, 'perbaikan']);
+    Route::post('proposal/mou/{id}', [\App\Http\Controllers\Dosen\ProposalController::class, 'mou']);
+    // Route::get('proposal/mou/{id}', [\App\Http\Controllers\Dosen\ProposalController::class, 'mou']);
     Route::resource('proposal', \App\Http\Controllers\Dosen\ProposalController::class);
     // 
     Route::get('jadwal/{id}', [\App\Http\Controllers\Dosen\HomeController::class, 'jadwal']);
+    // 
+    Route::post('penelitian/perbaikan/{id}', [\App\Http\Controllers\Dosen\PenelitianController::class, 'perbaikan']);
+    Route::resource('penelitian', \App\Http\Controllers\Dosen\PenelitianController::class);
+    // 
+    Route::post('pengabdian/perbaikan/{id}', [\App\Http\Controllers\Dosen\PengabdianController::class, 'perbaikan']);
+    Route::resource('pengabdian', \App\Http\Controllers\Dosen\PengabdianController::class);
+    // 
+    Route::middleware('ketua')->prefix('ketua')->group(function () {
+        Route::resource('proposal-pendanaan', \App\Http\Controllers\Dosen\Ketua\ProposalPendanaanController::class);
+        Route::resource('proposal-mou', \App\Http\Controllers\Dosen\Ketua\ProposalMouController::class);
+        Route::resource('proposal-riwayat', \App\Http\Controllers\Dosen\Ketua\ProposalRiwayatController::class);
+    });
     // 
     Route::middleware('peninjau')->prefix('peninjau')->group(function () {
         Route::post('review/perbaikan/{id}', [\App\Http\Controllers\Dosen\PeninjauReviewController::class, 'perbaikan']);
@@ -111,16 +128,5 @@ Route::middleware('dosen')->prefix('dosen')->group(function () {
         Route::get('revisi', [\App\Http\Controllers\Dosen\PeninjauRevisiController::class, 'index']);
         // 
         Route::resource('riwayat', \App\Http\Controllers\Dosen\PeninjauRiwayatController::class);
-    });
-
-    Route::post('penelitian/perbaikan/{id}', [\App\Http\Controllers\Dosen\PenelitianController::class, 'perbaikan']);
-    Route::resource('penelitian', \App\Http\Controllers\Dosen\PenelitianController::class);
-
-    Route::post('pengabdian/perbaikan/{id}', [\App\Http\Controllers\Dosen\PengabdianController::class, 'perbaikan']);
-    Route::resource('pengabdian', \App\Http\Controllers\Dosen\PengabdianController::class);
-
-    Route::middleware('ketua')->prefix('ketua')->group(function () {
-        Route::resource('proposal', \App\Http\Controllers\Dosen\KetuaProposalController::class);
-        Route::resource('riwayat', \App\Http\Controllers\Dosen\KetuaRiwayatController::class);
     });
 });

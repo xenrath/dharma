@@ -62,6 +62,8 @@
                                             <td>
                                                 {{ $proposal->user->nama }}
                                                 <hr class="my-2">
+                                                <strong>{{ ucfirst($proposal->jenis) }}</strong>
+                                                <br>
                                                 {{ $proposal->judul }}
                                             </td>
                                             <td class="text-center">
@@ -70,7 +72,8 @@
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-warning btn-sm btn-flat btn-block"
-                                                    data-toggle="modal" data-target="#modal-kembalikan-{{ $proposal->id }}">
+                                                    data-toggle="modal"
+                                                    data-target="#modal-kembalikan-{{ $proposal->id }}">
                                                     <i class="fas fa-undo"></i>
                                                 </button>
                                             </td>
@@ -170,10 +173,10 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Berkas Laporan</strong>
+                                <strong>Laporan Proposal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ url('operator/berkas/' . $proposal->id) }}"
+                                <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Laporan
                                 </a>
@@ -189,6 +192,9 @@
                                     <ol class="px-3 mb-0">
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($proposal->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else

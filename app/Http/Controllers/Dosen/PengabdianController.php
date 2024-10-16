@@ -27,6 +27,7 @@ class PengabdianController extends Controller
                 'dana_sumber',
                 'dana_setuju',
                 'file',
+                'mahasiswas',
                 'status',
             )
             ->with('user:id,nama')

@@ -62,10 +62,13 @@
                                                     <br>
                                                     <strong>Anggota:</strong>
                                                     <br>
-                                                    @if (count($penelitian->personels))
+                                                    @if (count($penelitian->personels) || count($penelitian->mahasiswas))
                                                         <ol class="px-3 mb-0">
                                                             @foreach ($penelitian->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
+                                                            @endforeach
+                                                            @foreach ($penelitian->mahasiswas as $mahasiswa)
+                                                                <li>{{ $mahasiswa }}</li>
                                                             @endforeach
                                                         </ol>
                                                     @else
@@ -189,10 +192,13 @@
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($penelitian->personels))
+                                @if (count($penelitian->personels) || count($penelitian->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($penelitian->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($penelitian->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else

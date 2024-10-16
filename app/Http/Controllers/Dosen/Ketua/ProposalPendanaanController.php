@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dosen;
+namespace App\Http\Controllers\Dosen\Ketua;
 
 use App\Http\Controllers\Controller;
 use App\Models\Penelitian;
@@ -9,10 +9,11 @@ use App\Models\Pengabdian;
 use App\Models\PengabdianPersonel;
 use App\Models\Proposal;
 use App\Models\ProposalPersonel;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class KetuaProposalController extends Controller
+class ProposalPendanaanController extends Controller
 {
     public function index()
     {
@@ -29,7 +30,8 @@ class KetuaProposalController extends Controller
                 'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'peninjau_id',
                 'jadwal_id',
                 'status',
@@ -55,7 +57,7 @@ class KetuaProposalController extends Controller
             })
             ->get();
 
-        return view('dosen.ketua.proposal.index', compact('proposals'));
+        return view('dosen.ketua.pendanaan.index', compact('proposals'));
     }
 
     public function update(Request $request, $id)
@@ -67,82 +69,34 @@ class KetuaProposalController extends Controller
         ]);
         // 
         if ($validator->fails()) {
-            alert()->error('Error', 'Gagal menyelesaikan Proposal!');
+            alert()->error('Error', 'Gagal mengonfirmasi Pendanaan Proposal!');
             return back()->withInput()->withErrors($validator->errors())->with('id', $id);
         }
         // 
         $update = Proposal::where('id', $id)->update([
             'dana_setuju' => $request->dana_setuju,
-            'status' => 'selesai',
+            'status' => 'mou',
         ]);
         // 
         if (!$update) {
-            alert()->error('Error', 'Gagal menyelesaikan Proposal!');
+            alert()->error('Error', 'Gagal mengonfirmasi Pendanaan Proposal!');
             return back();
-        }
-        // 
-        $proposal = Proposal::where('id', $id)->first();
-        $proposal_personels = ProposalPersonel::where('proposal_id', $id)->get();
-        // 
-        if ($proposal->jenis == 'penelitian') {
-            $penelitian = Penelitian::create([
-                'user_id' => $proposal->user_id,
-                'tahun' => $proposal->tahun,
-                'judul' => $proposal->judul,
-                'jenis_pendanaan_id' => $proposal->jenis_pendanaan_id,
-                'jenis_penelitian_id' => $proposal->jenis_penelitian_id,
-                'dana_sumber' => $proposal->dana_sumber,
-                'dana_setuju' => $proposal->dana_setuju,
-                'file' => null,
-                'status' => 'menunggu',
-            ]);
-            // 
-            if ($penelitian) {
-                foreach ($proposal_personels as $personel) {
-                    PenelitianPersonel::create([
-                        'penelitian_id' => $penelitian->id,
-                        'user_id' => $personel->user_id,
-                    ]);
-                }
-            }
-        } else {
-            $pengabdian = Pengabdian::create([
-                'user_id' => $proposal->user_id,
-                'tahun' => $proposal->tahun,
-                'judul' => $proposal->judul,
-                'jenis_pendanaan_id' => $proposal->jenis_pendanaan_id,
-                'jenis_pengabdian_id' => $proposal->jenis_pengabdian_id,
-                'dana_sumber' => $proposal->dana_sumber,
-                'dana_setuju' => $proposal->dana_setuju,
-                'file' => null,
-                'status' => 'menunggu',
-            ]);
-            // 
-            if ($pengabdian) {
-                foreach ($proposal_personels as $personel) {
-                    PengabdianPersonel::create([
-                        'pengabdian_id' => $pengabdian->id,
-                        'user_id' => $personel->user_id,
-                    ]);
-                }
-            }
         }
         // 
         $message = "SIDHARMA LPPM"  . PHP_EOL;
         $message .= "----------------------------------"  . PHP_EOL;
-        $message .= "*Ka. LPPM* telah menyetujui laporan proposal Anda" . PHP_EOL;
+        $message .= "*Ka. LPPM* telah mengonfirmasi pendanaan suatu proposal. Lakukan pembuatan MOU untuk melanjutkan." . PHP_EOL;
         $message .= "----------------------------------"  . PHP_EOL;
-        $message .= "Lihat daftar proposal" . PHP_EOL;
-        $message .= url('dosen/proposal');
+        $message .= "Lihat daftar mou proposal" . PHP_EOL;
+        $message .= url('operator/proposal-mou');
         // 
         $this->kirim('085328481969', $message);
-        // $user_id = Proposal::where('id', $id)->value('user_id');
-        // $telp = User::where('id', $user_id)->value('telp');
+        // $telp = User::where('role', 'operator')->value('telp');
         // if ($telp) {
         //     $this->kirim($telp, $message);
         // }
         //
-        alert()->success('Success', 'Berhasil menyelesaikan Proposal!');
+        alert()->success('Success', 'Berhasil mengonfirmasi Proposal!');
         return back();
     }
 
@@ -171,6 +125,6 @@ class KetuaProposalController extends Controller
 
         $result = json_decode(curl_exec($curl));
 
-        return $result;
+        return $result->status;
     }
 }

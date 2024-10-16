@@ -39,24 +39,37 @@
 </li>
 @if (auth()->user()->isKetua())
     @php
-        $ketua_proposal = \App\Models\Proposal::where('status', 'pendanaan')->count();
+        $proposal_pendanaan = \App\Models\Proposal::where('status', 'pendanaan')->count();
+        $proposal_mou = \App\Models\Proposal::where('status', 'setuju2')->count();
     @endphp
     <li class="nav-header">Menu Ka. LPPM</li>
     <li class="nav-item">
-        <a href="{{ url('dosen/ketua/proposal') }}"
-            class="nav-link rounded-0 {{ request()->is('dosen/ketua/proposal*') ? 'active' : '' }}">
+        <a href="{{ url('dosen/ketua/proposal-pendanaan') }}"
+            class="nav-link rounded-0 {{ request()->is('dosen/ketua/proposal-pendanaan*') ? 'active' : '' }}">
             <i class="nav-icon far fa-circle"></i>
             <p>
-                Data Proposal
-                @if ($ketua_proposal)
-                    <span class="right badge badge-info rounded-0">{{ $ketua_proposal }}</span>
+                Pendanaan Proposal
+                @if ($proposal_pendanaan)
+                    <span class="right badge badge-info rounded-0">{{ $proposal_pendanaan }}</span>
                 @endif
             </p>
         </a>
     </li>
     <li class="nav-item">
-        <a href="{{ url('dosen/ketua/riwayat') }}"
-            class="nav-link rounded-0 {{ request()->is('dosen/ketua/riwayat*') ? 'active' : '' }}">
+        <a href="{{ url('dosen/ketua/proposal-mou') }}"
+            class="nav-link rounded-0 {{ request()->is('dosen/ketua/proposal-mou*') ? 'active' : '' }}">
+            <i class="nav-icon far fa-circle"></i>
+            <p>
+                MOU Proposal
+                @if ($proposal_mou)
+                    <span class="right badge badge-info rounded-0">{{ $proposal_mou }}</span>
+                @endif
+            </p>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="{{ url('dosen/ketua/proposal-riwayat') }}"
+            class="nav-link rounded-0 {{ request()->is('dosen/ketua/proposal-riwayat*') ? 'active' : '' }}">
             <i class="nav-icon far fa-circle"></i>
             <p>
                 Riwayat Proposal

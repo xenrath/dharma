@@ -24,13 +24,15 @@ return new class extends Migration
             $table->string('dana_sumber');
             $table->string('dana_usulan');
             $table->string('dana_setuju')->nullable();
-            $table->string('berkas'); // Laporan Proposal
+            $table->string('file'); // Laporan Proposal
+            $table->json('mahasiswas')->nullable();
             $table->date('tanggal')->nullable();
             $table->string('jam')->nullable();
             $table->unsignedBigInteger('peninjau_id')->nullable();
             $table->foreign('peninjau_id')->references('id')->on('users')->restrictOnDelete();
             $table->unsignedBigInteger('jadwal_id')->nullable();
-            $table->enum('status', ['menunggu', 'proses', 'revisi1', 'setuju', 'revisi2', 'pendanaan', 'selesai']);
+            $table->string('mou')->nullable(); // MOU Proposal
+            $table->enum('status', ['menunggu', 'proses', 'revisi1', 'setuju', 'revisi2', 'pendanaan', 'mou', 'selesai']);
             $table->timestamps();
         });
     }

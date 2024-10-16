@@ -26,7 +26,7 @@
                         <h3 class="card-title">Form Profile</h3>
                     </div>
                     <!-- /.card-header -->
-                    <form action="{{ url('profile') }}" method="post">
+                    <form action="{{ url('profile') }}" method="post" autocomplete="off">
                         @csrf
                         <div class="card-body">
                             <div class="form-group mb-2">
@@ -44,7 +44,10 @@
                             </div>
                             @if (auth()->user()->isDosen() || auth()->user()->isKetua())
                                 <div class="form-group mb-2">
-                                    <label for="nidn">NIDN</label>
+                                    <label for="nidn">
+                                        NIDN
+                                        <small class="text-muted">(untuk login)</small>
+                                    </label>
                                     <input type="text" class="form-control rounded-0 @error('nidn') is-invalid @enderror"
                                         id="nidn" name="nidn" value="{{ old('nidn', $user->nidn) }}">
                                     @error('nidn')
@@ -53,8 +56,6 @@
                                         </div>
                                     @enderror
                                 </div>
-                            @endif
-                            @if (auth()->user()->isKetua())
                                 <div class="form-group mb-2">
                                     <label for="nipy">NIPY</label>
                                     <input type="text" class="form-control rounded-0 @error('nipy') is-invalid @enderror"

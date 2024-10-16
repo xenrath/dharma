@@ -176,9 +176,9 @@
                                 <strong>Laporan Proposal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}"
+                                <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
-                                    Lihat Berkas
+                                    Lihat Laporan
                                 </a>
                             </div>
                         </div>
@@ -188,10 +188,13 @@
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($proposal->personels))
+                                @if (count($proposal->personels) || count($proposal->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($proposal->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -229,14 +232,14 @@
                                 <strong>Jadwal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ url('dosen/proposal-laporan/' . $proposal->laporan_id) }}"
+                                <a href="{{ url('jadwal/' . $proposal->jadwal_id) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Jadwal
                                 </a>
                             </div>
                         </div>
                         <hr class="my-2">
-                        <div class="alert alert-light text-center rounded-0 mb-0">
+                        <div class="alert alert-light text-center rounded-0 mb-2">
                             <span class="text-muted">- Menunggu konfirmasi hasil revisi dari Anda -</span>
                         </div>
                     </div>
@@ -344,9 +347,7 @@
                     </div>
                     <div class="modal-body">
                         @if ($revisi->file)
-                            Yakin menyetujui <strong>Proposal
-                                {{ $proposal->jenis == 'penelitian' ? 'Penelitian' : 'Pengabdian' }}</strong> dari
-                            <strong>{{ $proposal->user->nama }}</strong>?
+                            Yakin menyetujui laporan proposal dari <strong>{{ $proposal->user->nama }}</strong>?
                         @else
                             <div class="alert alert-light text-center rounded-0 mb-2">
                                 <span class="text-muted">- Menunggu dosen mengunggah file revisi -</span>

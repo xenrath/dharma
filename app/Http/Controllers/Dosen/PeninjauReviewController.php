@@ -29,7 +29,8 @@ class PeninjauReviewController extends Controller
                 'jenis_pendanaan_id',
                 'dana_sumber',
                 'dana_usulan',
-                'berkas',
+                'file',
+                'mahasiswas',
                 'tanggal',
                 'jam',
                 'peninjau_id',
@@ -88,7 +89,7 @@ class PeninjauReviewController extends Controller
         // 
         $message = "SIDHARMA LPPM"  . PHP_EOL;
         $message .= "----------------------------------"  . PHP_EOL;
-        $message .= "*Reviewer* " . "memberikan revisi pada proposal Anda" . PHP_EOL;
+        $message .= "*Reviewer* memberikan revisi pada laporan proposal Anda" . PHP_EOL;
         $message .= "----------------------------------"  . PHP_EOL;
         $message .= "Lihat daftar proposal" . PHP_EOL;
         $message .= url('dosen/proposal');

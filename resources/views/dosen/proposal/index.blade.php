@@ -96,6 +96,9 @@
                                                             @foreach ($proposal->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
                                                             @endforeach
+                                                            @foreach ($proposal->mahasiswas as $mahasiswa)
+                                                                <li>{{ $mahasiswa }}</li>
+                                                            @endforeach
                                                         </ol>
                                                     @else
                                                         -
@@ -122,9 +125,11 @@
                                                     @endif
                                                     @if ($proposal->status == 'revisi1' || $proposal->status == 'revisi2')
                                                         @php
-                                                            $revisi = $proposal->proposal_revisis
-                                                                ->where('status', true)
-                                                                ->sortBy('id', true)
+                                                            $revisi = \App\Models\ProposalRevisi::where([
+                                                                ['proposal_id', $proposal->id],
+                                                                ['status', true],
+                                                            ])
+                                                                ->orderByDesc('id')
                                                                 ->first();
                                                         @endphp
                                                         <button type="button"
@@ -138,11 +143,17 @@
                                                             @endif
                                                         </button>
                                                     @endif
-                                                    @if ($proposal->status == 'konfirmasi')
+                                                    @if ($proposal->status == 'mou')
+                                                        @php
+                                                            $proposal_mou = \App\Models\ProposalMou::where(
+                                                                'proposal_id',
+                                                                $proposal->id,
+                                                            )->first();
+                                                        @endphp
                                                         <button type="button"
                                                             class="btn btn-warning btn-sm btn-flat btn-block"
                                                             data-toggle="modal"
-                                                            data-target="#modal-konfirmasi-{{ $proposal->id }}">
+                                                            data-target="#modal-mou-{{ $proposal->id }}">
                                                             <i class="fas fa-upload"></i>
                                                         </button>
                                                     @endif
@@ -289,7 +300,7 @@
                                 @rupiah($proposal->dana_usulan)
                             </div>
                         </div>
-                        @if ($proposal->status == 'selesai')
+                        @if ($proposal->status == 'mou' || $proposal->status == 'selesai')
                             <div class="row mb-2">
                                 <div class="col-md-6">
                                     <strong>Dana Disetujui</strong>
@@ -313,7 +324,7 @@
                                 <strong>Laporan Proposal</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ asset('storage/uploads/' . $proposal->berkas) }}"
+                                <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
                                     Lihat Laporan
                                 </a>
@@ -325,10 +336,13 @@
                                 <small class="text-muted">(anggota)</small>
                             </div>
                             <div class="col-md-6">
-                                @if (count($proposal->personels))
+                                @if (count($proposal->personels) || count($proposal->mahasiswas))
                                     <ol class="px-3 mb-0">
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
+                                        @endforeach
+                                        @foreach ($proposal->mahasiswas as $mahasiswa)
+                                            <li>{{ $mahasiswa }}</li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -336,8 +350,22 @@
                                 @endif
                             </div>
                         </div>
-                        @if ($proposal->jadwal_id)
-                            <hr class="my-2">
+                        @if ($proposal->mou)
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>MOU Proposal</strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
+                                        class="btn btn-info btn-xs btn-flat" target="_blank">
+                                        Lihat File
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                    @if ($proposal->jadwal_id)
+                        <div class="modal-body border-top">
                             @if ($proposal->status == 'proses')
                                 <div class="row mb-2">
                                     <div class="col-md-6">
@@ -369,48 +397,54 @@
                                     <strong>Jadwal</strong>
                                 </div>
                                 <div class="col-md-6">
-                                    <a href="{{ url('dosen/jadwal/' . $proposal->jadwal_id) }}"
+                                    <a href="{{ url('jadwal/' . $proposal->jadwal_id) }}"
                                         class="btn btn-info btn-xs btn-flat" target="_blank">
                                         Lihat Jadwal
                                     </a>
                                 </div>
                             </div>
-                            <hr class="my-2">
-                            @if ($proposal->status == 'menunggu')
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Menunggu operator menetapkan jadwal -</span>
-                                </div>
-                            @endif
-                            @if ($proposal->status == 'proses')
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Jadwal proposal telah ditetapkan -</span>
-                                </div>
-                            @endif
-                            @if ($proposal->status == 'revisi1')
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Proposal dalam tahap revisi oleh reviewer -</span>
-                                </div>
-                            @endif
-                            @if ($proposal->status == 'setuju')
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Proposal telah disetujui oleh reviewer -</span>
-                                </div>
-                            @endif
-                            @if ($proposal->status == 'revisi2')
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Proposal dalam tahap revisi oleh operator -</span>
-                                </div>
-                            @endif
-                            @if ($proposal->status == 'pendanaan')
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Menunggu Ka. LPPM mengonfirmasi pendanaan -</span>
-                                </div>
-                            @endif
-                            @if ($proposal->status == 'selesai')
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Proposal telah disetujui -</span>
-                                </div>
-                            @endif
+                        </div>
+                    @endif
+                    <div class="modal-body border-top">
+                        @if ($proposal->status == 'menunggu')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Menunggu operator menetapkan jadwal -</span>
+                            </div>
+                        @endif
+                        @if ($proposal->status == 'proses')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Jadwal proposal telah ditetapkan -</span>
+                            </div>
+                        @endif
+                        @if ($proposal->status == 'revisi1')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Proposal dalam tahap revisi oleh reviewer -</span>
+                            </div>
+                        @endif
+                        @if ($proposal->status == 'setuju')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Proposal telah disetujui oleh reviewer -</span>
+                            </div>
+                        @endif
+                        @if ($proposal->status == 'revisi2')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Proposal dalam tahap revisi oleh operator -</span>
+                            </div>
+                        @endif
+                        @if ($proposal->status == 'pendanaan')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Menunggu Ka. LPPM mengonfirmasi pendanaan -</span>
+                            </div>
+                        @endif
+                        @if ($proposal->status == 'mou' || $proposal->status == 'setuju2')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Proposal dalam tahap persetujuan MOU -</span>
+                            </div>
+                        @endif
+                        @if ($proposal->status == 'selesai')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Proposal telah disetujui -</span>
+                            </div>
                         @endif
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -498,7 +532,7 @@
                                         </a>
                                     @else
                                         <div class="form-group my-2">
-                                            <label for="file">Upload File Revisi</label>
+                                            <label for="file">File Revisi</label>
                                             <input type="file"
                                                 class="form-control rounded-0 @if (session('id') == $revisi->id) @error('file') is-invalid @enderror @endif"
                                                 id="file" name="file" accept=".pdf">
@@ -541,6 +575,111 @@
                                     @if (!$revisi->file)
                                         <button type="submit" class="btn btn-primary btn-sm btn-flat">Kirim</button>
                                     @endif
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            @if ($proposal->status == 'mou')
+                @php
+                    $proposal_mou = \App\Models\ProposalMou::where('proposal_id', $proposal->id)->first();
+                @endphp
+                <div class="modal fade" id="modal-mou-{{ $proposal->id }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content rounded-0">
+                            <div class="modal-header">
+                                <h4 class="modal-title">MOU Proposal</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form action="{{ url('dosen/proposal/mou/' . $proposal->id) }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group mb-2">
+                                        <label for="file">
+                                            File Persetujuan MOU
+                                            @if ($proposal_mou->file)
+                                                <small>(isi jika ingin diubah)</small>
+                                            @endif
+                                        </label>
+                                        <input type="file"
+                                            class="form-control rounded-0 @if (session('id') == $proposal->id) @error('file') is-invalid @enderror @endif"
+                                            id="file" name="file" accept=".pdf">
+                                        @if (session('id') == $proposal->id)
+                                            @error('file')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        @endif
+                                    </div>
+                                    <div class="text-right mb-2">
+                                        <a href="{{ asset('storage/uploads/' . $proposal_mou->file) }}"
+                                            class="btn btn-secondary btn-xs btn-flat" target="_blank">Lihat File</a>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Keterangan Revisi</strong>
+                                        <br>
+                                        {{ $proposal_mou->revisi }}
+                                    </div>
+                                </div>
+                                <div class="modal-body border-top">
+                                    <div class="mb-2">
+                                        <strong>File Draft MOU</strong>
+                                        <br>
+                                        <a href="{{ asset('storage/uploads/' . $proposal_mou->draft) }}"
+                                            class="btn btn-secondary btn-xs btn-flat" target="_blank">
+                                            Lihat Draft
+                                        </a>
+                                    </div>
+                                    <div id="accordion">
+                                        <div class="card rounded-0">
+                                            <div class="card-header">
+                                                <h4 class="card-title w-100" style="font-size: 16px;">
+                                                    <a class="d-block w-100" data-toggle="collapse" href="#collapseOne">
+                                                        Cara melakukan persetujuan MOU Proposal
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseOne" class="collapse" data-parent="#accordion">
+                                                <div class="card-body">
+                                                    <span>
+                                                        Beberapa tahapan untuk melakukan persetujuan MOU Proposal:
+                                                    </span>
+                                                    <ol class="px-3 mb-2">
+                                                        <li>Unduh <u>File Draft MOU Proposal</u> terlebih dahulu</li>
+                                                        <li>
+                                                            Print halaman terakhir dari File Draft (yang terdapat tanda
+                                                            tangan Ka.
+                                                            LPPM dan Dosen)
+                                                        </li>
+                                                        <li>
+                                                            Lakukan persetujuan dengan memberikan materai pada berkas
+                                                            serta
+                                                            tanda tangan
+                                                        </li>
+                                                        <li>
+                                                            Scan satu lembar file draft tersebut dan jadikan format .pdf
+                                                        </li>
+                                                        <li>
+                                                            Unggah file di kolom <u>File Persetujuan MOU</u>
+                                                        </li>
+                                                        <li>
+                                                            Tekan tombol <u>Kirim</u> dan tunggu konfirmasi Ka. LPPM
+                                                        </li>
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default btn-sm btn-flat"
+                                        data-dismiss="modal">Tutup</button>
+                                    <button type="submit" class="btn btn-primary btn-sm btn-flat">Kirim</button>
                                 </div>
                             </form>
                         </div>
