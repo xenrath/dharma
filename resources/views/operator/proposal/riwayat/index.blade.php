@@ -40,8 +40,8 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 20px">No</th>
-                                        <th>Proposal</th>
-                                        <th>Dana</th>
+                                        <th>Judul Proposal</th>
+                                        <th>Dosen / Personel</th>
                                         <th class="text-center" style="width: 40px">Opsi</th>
                                     </tr>
                                 </thead>
@@ -50,34 +50,43 @@
                                         <tr>
                                             <td class="text-center">{{ $proposals->firstItem() + $key }}</td>
                                             <td>
-                                                {{ $proposal->user->nama }}
-                                                <hr class="my-2">
-                                                <strong>{{ ucfirst($proposal->jenis) }}</strong>
+                                                <strong>
+                                                    {{ $proposal->jenis == 'penelitian' ? 'Penelitian' : 'Pengabdian' }}
+                                                </strong>
                                                 <br>
                                                 {{ $proposal->judul }}
-                                            </td>
-                                            <td>
-                                                <strong>Dana Disetujui</strong>
+                                                <br>
+                                                <hr class="my-2">
+                                                <strong>Dana Disetujui:</strong>
                                                 <br>
                                                 @rupiah($proposal->dana_setuju)
-                                                @if ($proposal->status == 'pendanaan')
-                                                    <span class="badge badge-warning rounded-circle p-1">
-                                                        <i class="far fa-clock"></i>
-                                                    </span>
-                                                @else
-                                                    <span class="badge badge-primary rounded-circle p-1">
-                                                        <i class="far fa-check-circle"></i>
-                                                    </span>
-                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="mb-2">
+                                                    <strong>Ketua Peneliti:</strong>
+                                                    <br>
+                                                    {{ $proposal->user->nama }}
+                                                    <br>
+                                                    <strong>Anggota:</strong>
+                                                    <br>
+                                                    @if (count($proposal->personels))
+                                                        <ol class="px-3 mb-0">
+                                                            @foreach ($proposal->personels as $personel)
+                                                                <li>{{ $personel->user->nama }}</li>
+                                                            @endforeach
+                                                            @foreach ($proposal->mahasiswas as $mahasiswa)
+                                                                <li>{{ $mahasiswa }}</li>
+                                                            @endforeach
+                                                        </ol>
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </div>
                                             </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-info btn-sm btn-flat btn-block"
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $proposal->id }}">
                                                     <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-warning btn-sm btn-flat btn-block"
-                                                    data-toggle="modal" data-target="#modal-revisi-{{ $proposal->id }}">
-                                                    <i class="fas fa-clipboard-list"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -225,7 +234,19 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>MOU Proposal</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
+                                    class="btn btn-info btn-xs btn-flat" target="_blank">
+                                    Lihat MOU
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <strong>Reviewer</strong>
@@ -245,60 +266,15 @@
                                 </a>
                             </div>
                         </div>
-                        <hr class="my-2">
-                        @if ($proposal->status == 'pendanaan')
+                    </div>
+                    <div class="modal-body border-top">
+                        @if ($proposal->status == 'setuju2')
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span>- Menunggu persetujuan dari Ka. LPPM -</span>
+                                <span class="text-muted">- Menunggu persetujuan dari Ka. LPPM -</span>
                             </div>
                         @else
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span>- Proposal telah selesai -</span>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat"
-                            data-dismiss="modal">Tutup</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="modal-revisi-{{ $proposal->id }}">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Riwayat Revisi</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        @if (count($proposal->proposal_revisis))
-                            @foreach ($proposal->proposal_revisis as $key => $proposal_revisi)
-                                <div class="mb-2">
-                                    <strong>
-                                        Revisi
-                                        {{ count($proposal->proposal_revisis) - $key }}
-                                        -
-                                        {{ $proposal_revisi->user_id == $proposal->peninjau_id ? 'Reviewer' : 'Operator' }}
-                                    </strong>
-                                    <br>
-                                    <span>{{ $proposal_revisi->keterangan }}</span>
-                                    <br>
-                                    @if ($proposal_revisi->file)
-                                        <a href="{{ asset('storage/uploads/' . $proposal_revisi->file) }}"
-                                            target="_blank" class="btn btn-secondary btn-xs btn-flat">
-                                            Lihat Laporan
-                                        </a>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span>
-                                    Proposal disetujui <strong>tanpa</strong> revisi
-                                    <i class="far fa-thumbs-up"></i>
-                                </span>
+                                <span class="text-muted">- Proposal telah diselesaikan -</span>
                             </div>
                         @endif
                     </div>

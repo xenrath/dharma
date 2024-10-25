@@ -11,7 +11,6 @@ use App\Models\Proposal;
 use App\Models\ProposalMou;
 use App\Models\ProposalPersonel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ProposalMouController extends Controller
 {
@@ -34,6 +33,7 @@ class ProposalMouController extends Controller
                 'mahasiswas',
                 'peninjau_id',
                 'jadwal_id',
+                'mou',
                 'status',
             )
             ->with('user:id,nama')
@@ -62,9 +62,7 @@ class ProposalMouController extends Controller
 
     public function update(Request $request, $id)
     {
-        $file = ProposalMou::where('proposal_id', $id)->value('file');
         $proposal = Proposal::where('id', $id)->update([
-            'mou' => $file,
             'status' => 'selesai',
         ]);
         // 
@@ -136,7 +134,7 @@ class ProposalMouController extends Controller
         //     $this->kirim($telp, $message);
         // }
         //
-        alert()->success('Success', 'Berhasil mengonfirmasi MOU Proposal!');
+        alert()->success('Success', 'Berhasil menyelesaikan Proposal!');
         return back();
     }
 

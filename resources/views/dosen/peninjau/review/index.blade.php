@@ -209,7 +209,8 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <strong>Tanggal</strong>
@@ -245,7 +246,8 @@
                                 </a>
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         @if (Carbon\Carbon::now()->format('Y-m-d') >= $proposal->tanggal)
                             <div class="alert alert-light text-center rounded-0 mb-2">
                                 <span class="text-muted">- Menunggu konfirmasi hasil pengujian dari Anda -</span>
@@ -277,8 +279,16 @@
                             @csrf
                             @method('POST')
                             <div class="modal-body">
+                                <div class="mb-2">
+                                    <strong>Laporan Proposal</strong>
+                                    <br>
+                                    <a href="{{ asset('storage/uploads/' . $proposal->file) }}" target="_blank"
+                                        class="btn btn-secondary btn-xs btn-flat">
+                                        Lihat Laporan
+                                    </a>
+                                </div>
                                 <div class="form-group mb-2">
-                                    <label for="keterangan">Keterangan</label>
+                                    <label for="keterangan">Keterangan Revisi</label>
                                     <textarea
                                         class="form-control rounded-0 @if (session('id') == $proposal->id) @error('keterangan') is-invalid @enderror @endif"
                                         name="keterangan" id="keterangan" cols="30" rows="4">{{ old('keterangan') }}</textarea>
@@ -289,16 +299,6 @@
                                             </div>
                                         @enderror
                                     @endif
-                                </div>
-                            </div>
-                            <div class="modal-body border-top">
-                                <div class="mb-2">
-                                    <strong>Laporan Proposal</strong>
-                                    <br>
-                                    <a href="{{ asset('storage/uploads/' . $proposal->file) }}" target="_blank"
-                                        class="btn btn-secondary btn-xs btn-flat">
-                                        Lihat Laporan
-                                    </a>
                                 </div>
                             </div>
                             <div class="modal-footer justify-content-between">

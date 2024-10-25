@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreign('proposal_id')->references('id')->on('proposals')->restrictOnDelete();
             $table->text('keterangan');
             $table->string('file')->nullable();
-            $table->boolean('status')->default(true);
+            $table->enum('status', ['revisi1', 'revisi2', 'revisi3']);
+            $table->boolean('is_aktif')->default(true);
             $table->timestamps();
         });
     }

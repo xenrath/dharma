@@ -235,7 +235,8 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         @if ($penelitian->status == 'menunggu')
                             @if ($penelitian->file)
                                 <div class="alert alert-light text-center rounded-0 mb-2">

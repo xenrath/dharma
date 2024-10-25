@@ -17,6 +17,7 @@ class ProposalMouController extends Controller
     public function index()
     {
         $proposals = Proposal::where('status', 'mou')
+            ->orWhere('status', 'setuju2')
             ->select(
                 'id',
                 'jenis',
@@ -33,6 +34,7 @@ class ProposalMouController extends Controller
                 'mahasiswas',
                 'peninjau_id',
                 'jadwal_id',
+                'mou',
                 'status',
             )
             ->with('user:id,nama,nipy,telp')
@@ -68,7 +70,7 @@ class ProposalMouController extends Controller
         }
         // 
         $draft = $this->mou($id);
-        $mou_proposal = ProposalMou::where()->exsits();
+        $mou_proposal = ProposalMou::where('proposal_id', $id)->exists();
         if ($mou_proposal) {
             ProposalMou::where('proposal_id', $id)->update([
                 'nomor' => $request->nomor,
@@ -82,6 +84,15 @@ class ProposalMouController extends Controller
                 'tanggal' => Carbon::now()->format('Y-m-d'),
                 'draft' =>  $draft,
             ]);
+        }
+        // 
+        $proposal = Proposal::where('id', $id)->update([
+            'status' => 'mou'
+        ]);
+        // 
+        if ($proposal) {
+            alert()->error('Error', 'Gagal membuat MOU Proposal!');
+            return back();
         }
         // 
         $message = "SIDHARMA LPPM"  . PHP_EOL;
@@ -99,46 +110,6 @@ class ProposalMouController extends Controller
         // }
         // 
         alert()->success('Success', 'Berhasil membuat MOU Proposal');
-        return back();
-    }
-
-    public function perbaikan(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'revisi' => 'required',
-        ], [
-            'revisi.required' => 'Keterangan Revisi harus diisi!',
-        ]);
-        // 
-        if ($validator->fails()) {
-            alert()->error('Error', 'Gagal mengirim revisi MOU Proposal!');
-            return back()->withInput()->withErrors($validator->errors())->with('id', $id);
-        }
-        // 
-        $proposal_mou = ProposalMou::where('proposal_id', $id)->update([
-            'revisi' => $request->revisi,
-        ]);
-        // 
-        if (!$proposal_mou) {
-            alert()->error('Error', 'Gagal mengirim revisi MOU Proposal!');
-            return back();
-        }
-        // 
-        $message = "SIDHARMA LPPM"  . PHP_EOL;
-        $message .= "----------------------------------"  . PHP_EOL;
-        $message .= "*Operator* memberikan revisi pada file persetujuan MOU Anda" . PHP_EOL;
-        $message .= "----------------------------------"  . PHP_EOL;
-        $message .= "Lihat daftar proposal" . PHP_EOL;
-        $message .= url('dosen/proposal');
-        // 
-        $this->kirim('085328481969', $message);
-        // $user_id = Proposal::where('id', $id)->value('user_id');
-        // $telp = User::where('id', $user_id)->value('telp');
-        // if ($telp) {
-        //     $this->kirim($telp, $message);
-        // }
-        // 
-        alert()->success('Success', 'Berhasil mengirim revisi MOU Proposal');
         return back();
     }
 
@@ -238,7 +209,8 @@ class ProposalMouController extends Controller
             'jenis',
         ));
         $waktu = Carbon::now()->format('ymdhis');
-        $nama_file = 'proposal/draft_' . $waktu . '.pdf';
+        $random = rand(10, 99);
+        $nama_file = 'proposal/' . $waktu . $random . '.pdf';
         $content = $pdf->download()->getOriginalContent();
         Storage::put('public/uploads/' . $nama_file, $content);
         return $nama_file;

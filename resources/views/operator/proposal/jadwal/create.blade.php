@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Buat Laporan Proposal')
+@section('title', 'Buat Jadwal Proposal')
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
@@ -20,7 +20,7 @@
                         <a href="{{ url('operator/proposal-jadwal') }}" class="btn btn-secondary btn-flat float-left mr-2">
                             <i class="fas fa-arrow-left"></i>
                         </a>
-                        <h1>Buat Laporan Proposal</h1>
+                        <h1>Buat Jadwal Proposal</h1>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -37,7 +37,7 @@
                     @csrf
                     <div class="card rounded-0">
                         <div class="card-header">
-                            <h3 class="card-title">Form Laporan</h3>
+                            <h3 class="card-title">Form Jadwal</h3>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -119,7 +119,7 @@
                         </div>
                     </div>
                     <div class="text-right pb-4">
-                        <button type="submit" class="btn btn-primary btn-flat">Buat Laporan</button>
+                        <button type="submit" class="btn btn-primary btn-flat">Buat Jadwal</button>
                     </div>
                 </form>
             </div>

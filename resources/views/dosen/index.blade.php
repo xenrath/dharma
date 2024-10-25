@@ -31,6 +31,20 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+                @if (!$is_chrome)
+                    <div class="callout callout-warning text-center rounded-0">
+                        <p>
+                            Kami menyarankan Anda untuk membuka
+                            <strong>SIDHARMA</strong>
+                            dengan browser
+                            <br>
+                            <strong>
+                                <i class="fab fa-chrome"></i>
+                                Chrome
+                            </strong>
+                        </p>
+                    </div>
+                @endif
                 @if (!auth()->user()->telp || (auth()->user()->isKetua() && !auth()->user()->nipy))
                     <div class="callout callout-info rounded-0">
                         <h5>

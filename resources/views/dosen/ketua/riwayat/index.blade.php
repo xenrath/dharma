@@ -66,10 +66,6 @@
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $proposal->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-warning btn-sm btn-flat btn-block"
-                                                    data-toggle="modal" data-target="#modal-revisi-{{ $proposal->id }}">
-                                                    <i class="fas fa-clipboard-list"></i>
-                                                </button>
                                             </td>
                                         </tr>
                                     @empty
@@ -204,7 +200,19 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>MOU Proposal</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
+                                    class="btn btn-info btn-xs btn-flat" target="_blank">
+                                    Lihat MOU
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <strong>Reviewer</strong>
@@ -224,56 +232,11 @@
                                 </a>
                             </div>
                         </div>
-                        <hr class="my-2">
-                        <div class="alert alert-light text-center rounded-0 mb-2">
-                            <span class="text-muted">- Proposal telah disetujui -</span>
-                        </div>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat"
-                            data-dismiss="modal">Tutup</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="modal-revisi-{{ $proposal->id }}">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Revisi Proposal</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
                     </div>
                     <div class="modal-body border-top">
-                        @if (count($proposal->proposal_revisis))
-                            @foreach ($proposal->proposal_revisis as $key => $proposal_revisi)
-                                <div class="mb-2">
-                                    <strong>
-                                        Revisi
-                                        {{ count($proposal->proposal_revisis) - $key }}
-                                        -
-                                        {{ $proposal_revisi->user_id == $proposal->peninjau_id ? 'Reviewer' : 'Operator' }}
-                                    </strong>
-                                    <br>
-                                    <span>{{ $proposal_revisi->keterangan }}</span>
-                                    <br>
-                                    @if ($proposal_revisi->file)
-                                        <a href="{{ asset('storage/uploads/' . $proposal_revisi->file) }}"
-                                            target="_blank" class="btn btn-secondary btn-xs btn-flat">
-                                            Lihat Laporan
-                                        </a>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span>
-                                    Proposal disetujui <strong>tanpa</strong> revisi
-                                    <i class="far fa-thumbs-up"></i>
-                                </span>
-                            </div>
-                        @endif
+                        <div class="alert alert-light text-center rounded-0 mb-2">
+                            <span class="text-muted">- Proposal telah selesai -</span>
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm btn-flat"

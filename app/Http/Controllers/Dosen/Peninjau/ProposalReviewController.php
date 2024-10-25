@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dosen;
+namespace App\Http\Controllers\Dosen\Peninjau;
 
 use App\Http\Controllers\Controller;
 use App\Models\Proposal;
@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class PeninjauReviewController extends Controller
+class ProposalReviewController extends Controller
 {
     public function index()
     {
@@ -71,6 +71,7 @@ class PeninjauReviewController extends Controller
             'user_id' => auth()->user()->id,
             'proposal_id' => $id,
             'keterangan' => $request->keterangan,
+            'status' => 'revisi1',
         ]);
         // 
         if (!$revisi) {

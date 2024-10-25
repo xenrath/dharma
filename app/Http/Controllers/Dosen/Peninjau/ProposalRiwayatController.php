@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Dosen;
+namespace App\Http\Controllers\Dosen\Peninjau;
 
 use App\Http\Controllers\Controller;
 use App\Models\Proposal;
 
-class PeninjauRiwayatController extends Controller
+class ProposalRiwayatController extends Controller
 {
     public function index()
     {
         $proposals = Proposal::where([
             ['peninjau_id', auth()->user()->id],
-            ['status', 'setuju'],
+            ['status', '!=', 'menunggu'],
+            ['status', '!=', 'proses'],
+            ['status', '!=', 'revisi1'],
         ])
             ->select(
                 'id',
@@ -39,13 +41,6 @@ class PeninjauRiwayatController extends Controller
             ->with('peninjau:id,nama')
             ->with('personels', function ($query) {
                 $query->select('proposal_id', 'user_id');
-                $query->with('user', function ($query) {
-                    $query->select('id', 'nama');
-                    $query->withTrashed();
-                });
-            })
-            ->with('proposal_revisis', function ($query) {
-                $query->select('proposal_id', 'user_id', 'file', 'keterangan');
                 $query->with('user', function ($query) {
                     $query->select('id', 'nama');
                     $query->withTrashed();

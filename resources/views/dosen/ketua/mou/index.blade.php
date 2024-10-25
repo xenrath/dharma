@@ -222,7 +222,21 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                        @if ($proposal->mou)
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>MOU Proposal</strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
+                                        class="btn btn-info btn-xs btn-flat" target="_blank">
+                                        Lihat MOU
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <strong>Reviewer</strong>
@@ -242,7 +256,8 @@
                                 </a>
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="alert alert-light text-center rounded-0 mb-2">
                             <span class="text-muted">- Menunggu Anda mengonfirmasi MOU Proposal -</span>
                         </div>
@@ -254,9 +269,6 @@
                 </div>
             </div>
         </div>
-        @php
-            $proposal_mou = \App\Models\ProposalMou::where('proposal_id', $proposal->id)->first();
-        @endphp
         <div class="modal fade" id="modal-selesai-{{ $proposal->id }}">
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
@@ -273,18 +285,11 @@
                         <div class="mb-2">
                             <strong>File Persetujuan MOU</strong>
                             <br>
-                            <a href="{{ asset('storage/uploads/' . $proposal_mou->file) }}"
+                            <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                 class="btn btn-secondary btn-xs btn-flat">
                                 Lihat File
                             </a>
                         </div>
-                        @if ($proposal_mou->revisi)
-                            <div class="mb-2">
-                                <strong>Keterangan Revisi</strong>
-                                <br>
-                                {{ $proposal_mou->revisi }}
-                            </div>
-                        @endif
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm btn-flat"

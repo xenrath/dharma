@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Proposal;
 use App\Models\ProposalRevisi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProposalPendanaanController extends Controller
@@ -13,8 +14,9 @@ class ProposalPendanaanController extends Controller
     public function index()
     {
         $proposals = Proposal::where(function ($query) {
-            $query->where('status', 'setuju');
+            $query->where('status', 'setuju1');
             $query->orWhere('status', 'revisi2');
+            $query->orWhere('status', 'pendanaan');
         })
             ->select(
                 'id',
@@ -27,6 +29,7 @@ class ProposalPendanaanController extends Controller
                 'jenis_pendanaan_id',
                 'dana_sumber',
                 'dana_usulan',
+                'dana_setuju',
                 'file',
                 'mahasiswas',
                 'peninjau_id',
@@ -59,20 +62,24 @@ class ProposalPendanaanController extends Controller
             alert()->error('Error', 'Gagal mengirim revisi Proposal!');
             return back()->withInput()->withErrors($validator->errors())->with('id', $id);
         }
+        //
+        $proposal_revisi = ProposalRevisi::where([
+            ['proposal_id', $id],
+            ['status', 'revisi2'],
+            ['is_aktif', true],
+        ])->first();
         // 
-        $proposal_revisis = ProposalRevisi::where('proposal_id', $id)->get();
-        if (count($proposal_revisis)) {
-            foreach ($proposal_revisis as $proposal_revisi) {
-                ProposalRevisi::where('id', $proposal_revisi->id)->update([
-                    'status' => false,
-                ]);
-            }
+        if ($proposal_revisi) {
+            ProposalRevisi::where('id', $proposal_revisi->id)->update([
+                'is_aktif' => false,
+            ]);
         }
-        // 
+        //  
         $revisi = ProposalRevisi::create([
             'user_id' => auth()->user()->id,
             'proposal_id' => $id,
             'keterangan' => $request->keterangan,
+            'status' => 'revisi2'
         ]);
         // 
         if (!$revisi) {
@@ -120,16 +127,18 @@ class ProposalPendanaanController extends Controller
             return back()->withInput()->withErrors($validator->errors())->with('id', $id);
         }
         // 
-        $revisi = ProposalRevisi::where([
+        $proposal_revisi = ProposalRevisi::where([
             ['proposal_id', $id],
-            ['status', true]
+            ['status', 'revisi2'],
+            ['is_aktif', true],
         ])->first();
         // 
-        if ($revisi) {
-            ProposalRevisi::where('id', $revisi->id)->update([
-                'status' => false,
+        if ($proposal_revisi) {
+            ProposalRevisi::where('id', $proposal_revisi->id)->update([
+                'is_aktif' => false,
             ]);
-            $file = $revisi->file;
+            Storage::disk('local')->delete('public/uploads/' . Proposal::where('id', $id)->value('file'));
+            $file = $proposal_revisi->file;
         } else {
             $file = Proposal::where('id', $id)->value('file');
         }
@@ -145,13 +154,28 @@ class ProposalPendanaanController extends Controller
             return back();
         }
         // 
+        $proposal_revisis = ProposalRevisi::where([
+            ['proposal_id', $id],
+            ['status', 'revisi2'],
+        ])->get();
+        // 
+        if (count($proposal_revisis)) {
+            foreach ($proposal_revisis as $revisi) {
+                $revisi_file = ProposalRevisi::where('id', $revisi->id)->value('file');
+                if ($revisi->file != $revisi_file) {
+                    Storage::disk('local')->delete('public/uploads/' . $file);
+                }
+                ProposalRevisi::where('id', $revisi->id)->delete();
+            }
+        }
+        // 
         $message_dosen = "SIDHARMA LPPM"  . PHP_EOL;
         $message_dosen .= "----------------------------------"  . PHP_EOL;
         $message_dosen .= "*Operator* menyetujui laporan proposal Anda" . PHP_EOL;
         $message_dosen .= "----------------------------------"  . PHP_EOL;
         $message_dosen .= "Lihat daftar proposal" . PHP_EOL;
         $message_dosen .= url('dosen/proposal');
-        // 
+        //  
         // $user_id = Proposal::where('id', $id)->value('user_id');
         // $telp = User::where('id', $user_id)->value('telp');
         // if ($telp) {

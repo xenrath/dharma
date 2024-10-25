@@ -75,27 +75,22 @@
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $proposal->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                @php
-                                                    $proposal_mou = \App\Models\ProposalMou::where(
-                                                        'proposal_id',
-                                                        $proposal->id,
-                                                    )->first();
-                                                @endphp
-                                                @if ($proposal_mou)
-                                                    <button type="button" class="btn btn-warning btn-sm btn-flat btn-block"
-                                                        data-toggle="modal" data-target="#modal-revisi-{{ $proposal->id }}">
-                                                        <i class="fas fa-undo"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary btn-sm btn-flat btn-block"
-                                                        data-toggle="modal" data-target="#modal-setuju-{{ $proposal->id }}">
-                                                        <i class="fas fa-check"></i>
-                                                    </button>
-                                                @else
-                                                    <button type="button"
-                                                        class="btn btn-secondary btn-sm btn-flat btn-block"
-                                                        data-toggle="modal" data-target="#modal-mou-{{ $proposal->id }}">
-                                                        <i class="fas fa-file-signature"></i>
-                                                    </button>
+                                                @if ($proposal->status == 'mou')
+                                                    @if ($proposal->mou)
+                                                        <button type="button"
+                                                            class="btn btn-primary btn-sm btn-flat btn-block"
+                                                            data-toggle="modal"
+                                                            data-target="#modal-setuju-{{ $proposal->id }}">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    @else
+                                                        <button type="button"
+                                                            class="btn btn-secondary btn-sm btn-flat btn-block"
+                                                            data-toggle="modal"
+                                                            data-target="#modal-mou-{{ $proposal->id }}">
+                                                            <i class="fas fa-file-signature"></i>
+                                                        </button>
+                                                    @endif
                                                 @endif
                                             </td>
                                         </tr>
@@ -243,7 +238,21 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                        @if ($proposal->mou)
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>MOU Proposal</strong>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
+                                        class="btn btn-info btn-xs btn-flat" target="_blank">
+                                        Lihat MOU
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <strong>Reviewer</strong>
@@ -263,14 +272,15 @@
                                 </a>
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         @if ($proposal->status == 'mou')
                             <div class="alert alert-light text-center rounded-0 mb-2">
                                 <span class="text-muted">- Menunggu Anda membuat MOU Proposal -</span>
                             </div>
                         @else
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Menunggu Dosen mengunggah File Persetujuan MOU -</span>
+                                <span class="text-muted">- Menunggu persetujuan dari Ka. LPPM -</span>
                             </div>
                         @endif
                     </div>
@@ -281,9 +291,6 @@
                 </div>
             </div>
         </div>
-        @php
-            $proposal_mou = \App\Models\ProposalMou::where('proposal_id', $proposal->id)->first();
-        @endphp
         <div class="modal fade" id="modal-mou-{{ $proposal->id }}">
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
@@ -298,111 +305,33 @@
                         @csrf
                         @method('PUT')
                         <div class="modal-body">
-                            @if ($proposal_mou)
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Menunggu Dosen mengunggah persetujuan MOU -</span>
-                                </div>
-                                <hr class="my-2">
-                                <div class="mb-2">
-                                    <strong>File Draft MOU</strong>
-                                    <br>
-                                    <a href="{{ asset('storage/uploads/' . $proposal_mou->draft) }}"
-                                        class="btn btn-secondary btn-xs btn-flat" target="_blank">
-                                        Lihat Draft MOU
-                                    </a>
+                            @if (!$proposal->user->nipy)
+                                <div class="alert alert-light rounded-0 mb-2">
+                                    <div class="mb-2">
+                                        <span class="text-danger">
+                                            <i class="fas fa-exclamation"></i>
+                                            Dosen belum menambahkan NIPY
+                                        </span>
+                                        <br>
+                                        <span class="text-muted">Hubungi Dosen untuk menambahkan di Menu Profile</span>
+                                    </div>
+                                    @if ($proposal->user->telp)
+                                        <a href="{{ url('hubungi/' . $proposal->user->telp) }}"
+                                            class="btn btn-success btn-sm btn-flat" style="text-decoration: none;"
+                                            target="_blank">
+                                            <i class="fab fa-whatsapp"></i>
+                                            Hubungi
+                                        </a>
+                                    @endif
                                 </div>
                             @else
-                                @if (!$proposal->user->nipy)
-                                    <div class="alert alert-light rounded-0 mb-2">
-                                        <div class="mb-2">
-                                            <span class="text-danger">
-                                                <i class="fas fa-exclamation"></i>
-                                                Dosen belum menambahkan NIPY
-                                            </span>
-                                            <br>
-                                            <span class="text-muted">Hubungi Dosen untuk menambahkan di Menu Profile</span>
-                                        </div>
-                                        @if ($proposal->user->telp)
-                                            <a href="{{ url('hubungi/' . $proposal->user->telp) }}"
-                                                class="btn btn-success btn-sm btn-flat" style="text-decoration: none;"
-                                                target="_blank">
-                                                <i class="fab fa-whatsapp"></i>
-                                                Hubungi
-                                            </a>
-                                        @endif
-                                    </div>
-                                @else
-                                    <div class="form-group mb-2">
-                                        <label for="nomor">Nomor Surat</label>
-                                        <input type="text"
-                                            class="form-control rounded-0 @if (session('id') == $proposal->id) @error('nomor') is-invalid @enderror @endif"
-                                            id="nomor" name="nomor" value="{{ old('nomor') }}">
-                                        @if (session('id') == $proposal->id)
-                                            @error('nomor')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        @endif
-                                    </div>
-                                @endif
-                            @endif
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-sm btn-flat"
-                                data-dismiss="modal">Tutup</button>
-                            @if ($proposal->user->nipy)
-                                @if (!$proposal_mou)
-                                    <button type="submit" class="btn btn-primary btn-sm btn-flat">Buat MOU</button>
-                                @endif
-                            @endif
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="modal-revisi-{{ $proposal->id }}">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Revisi Proposal</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form action="{{ url('operator/proposal-mou/perbaikan/' . $proposal->id) }}" method="POST">
-                        @csrf
-                        <div class="modal-body">
-                            <div class="mb-2">
-                                <strong>File Persetujuan MOU</strong>
-                                <br>
-                                @if ($proposal_mou->file)
-                                    <a href="{{ asset('storage/uploads/' . $proposal_mou->file) }}" target="_blank"
-                                        class="btn btn-secondary btn-xs btn-flat">
-                                        Lihat File
-                                    </a>
-                                @else
-                                    <button type="button" class="btn btn-default btn-xs btn-flat"
-                                        style="pointer-events: none;">
-                                        File belum diunggah
-                                    </button>
-                                @endif
-                            </div>
-                            @if ($proposal_mou->revisi)
-                                <div class="mb-2">
-                                    <strong>Revisi Sebelumnya</strong>
-                                    <br>
-                                    {{ $proposal_mou->revisi ?? '-' }}
-                                </div>
-                            @endif
-                            @if ($proposal_mou->file)
-                                <div class="form-group my-2">
-                                    <label for="revisi">Keterangan Revisi</label>
-                                    <textarea
-                                        class="form-control rounded-0 @if (session('id') == $proposal->id) @error('revisi') is-invalid @enderror @endif"
-                                        name="revisi" id="revisi" cols="30" rows="4">{{ old('revisi') }}</textarea>
+                                <div class="form-group mb-2">
+                                    <label for="nomor">Nomor Surat</label>
+                                    <input type="text"
+                                        class="form-control rounded-0 @if (session('id') == $proposal->id) @error('nomor') is-invalid @enderror @endif"
+                                        id="nomor" name="nomor" value="{{ old('nomor') }}">
                                     @if (session('id') == $proposal->id)
-                                        @error('revisi')
+                                        @error('nomor')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
                                             </div>
@@ -411,20 +340,12 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="modal-body border-top">
-                            <div class="mb-2">
-                                <strong>File Draft MOU</strong>
-                                <br>
-                                <a href="{{ asset('storage/uploads/' . $proposal_mou->draft) }}" target="_blank"
-                                    class="btn btn-secondary btn-xs btn-flat">
-                                    Lihat Draft
-                                </a>
-                            </div>
-                        </div>
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default btn-sm btn-flat"
                                 data-dismiss="modal">Tutup</button>
-                            <button type="submit" class="btn btn-warning btn-sm btn-flat">Revisi</button>
+                            @if ($proposal->user->nipy)
+                                <button type="submit" class="btn btn-primary btn-sm btn-flat">Buat MOU</button>
+                            @endif
                         </div>
                     </form>
                 </div>
@@ -434,19 +355,19 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Konfirmasi Proposal</h4>
+                        <h4 class="modal-title">Konfirmasi MOU</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Yakin konfirmasi MOU Proposal dari <strong>{{ $proposal->user->nama }}</strong>?
+                        Yakin konfirmasi Proposal MOU dari <strong>{{ $proposal->user->nama }}</strong>?
                     </div>
                     <div class="modal-body border-top">
                         <div class="mb-2">
                             <strong>File Persetujuan MOU</strong>
                             <br>
-                            <a href="{{ asset('storage/uploads/' . $proposal_mou->file) }}"
+                            <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
                                 class="btn btn-secondary btn-xs btn-flat" target="_blank">
                                 Lihat File
                             </a>

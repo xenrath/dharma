@@ -9,7 +9,7 @@ class ProposalRiwayatController extends Controller
 {
     public function index()
     {
-        $proposals = Proposal::where('status', 'pendanaan')
+        $proposals = Proposal::where('status', 'setuju2')
             ->orWhere('status', 'selesai')
             ->select(
                 'id',
@@ -27,6 +27,7 @@ class ProposalRiwayatController extends Controller
                 'mahasiswas',
                 'peninjau_id',
                 'jadwal_id',
+                'mou',
                 'status',
             )
             ->with('user:id,nama')
@@ -38,10 +39,6 @@ class ProposalRiwayatController extends Controller
                 $query->with('user:id,nama');
             })
             ->with('peninjau:id,nama')
-            ->with('proposal_revisis', function ($query) {
-                $query->select('proposal_id', 'user_id', 'keterangan', 'file');
-                $query->orderByDesc('id');
-            })
             ->orderByDesc('id')
             ->paginate(10);
 

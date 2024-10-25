@@ -26,6 +26,7 @@ class ProposalRiwayatController extends Controller
                 'mahasiswas',
                 'peninjau_id',
                 'jadwal_id',
+                'mou',
                 'status',
             )
             ->with('user:id,nama')
@@ -39,10 +40,6 @@ class ProposalRiwayatController extends Controller
                     $query->select('id', 'nama');
                     $query->withTrashed();
                 });
-            })
-            ->with('proposal_revisis', function ($query) {
-                $query->select('proposal_id', 'user_id', 'file', 'keterangan');
-                $query->orderByDesc('id');
             })
             ->orderByDesc('id')
             ->paginate(10);

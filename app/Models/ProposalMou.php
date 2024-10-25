@@ -15,8 +15,6 @@ class ProposalMou extends Model
         'tanggal',
         'draft',
         'file',
-        'revisi',
-        'status',
     ];
 
     public function proposal()

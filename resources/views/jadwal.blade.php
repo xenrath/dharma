@@ -182,15 +182,27 @@
         </tr>
     </table>
     <br><br>
-    <div style="text-align: right">
+    <div style="text-align: right;">
         <div style="display: inline-flex; text-align: left;">
-            Kepala LPPM
-            <br>
-            Universitas Bhamada Slawi
-            <br><br><br><br><br>
-            <span style="text-decoration: underline;">{{ $ketua->nama }}</span>
-            <br>
-            NIPY: {{ $ketua->nipy }}
+            <img src="{{ public_path('storage/uploads/asset/stempel.png') }}"
+                style="max-width: 140px; max-height: 140px; transform: rotate(-2deg); position: absolute; z-index: -1; left: -60px; opacity: 0.7;"
+                alt="Stempel">
+            <div style="margin-bottom: 4px">
+                <span>Kepala LPPM</span>
+                <br>
+                <span>Universitas Bhamada Slawi,</span>
+            </div>
+            @if ($ketua->ttd)
+                <img src="{{ public_path('storage/uploads/' . $ketua->ttd) }}"
+                    style="max-width: 120px; max-height: 120px; transform: rotate(-10deg);" alt="Ka. LPPM">
+            @else
+                <br><br><br>
+            @endif
+            <div style="margin-bottom: 4px">
+                <span style="text-decoration: underline">{{ $ketua->nama }}</span>
+                <br>
+                <span>NIPY: {{ $ketua->nipy }}</span>
+            </div>
         </div>
     </div>
     <div style="position: absolute; bottom: 0px;">
@@ -381,13 +393,25 @@
     <br><br>
     <div style="text-align: right">
         <div style="display: inline-flex; text-align: left;">
-            Kepala LPPM
-            <br>
-            Universitas Bhamada Slawi
-            <br><br><br><br><br>
-            <span style="text-decoration: underline;">{{ $ketua->nama }}</span>
-            <br>
-            NIPY: {{ $ketua->nipy }}
+            <img src="{{ public_path('storage/uploads/asset/stempel.png') }}"
+                style="max-width: 140px; max-height: 140px; transform: rotate(-2deg); position: absolute; z-index: -1; left: -60px; opacity: 0.7;"
+                alt="Stempel">
+            <div style="margin-bottom: 4px">
+                <span>Kepala LPPM</span>
+                <br>
+                <span>Universitas Bhamada Slawi,</span>
+            </div>
+            @if ($ketua->ttd)
+                <img src="{{ public_path('storage/uploads/' . $ketua->ttd) }}"
+                    style="max-width: 120px; max-height: 120px; transform: rotate(-10deg);" alt="Ka. LPPM">
+            @else
+                <br><br><br>
+            @endif
+            <div style="margin-bottom: 4px">
+                <span style="text-decoration: underline">{{ $ketua->nama }}</span>
+                <br>
+                <span>NIPY: {{ $ketua->nipy }}</span>
+            </div>
         </div>
     </div>
 </body>

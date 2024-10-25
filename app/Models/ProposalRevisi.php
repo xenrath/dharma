@@ -14,6 +14,8 @@ class ProposalRevisi extends Model
         'proposal_id',
         'keterangan',
         'file',
+        'status',
+        'is_aktif',
     ];
 
     public function user()

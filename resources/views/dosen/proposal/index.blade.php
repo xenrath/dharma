@@ -33,6 +33,9 @@
                     <div class="card-header">
                         <h3 class="card-title">Data Proposal</h3>
                         <div class="text-right">
+                            <a href="{{ url('dosen/proposal/riwayat') }}" class="btn btn-secondary btn-sm btn-flat">
+                                Riwayat Proposal
+                            </a>
                             <button type="button" class="btn btn-primary btn-sm btn-flat" data-toggle="modal"
                                 data-target="#modal-buat">
                                 Buat Proposal
@@ -76,7 +79,7 @@
                                                     <br>
                                                     {{ $proposal->peninjau->nama }}
                                                 @endif
-                                                @if ($proposal->status == 'selesai')
+                                                @if ($proposal->status == 'mou' || $proposal->status == 'setuju2')
                                                     <hr class="my-2">
                                                     <strong>Dana Disetujui:</strong>
                                                     <br>
@@ -123,11 +126,12 @@
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     @endif
-                                                    @if ($proposal->status == 'revisi1' || $proposal->status == 'revisi2')
+                                                    @if ($proposal->status == 'revisi1')
                                                         @php
                                                             $revisi = \App\Models\ProposalRevisi::where([
                                                                 ['proposal_id', $proposal->id],
-                                                                ['status', true],
+                                                                ['status', 'revisi1'],
+                                                                ['is_aktif', true],
                                                             ])
                                                                 ->orderByDesc('id')
                                                                 ->first();
@@ -135,7 +139,7 @@
                                                         <button type="button"
                                                             class="btn btn-warning btn-sm btn-flat btn-block"
                                                             data-toggle="modal"
-                                                            data-target="#modal-revisi-{{ $proposal->id }}">
+                                                            data-target="#modal-revisi1-{{ $proposal->id }}">
                                                             @if ($revisi->file)
                                                                 <i class="fas fa-clock"></i>
                                                             @else
@@ -143,27 +147,39 @@
                                                             @endif
                                                         </button>
                                                     @endif
-                                                    @if ($proposal->status == 'mou')
+                                                    @if ($proposal->status == 'revisi2')
                                                         @php
-                                                            $proposal_mou = \App\Models\ProposalMou::where(
-                                                                'proposal_id',
-                                                                $proposal->id,
-                                                            )->first();
+                                                            $revisi = \App\Models\ProposalRevisi::where([
+                                                                ['proposal_id', $proposal->id],
+                                                                ['status', 'revisi2'],
+                                                                ['is_aktif', true],
+                                                            ])
+                                                                ->orderByDesc('id')
+                                                                ->first();
                                                         @endphp
                                                         <button type="button"
                                                             class="btn btn-warning btn-sm btn-flat btn-block"
                                                             data-toggle="modal"
-                                                            data-target="#modal-mou-{{ $proposal->id }}">
-                                                            <i class="fas fa-upload"></i>
+                                                            data-target="#modal-revisi2-{{ $proposal->id }}">
+                                                            @if ($revisi->file)
+                                                                <i class="fas fa-clock"></i>
+                                                            @else
+                                                                <i class="fas fa-upload"></i>
+                                                            @endif
                                                         </button>
                                                     @endif
-                                                @endif
-                                                @if ($proposal->status == 'pendanaan' || $proposal->status == 'selesai')
-                                                    <button type="button" class="btn btn-warning btn-sm btn-flat btn-block"
-                                                        data-toggle="modal"
-                                                        data-target="#modal-revisi-list-{{ $proposal->id }}">
-                                                        <i class="fas fa-clipboard-list"></i>
-                                                    </button>
+                                                    @if ($proposal->status == 'mou' || $proposal->status == 'setuju2')
+                                                        <button type="button"
+                                                            class="btn btn-warning btn-sm btn-flat btn-block"
+                                                            data-toggle="modal"
+                                                            data-target="#modal-mou-{{ $proposal->id }}">
+                                                            @if ($proposal->mou)
+                                                                <i class="fas fa-clock"></i>
+                                                            @else
+                                                                <i class="fas fa-upload"></i>
+                                                            @endif
+                                                        </button>
+                                                    @endif
                                                 @endif
                                             </td>
                                         </tr>
@@ -350,19 +366,6 @@
                                 @endif
                             </div>
                         </div>
-                        @if ($proposal->mou)
-                            <div class="row mb-2">
-                                <div class="col-md-6">
-                                    <strong>MOU Proposal</strong>
-                                </div>
-                                <div class="col-md-6">
-                                    <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
-                                        class="btn btn-info btn-xs btn-flat" target="_blank">
-                                        Lihat File
-                                    </a>
-                                </div>
-                            </div>
-                        @endif
                     </div>
                     @if ($proposal->jadwal_id)
                         <div class="modal-body border-top">
@@ -408,7 +411,7 @@
                     <div class="modal-body border-top">
                         @if ($proposal->status == 'menunggu')
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Menunggu operator menetapkan jadwal -</span>
+                                <span class="text-muted">- Menunggu Operator menetapkan jadwal -</span>
                             </div>
                         @endif
                         @if ($proposal->status == 'proses')
@@ -418,17 +421,17 @@
                         @endif
                         @if ($proposal->status == 'revisi1')
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Proposal dalam tahap revisi oleh reviewer -</span>
+                                <span class="text-muted">- Proposal dalam tahap revisi oleh Reviewer -</span>
                             </div>
                         @endif
-                        @if ($proposal->status == 'setuju')
+                        @if ($proposal->status == 'setuju1')
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Proposal telah disetujui oleh reviewer -</span>
+                                <span class="text-muted">- Proposal telah disetujui oleh Reviewer -</span>
                             </div>
                         @endif
                         @if ($proposal->status == 'revisi2')
                             <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Proposal dalam tahap revisi oleh operator -</span>
+                                <span class="text-muted">- Proposal dalam tahap revisi oleh Operator -</span>
                             </div>
                         @endif
                         @if ($proposal->status == 'pendanaan')
@@ -439,11 +442,6 @@
                         @if ($proposal->status == 'mou' || $proposal->status == 'setuju2')
                             <div class="alert alert-light text-center rounded-0 mb-2">
                                 <span class="text-muted">- Proposal dalam tahap persetujuan MOU -</span>
-                            </div>
-                        @endif
-                        @if ($proposal->status == 'selesai')
-                            <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Proposal telah disetujui -</span>
                             </div>
                         @endif
                     </div>
@@ -484,19 +482,24 @@
                     </div>
                 </div>
             @endif
-            @if ($proposal->status == 'revisi1' || $proposal->status == 'revisi2')
+            @if ($proposal->status == 'revisi1')
                 @php
-                    $revisi = \App\Models\ProposalRevisi::where([['proposal_id', $proposal->id], ['status', true]])
+                    $revisi = \App\Models\ProposalRevisi::where([
+                        ['proposal_id', $proposal->id],
+                        ['status', 'revisi1'],
+                        ['is_aktif', true],
+                    ])
                         ->orderByDesc('id')
                         ->first();
                     $proposal_revisis = \App\Models\ProposalRevisi::where([
                         ['proposal_id', $proposal->id],
-                        ['status', false],
+                        ['status', 'revisi1'],
+                        ['is_aktif', false],
                     ])
                         ->orderByDesc('id')
                         ->get();
                 @endphp
-                <div class="modal fade" id="modal-revisi-{{ $proposal->id }}">
+                <div class="modal fade" id="modal-revisi1-{{ $proposal->id }}">
                     <div class="modal-dialog">
                         <div class="modal-content rounded-0">
                             <div class="modal-header">
@@ -511,16 +514,109 @@
                                 <div class="modal-body">
                                     @if ($revisi->file)
                                         <div class="alert alert-light text-center rounded-0 mb-2">
-                                            <span class="text-muted">- Menunggu respon dari
-                                                {{ $revisi->user_id == $proposal->peninjau_id ? 'Reviewer' : 'Operator' }}
-                                                -</span>
+                                            <span class="text-muted">- Menunggu respon dari Reviewer -</span>
+                                        </div>
+                                    @endif
+                                    <div class="mb-2">
+                                        <strong>
+                                            Revisi
+                                            {{ count($proposal_revisis) + 1 }}
+                                            -
+                                            {{ $revisi->user_id == $proposal->peninjau_id ? 'Reviewer' : 'Operator' }}
+                                        </strong>
+                                        <br>
+                                        <span>{{ $revisi->keterangan }}</span>
+                                    </div>
+                                    @if ($revisi->file)
+                                        <a href="{{ asset('storage/uploads/' . $revisi->file) }}" target="_blank"
+                                            class="btn btn-secondary btn-xs btn-flat">
+                                            Lihat Laporan
+                                        </a>
+                                    @else
+                                        <div class="form-group mb-2">
+                                            <label for="file">File Revisi</label>
+                                            <input type="file"
+                                                class="form-control rounded-0 @if (session('id') == $revisi->id) @error('file') is-invalid @enderror @endif"
+                                                id="file" name="file" accept=".pdf">
+                                            @if (session('id') == $revisi->id)
+                                                @error('file')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                                @if (count($proposal_revisis))
+                                    <div class="modal-body border-top">
+                                        @foreach ($proposal_revisis as $key => $proposal_revisi)
+                                            <div class="mb-2">
+                                                <strong>
+                                                    Revisi {{ count($proposal_revisis) - $key }} - Reviewer
+                                                </strong>
+                                                <br>
+                                                <span>{{ $proposal_revisi->keterangan }}</span>
+                                                <br>
+                                                @if ($proposal_revisi->file)
+                                                    <a href="{{ asset('storage/uploads/' . $proposal_revisi->file) }}"
+                                                        target="_blank" class="btn btn-secondary btn-xs btn-flat">
+                                                        Lihat Laporan
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default btn-sm btn-flat"
+                                        data-dismiss="modal">Tutup</button>
+                                    @if (!$revisi->file)
+                                        <button type="submit" class="btn btn-primary btn-sm btn-flat">Kirim</button>
+                                    @endif
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            @if ($proposal->status == 'revisi2')
+                @php
+                    $revisi = \App\Models\ProposalRevisi::where([
+                        ['proposal_id', $proposal->id],
+                        ['status', 'revisi2'],
+                        ['is_aktif', true],
+                    ])
+                        ->orderByDesc('id')
+                        ->first();
+                    $proposal_revisis = \App\Models\ProposalRevisi::where([
+                        ['proposal_id', $proposal->id],
+                        ['status', 'revisi2'],
+                        ['is_aktif', false],
+                    ])
+                        ->orderByDesc('id')
+                        ->get();
+                @endphp
+                <div class="modal fade" id="modal-revisi2-{{ $proposal->id }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content rounded-0">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Revisi Proposal</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form action="{{ url('dosen/proposal/perbaikan/' . $revisi->id) }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="modal-body">
+                                    @if ($revisi->file)
+                                        <div class="alert alert-light text-center rounded-0 mb-2">
+                                            <span class="text-muted">- Menunggu respon dari Operator -</span>
                                         </div>
                                     @endif
                                     <strong>
-                                        Revisi
-                                        {{ count($proposal_revisis) + 1 }}
-                                        -
-                                        {{ $revisi->user_id == $proposal->peninjau_id ? 'Reviewer' : 'Operator' }}
+                                        Revisi {{ count($proposal_revisis) + 1 }} - Operator
                                     </strong>
                                     <br>
                                     <span>{{ $revisi->keterangan }}</span>
@@ -581,7 +677,7 @@
                     </div>
                 </div>
             @endif
-            @if ($proposal->status == 'mou')
+            @if ($proposal->status == 'mou' || $proposal->status == 'setuju2')
                 @php
                     $proposal_mou = \App\Models\ProposalMou::where('proposal_id', $proposal->id)->first();
                 @endphp
@@ -598,32 +694,34 @@
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="modal-body">
+                                    @if ($proposal->mou)
+                                        <div class="alert alert-light text-center rounded-0 mb-2">
+                                            <span class="text-muted">- Menunggu persetujuan MOU -</span>
+                                        </div>
+                                    @endif
                                     <div class="form-group mb-2">
-                                        <label for="file">
-                                            File Persetujuan MOU
-                                            @if ($proposal_mou->file)
-                                                <small>(isi jika ingin diubah)</small>
-                                            @endif
-                                        </label>
-                                        <input type="file"
-                                            class="form-control rounded-0 @if (session('id') == $proposal->id) @error('file') is-invalid @enderror @endif"
-                                            id="file" name="file" accept=".pdf">
-                                        @if (session('id') == $proposal->id)
-                                            @error('file')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
+                                        <strong>File Persetujuan MOU</strong>
+                                        @if ($proposal->mou)
+                                            <div>
+                                                <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
+                                                    class="btn btn-secondary btn-xs btn-flat" target="_blank">
+                                                    Lihat File
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div class="mt-2">
+                                                <input type="file"
+                                                    class="form-control rounded-0 @if (session('id') == $proposal->id) @error('file') is-invalid @enderror @endif"
+                                                    id="file" name="file" accept=".pdf">
+                                                @if (session('id') == $proposal->id)
+                                                    @error('file')
+                                                        <div class="invalid-feedback">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                @endif
+                                            </div>
                                         @endif
-                                    </div>
-                                    <div class="text-right mb-2">
-                                        <a href="{{ asset('storage/uploads/' . $proposal_mou->file) }}"
-                                            class="btn btn-secondary btn-xs btn-flat" target="_blank">Lihat File</a>
-                                    </div>
-                                    <div class="mb-2">
-                                        <strong>Keterangan Revisi</strong>
-                                        <br>
-                                        {{ $proposal_mou->revisi }}
                                     </div>
                                 </div>
                                 <div class="modal-body border-top">
@@ -650,7 +748,7 @@
                                                         Beberapa tahapan untuk melakukan persetujuan MOU Proposal:
                                                     </span>
                                                     <ol class="px-3 mb-2">
-                                                        <li>Unduh <u>File Draft MOU Proposal</u> terlebih dahulu</li>
+                                                        <li>Unduh <u>File Draft MOU</u> terlebih dahulu</li>
                                                         <li>
                                                             Print halaman terakhir dari File Draft (yang terdapat tanda
                                                             tangan Ka.
@@ -679,61 +777,15 @@
                                 <div class="modal-footer justify-content-between">
                                     <button type="button" class="btn btn-default btn-sm btn-flat"
                                         data-dismiss="modal">Tutup</button>
-                                    <button type="submit" class="btn btn-primary btn-sm btn-flat">Kirim</button>
+                                    @if (!$proposal->mou)
+                                        <button type="submit" class="btn btn-primary btn-sm btn-flat">Kirim</button>
+                                    @endif
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             @endif
-        @endif
-        @if ($proposal->status == 'pendanaan' || $proposal->status == 'selesai')
-            <div class="modal fade" id="modal-revisi-list-{{ $proposal->id }}">
-                <div class="modal-dialog">
-                    <div class="modal-content rounded-0">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Revisi Proposal</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body border-top">
-                            @if (count($proposal->proposal_revisis))
-                                @foreach ($proposal->proposal_revisis as $key => $proposal_revisi)
-                                    <div class="mb-2">
-                                        <strong>
-                                            Revisi
-                                            {{ count($proposal->proposal_revisis) - $key }}
-                                            -
-                                            {{ $proposal_revisi->user_id == $proposal->peninjau_id ? 'Reviewer' : 'Operator' }}
-                                        </strong>
-                                        <br>
-                                        <span>{{ $proposal_revisi->keterangan }}</span>
-                                        <br>
-                                        @if ($proposal_revisi->file)
-                                            <a href="{{ asset('storage/uploads/' . $proposal_revisi->file) }}"
-                                                target="_blank" class="btn btn-secondary btn-xs btn-flat">
-                                                Lihat Laporan
-                                            </a>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            @else
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span>
-                                        Proposal disetujui <strong>tanpa</strong> revisi
-                                        <i class="far fa-thumbs-up"></i>
-                                    </span>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default btn-sm btn-flat"
-                                data-dismiss="modal">Tutup</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         @endif
     @endforeach
 @endsection

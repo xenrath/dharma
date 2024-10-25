@@ -21,9 +21,12 @@ class ProposalController extends Controller
 {
     public function index()
     {
-        $proposals = Proposal::where('user_id', auth()->user()->id)
-            ->orWhereHas('personels', function ($query) {
+        $proposals = Proposal::where('status', '!=', 'selesai')
+            ->where(function ($query) {
                 $query->where('user_id', auth()->user()->id);
+                $query->orWhereHas('personels', function ($query) {
+                    $query->where('user_id', auth()->user()->id);
+                });
             })
             ->select(
                 'id',
@@ -124,8 +127,15 @@ class ProposalController extends Controller
         }
         // 
         $waktu = Carbon::now()->format('ymdhis');
-        $file = 'proposal/proposal_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $random = rand(10, 99);
+        $file = 'proposal/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
         $request->file->storeAs('public/uploads/', $file);
+        // 
+        if ($request->mahasiswas) {
+            $mahasiswas = array_filter($request->mahasiswas);
+        } else {
+            $mahasiswas = array();
+        }
         // 
         $proposal = Proposal::create([
             'jenis' => 'penelitian',
@@ -137,7 +147,7 @@ class ProposalController extends Controller
             'dana_sumber' => $request->dana_sumber,
             'dana_usulan' => $request->dana_usulan,
             'file' => $file,
-            'mahasiswas' => array_filter($request->mahasiswas),
+            'mahasiswas' => $mahasiswas,
             'status' => 'menunggu',
         ]);
         // 
@@ -217,7 +227,8 @@ class ProposalController extends Controller
         }
         // 
         $waktu = Carbon::now()->format('ymdhis');
-        $file = 'proposal/proposal_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $random = rand(10, 99);
+        $file = 'proposal/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
         $request->file->storeAs('public/uploads/', $file);
         // 
         $proposal = Proposal::create([
@@ -347,7 +358,8 @@ class ProposalController extends Controller
         if ($request->file) {
             Storage::disk('local')->delete('public/uploads/' . Proposal::where('id', $id)->value('file'));
             $waktu = Carbon::now()->format('ymdhis');
-            $file = 'proposal/proposal_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+            $random = rand(10, 99);
+            $file = 'proposal/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
             $request->file->storeAs('public/uploads/', $file);
         } else {
             $file = Proposal::where('id', $id)->value('file');
@@ -463,7 +475,8 @@ class ProposalController extends Controller
         if ($request->file) {
             Storage::disk('local')->delete('public/uploads/' . Proposal::where('id', $id)->value('file'));
             $waktu = Carbon::now()->format('ymdhis');
-            $file = 'proposal/proposal_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+            $random = rand(10, 99);
+            $file = 'proposal/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
             $request->file->storeAs('public/uploads/', $file);
         } else {
             $file = Proposal::where('id', $id)->value('file');
@@ -557,7 +570,8 @@ class ProposalController extends Controller
         }
         // 
         $waktu = Carbon::now()->format('ymdhis');
-        $file = 'proposal/revisi_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $random = rand(10, 99);
+        $file = 'proposal/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
         $request->file->storeAs('public/uploads/', $file);
         // 
         $revisi = ProposalRevisi::where('id', $id)->update([
@@ -614,28 +628,28 @@ class ProposalController extends Controller
             return back()->withInput()->withErrors($validator->errors())->with('id', $id);
         }
         // 
-        $waktu = Carbon::now()->format('ymdhis');
-        $file = 'proposal/file_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $waktu1 = Carbon::now()->format('ymdhis');
+        $random1 = rand(10, 99);
+        $file = 'proposal/' . $waktu1 . $random1 . '.' . $request->file->getClientOriginalExtension();
         $request->file->storeAs('public/uploads/', $file);
         //
-        $mou_draft = ProposalMou::where('proposal_id', $id)->value('draft');
-        $mou_file = ProposalMou::where('proposal_id', $id)->value('file');
-        // 
-        Storage::disk('local')->delete('public/uploads/' . $mou_file);
+        $draft = ProposalMou::where('proposal_id', $id)->value('draft');
         // 
         $merge = PDFMergerFacade::init();
-        $merge->addPDF(public_path('storage/uploads/' . $mou_draft), [1, 2, 3]);
+        $merge->addPDF(public_path('storage/uploads/' . $draft), [1, 2, 3]);
         $merge->addPDF(public_path('storage/uploads/' . $file), [1]);
         $merge->merge();
-        $nama_file = 'proposal/mou_' . $waktu . '.pdf';
+        $waktu2 = Carbon::now()->format('ymdhis');
+        $random2 = rand(10, 99);
+        $nama_file = 'proposal/' . $waktu2 . $random2 . '.pdf';
         $merge->setFileName($nama_file);
         $merge->save(public_path('storage/uploads/' . $nama_file));
         // 
-        $proposal_mou = ProposalMou::where('proposal_id', $id)->update([
-            'file' => $nama_file,
+        $proposal = Proposal::where('id', $id)->update([
+            'mou' => $nama_file,
         ]);
         // 
-        if (!$proposal_mou) {
+        if (!$proposal) {
             alert()->error('Error', 'Gagal mengunggah File Persetujuan!');
             return back();
         }
@@ -736,6 +750,58 @@ class ProposalController extends Controller
     //     $oMerger->setFileName('example.pdf');
     //     return $oMerger->stream();
     // }
+
+    public function riwayat()
+    {
+        $proposals = Proposal::where('status', 'selesai')
+            ->where(function ($query) {
+                $query->where('user_id', auth()->user()->id);
+                $query->orWhereHas('personels', function ($query) {
+                    $query->where('user_id', auth()->user()->id);
+                });
+            })
+            ->select(
+                'id',
+                'jenis',
+                'user_id',
+                'tahun',
+                'judul',
+                'jenis_pendanaan_id',
+                'jenis_penelitian_id',
+                'jenis_pengabdian_id',
+                'dana_sumber',
+                'dana_usulan',
+                'dana_setuju',
+                'file',
+                'mahasiswas',
+                'tanggal',
+                'jam',
+                'peninjau_id',
+                'jadwal_id',
+                'mou',
+                'status',
+            )
+            ->with('user:id,nama')
+            ->with('jenis_pendanaan:id,nama')
+            ->with('jenis_penelitian:id,nama')
+            ->with('jenis_pengabdian:id,nama')
+            ->with('peninjau:id,nama')
+            ->with('personels', function ($query) {
+                $query->select('proposal_id', 'user_id');
+                $query->with('user', function ($query) {
+                    $query->select('id', 'nama');
+                    $query->withTrashed();
+                });
+            })
+            ->with('proposal_revisis', function ($query) {
+                $query->select('proposal_id', 'user_id', 'file', 'keterangan');
+                $query->orderByDesc('id');
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
+        // 
+        return view('dosen.proposal.riwayat', compact('proposals'));
+    }
 
     public function terbilang($value)
     {

@@ -59,7 +59,8 @@ class PenelitianController extends Controller
         }
         // 
         $waktu = Carbon::now()->format('ymdhis');
-        $file = 'penelitian/' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $random = rand(10, 99);
+        $file = 'penelitian/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
         $request->file->storeAs('public/uploads/', $file);
         // 
         $penelitian = Penelitian::where('id', $id)->update([
@@ -105,7 +106,8 @@ class PenelitianController extends Controller
         }
         // 
         $waktu = Carbon::now()->format('ymdhis');
-        $file = 'penelitian/revisi_' . $waktu . '.' . $request->file->getClientOriginalExtension();
+        $random = rand(10, 99);
+        $file = 'penelitian/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
         $request->file->storeAs('public/uploads/', $file);
         // 
         $revisi = PenelitianRevisi::where('id', $id)->update([

@@ -193,11 +193,11 @@
             <br>
             Universitas Bhamada Slawi
             <br>
-            @if (!$user->ttd)
+            @if ($user->ttd)
                 <img src="{{ public_path('storage/uploads/' . $user->ttd) }}"
-                    style="max-width: 74px; max-height: 74px;">
+                    style="max-width: 120px; max-height: 120px;" alt="PIHAK PERTAMA">
             @else
-                <br><br>
+                <br><br><br>
             @endif
             <br>
             <span style="text-decoration: underline;">{{ $user->nama }}</span>

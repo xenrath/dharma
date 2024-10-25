@@ -216,7 +216,8 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="alert alert-light text-center rounded-0 mb-2">
                             <span class="text-muted">- Menunggu Anda menetapkan jadwal -</span>
                         </div>

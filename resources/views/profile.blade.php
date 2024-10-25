@@ -89,10 +89,10 @@
                                         @endif
                                     </label>
                                     <input type="file"
-                                        class="form-control rounded-0 @error('ttd_test') is-invalid @enderror"
+                                        class="form-control rounded-0 @error('ttd') is-invalid @enderror"
                                         id="ttd" name="ttd" accept="image/png" onchange="getTtd()"
                                         value="{{ old('ttd', $user->ttd) }}">
-                                    @error('ttd_test')
+                                    @error('ttd')
                                         <div class="invalid-feedback">
                                             {{ $message }}
                                         </div>
@@ -112,7 +112,7 @@
                     <form action="{{ url('ttd') }}" method="post" id="form-ttd" enctype="multipart/form-data"
                         target="_blank">
                         @csrf
-                        <input type="text" class="form-control rounded-0" id="nidn-test" name="nidn_test" hidden>
+                        <input type="text" class="form-control rounded-0" id="nipy-test" name="nipy_test" hidden>
                         <input type="file" class="form-control rounded-0" id="ttd-test" name="ttd_test" hidden>
                     </form>
                 @endif
@@ -130,8 +130,8 @@
         }
 
         function showTtd() {
-            var nidn = $('#nidn').val();
-            $('#nidn-test').val(nidn);
+            var nipy = $('#nipy').val();
+            $('#nipy-test').val(nipy);
             $('#form-ttd').submit();
         }
     </script>

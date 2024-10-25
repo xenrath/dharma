@@ -96,6 +96,24 @@
         <!-- /.card -->
     </div>
     @foreach ($proposals as $proposal)
+        @php
+            $revisi = \App\Models\ProposalRevisi::where([
+                ['proposal_id', $proposal->id],
+                ['user_id', auth()->user()->id],
+                ['status', 'revisi1'],
+                ['is_aktif', true],
+            ])
+                ->orderByDesc('id')
+                ->first();
+            $proposal_revisis = \App\Models\ProposalRevisi::where([
+                ['proposal_id', $proposal->id],
+                ['user_id', auth()->user()->id],
+                ['status', 'revisi1'],
+                ['is_aktif', false],
+            ])
+                ->orderByDesc('id')
+                ->get();
+        @endphp
         <div class="modal fade" id="modal-lihat-{{ $proposal->id }}">
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
@@ -202,7 +220,8 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <strong>Tanggal</strong>
@@ -238,7 +257,8 @@
                                 </a>
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         <div class="alert alert-light text-center rounded-0 mb-2">
                             <span class="text-muted">- Menunggu konfirmasi hasil revisi dari Anda -</span>
                         </div>
@@ -250,22 +270,6 @@
                 </div>
             </div>
         </div>
-        @php
-            $revisi = \App\Models\ProposalRevisi::where([
-                ['proposal_id', $proposal->id],
-                ['user_id', auth()->user()->id],
-                ['status', true],
-            ])
-                ->orderByDesc('id')
-                ->first();
-            $proposal_revisis = \App\Models\ProposalRevisi::where([
-                ['proposal_id', $proposal->id],
-                ['user_id', auth()->user()->id],
-                ['status', false],
-            ])
-                ->orderByDesc('id')
-                ->get();
-        @endphp
         <div class="modal fade" id="modal-perbaikan-{{ $proposal->id }}">
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">

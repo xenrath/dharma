@@ -3,13 +3,7 @@
 namespace App\Http\Controllers\Dosen\Ketua;
 
 use App\Http\Controllers\Controller;
-use App\Models\Penelitian;
-use App\Models\PenelitianPersonel;
-use App\Models\Pengabdian;
-use App\Models\PengabdianPersonel;
 use App\Models\Proposal;
-use App\Models\ProposalPersonel;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,6 +12,11 @@ class ProposalPendanaanController extends Controller
     public function index()
     {
         $proposals = Proposal::where('status', 'pendanaan')
+            ->orWhere('status', 'revisi2')
+            ->orWhere(function ($query) {
+                $query->where('status', 'mou');
+                $query->where('mou', null);
+            })
             ->select(
                 'id',
                 'jenis',
@@ -43,13 +42,6 @@ class ProposalPendanaanController extends Controller
             ->with('peninjau:id,nama')
             ->with('personels', function ($query) {
                 $query->select('proposal_id', 'user_id');
-                $query->with('user', function ($query) {
-                    $query->select('id', 'nama');
-                    $query->withTrashed();
-                });
-            })
-            ->with('proposal_revisis', function ($query) {
-                $query->select('proposal_id', 'user_id', 'file', 'keterangan')->orderByDesc('id');
                 $query->with('user', function ($query) {
                     $query->select('id', 'nama');
                     $query->withTrashed();

@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Dosen;
+namespace App\Http\Controllers\Dosen\Peninjau;
 
 use App\Http\Controllers\Controller;
 use App\Models\Proposal;
 use App\Models\ProposalRevisi;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class PeninjauRevisiController extends Controller
+class ProposalRevisiController extends Controller
 {
     public function index()
     {
@@ -67,13 +68,14 @@ class PeninjauRevisiController extends Controller
         // 
         $proposal_revisis = ProposalRevisi::where([
             ['proposal_id', $id],
-            ['status', true],
+            ['status', 'revisi1'],
+            ['is_aktif', true],
         ])->get();
         // 
         if (count($proposal_revisis)) {
             foreach ($proposal_revisis as $proposal_revisi) {
                 ProposalRevisi::where('id', $proposal_revisi->id)->update([
-                    'status' => false,
+                    'is_aktif' => false,
                 ]);
             }
         }
@@ -82,6 +84,7 @@ class PeninjauRevisiController extends Controller
             'user_id' => auth()->user()->id,
             'proposal_id' => $id,
             'keterangan' => $request->keterangan,
+            'status' => 'revisi1',
         ]);
         // 
         if (!$revisi) {
@@ -111,14 +114,18 @@ class PeninjauRevisiController extends Controller
     // ID = PROPOSAL ID
     public function setujui($id)
     {
+        $proposal_file = Proposal::where('id', $id)->value('file');
+        Storage::disk('local')->delete('public/uploads/' . $proposal_file);
+        // 
         $revisi = ProposalRevisi::where([
             ['proposal_id', $id],
-            ['status', true],
+            ['status', 'revisi1'],
+            ['is_aktif', true],
         ])->orderByDesc('id')->first();
         // 
         $proposal = Proposal::where('id', $id)->update([
             'file' => $revisi->file,
-            'status' => 'setuju',
+            'status' => 'setuju1',
         ]);
         // 
         if (!$proposal) {
@@ -128,14 +135,16 @@ class PeninjauRevisiController extends Controller
         // 
         $proposal_revisis = ProposalRevisi::where([
             ['proposal_id', $id],
-            ['status', true],
+            ['status', 'revisi1'],
         ])->get();
         // 
         if (count($proposal_revisis)) {
             foreach ($proposal_revisis as $proposal_revisi) {
-                ProposalRevisi::where('id', $proposal_revisi->id)->update([
-                    'status' => false,
-                ]);
+                $file = ProposalRevisi::where('id', $proposal_revisi->id)->value('file');
+                if ($revisi->file != $file) {
+                    Storage::disk('local')->delete('public/uploads/' . $file);
+                }
+                ProposalRevisi::where('id', $proposal_revisi->id)->delete();
             }
         }
         // 
@@ -158,7 +167,7 @@ class PeninjauRevisiController extends Controller
         $message_operator .= "----------------------------------"  . PHP_EOL;
         $message_operator .= "*Reviewer* telah menyetujui sebuah laporan proposal. Menunggu Anda mengonfirmasi pendanaan." . PHP_EOL;
         $message_operator .= "----------------------------------"  . PHP_EOL;
-        $message_operator .= "Lihat daftar pendanaan" . PHP_EOL;
+        $message_operator .= "Lihat daftar pendanaan proposal" . PHP_EOL;
         $message_operator .= url('operator/proposal-pendanaan');
         // 
         $this->kirim('085328481969', $message_operator);

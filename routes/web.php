@@ -12,6 +12,7 @@ Route::post('profile', [\App\Http\Controllers\HomeController::class, 'profile_pr
 Route::post('ttd', [\App\Http\Controllers\HomeController::class, 'ttd']);
 Route::get('ubah-password', [\App\Http\Controllers\HomeController::class, 'ubah_password']);
 Route::post('ubah-password', [\App\Http\Controllers\HomeController::class, 'ubah_password_proses']);
+Route::get('info', [\App\Http\Controllers\HomeController::class, 'info']);
 // 
 Route::post('ketua-search', [\App\Http\Controllers\HomeController::class, 'ketua_search']);
 Route::get('ketua-set/{id}', [\App\Http\Controllers\HomeController::class, 'ketua_set']);
@@ -101,10 +102,8 @@ Route::middleware('dosen')->prefix('dosen')->group(function () {
     // 
     Route::post('proposal/perbaikan/{id}', [\App\Http\Controllers\Dosen\ProposalController::class, 'perbaikan']);
     Route::post('proposal/mou/{id}', [\App\Http\Controllers\Dosen\ProposalController::class, 'mou']);
-    // Route::get('proposal/mou/{id}', [\App\Http\Controllers\Dosen\ProposalController::class, 'mou']);
+    Route::get('proposal/riwayat', [\App\Http\Controllers\Dosen\ProposalController::class, 'riwayat']);
     Route::resource('proposal', \App\Http\Controllers\Dosen\ProposalController::class);
-    // 
-    Route::get('jadwal/{id}', [\App\Http\Controllers\Dosen\HomeController::class, 'jadwal']);
     // 
     Route::post('penelitian/perbaikan/{id}', [\App\Http\Controllers\Dosen\PenelitianController::class, 'perbaikan']);
     Route::resource('penelitian', \App\Http\Controllers\Dosen\PenelitianController::class);
@@ -119,14 +118,14 @@ Route::middleware('dosen')->prefix('dosen')->group(function () {
     });
     // 
     Route::middleware('peninjau')->prefix('peninjau')->group(function () {
-        Route::post('review/perbaikan/{id}', [\App\Http\Controllers\Dosen\PeninjauReviewController::class, 'perbaikan']);
-        Route::post('review/setujui/{id}', [\App\Http\Controllers\Dosen\PeninjauReviewController::class, 'setujui']);
-        Route::get('review', [\App\Http\Controllers\Dosen\PeninjauReviewController::class, 'index']);
+        Route::post('review/perbaikan/{id}', [\App\Http\Controllers\Dosen\Peninjau\ProposalReviewController::class, 'perbaikan']);
+        Route::post('review/setujui/{id}', [\App\Http\Controllers\Dosen\Peninjau\ProposalReviewController::class, 'setujui']);
+        Route::get('review', [\App\Http\Controllers\Dosen\Peninjau\ProposalReviewController::class, 'index']);
         // 
-        Route::post('revisi/perbaikan/{id}', [\App\Http\Controllers\Dosen\PeninjauRevisiController::class, 'perbaikan']);
-        Route::post('revisi/setujui/{id}', [\App\Http\Controllers\Dosen\PeninjauRevisiController::class, 'setujui']);
-        Route::get('revisi', [\App\Http\Controllers\Dosen\PeninjauRevisiController::class, 'index']);
+        Route::post('revisi/perbaikan/{id}', [\App\Http\Controllers\Dosen\Peninjau\ProposalRevisiController::class, 'perbaikan']);
+        Route::post('revisi/setujui/{id}', [\App\Http\Controllers\Dosen\Peninjau\ProposalRevisiController::class, 'setujui']);
+        Route::get('revisi', [\App\Http\Controllers\Dosen\Peninjau\ProposalRevisiController::class, 'index']);
         // 
-        Route::resource('riwayat', \App\Http\Controllers\Dosen\PeninjauRiwayatController::class);
+        Route::resource('riwayat', \App\Http\Controllers\Dosen\Peninjau\ProposalRiwayatController::class);
     });
 });

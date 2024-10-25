@@ -11,6 +11,7 @@ use App\Models\ProposalJadwal;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Jenssegers\Agent\Agent;
 
 class HomeController extends Controller
 {
@@ -55,6 +56,10 @@ class HomeController extends Controller
             ])->count();
         }
         // 
+        $agent = new Agent;
+        $is_chrome = $agent->is('Chrome');
+        $browser = $agent->browser();
+        // 
         return view('dosen.index', compact(
             'proposal',
             'penelitian',
@@ -64,6 +69,8 @@ class HomeController extends Controller
             'peninjau_review',
             'peninjau_revisi',
             'peninjau_riwayat',
+            'is_chrome',
+            'browser',
         ));
     }
 

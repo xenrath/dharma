@@ -122,10 +122,10 @@ class HomeController extends Controller
         }
         // 
         $validator = Validator::make($request->all(), [
-            'nidn_test' => 'required',
+            'nipy_test' => 'required',
             'ttd_test' => $validator_ttd . '|image|mimes:png|max:1024',
         ], [
-            'nidn_test.required' => 'NIDN belum diisi!',
+            'nipy_test.required' => 'NIPY belum diisi!',
             'ttd_test.required' => 'Tanda Tangan belum ditambahkan!',
             'ttd_test.image' => 'Tanda Tangan harus berformat jpeg, jpg, png!',
             'ttd_test.max' => 'Tanda Tangan maksimal ukuran 1 MB',
@@ -138,15 +138,19 @@ class HomeController extends Controller
         // 
         if ($request->ttd_test) {
             Storage::disk('local')->delete('public/uploads/' . auth()->user()->ttd);
-            $ttd_test = 'ttd/' . $request->nidn_test . '.' . $request->ttd_test->getClientOriginalExtension();
+            $ttd_test = 'ttd/' . auth()->user()->nidn . '.' . $request->ttd_test->getClientOriginalExtension();
             $request->ttd_test->storeAs('public/uploads/', $ttd_test);
             // 
             User::where('id', auth()->user()->id)->update([
-                'nidn' => $request->nidn_test,
+                'nipy' => $request->nipy_test,
                 'ttd' => $ttd_test,
             ]);
         } else {
             $ttd_test = auth()->user()->ttd;
+            User::where('id', auth()->user()->id)->update([
+                'nipy' => $request->nipy_test,
+                'ttd' => $ttd_test,
+            ]);
         }
         // 
         $user = User::where('id', auth()->user()->id)
@@ -256,6 +260,14 @@ class HomeController extends Controller
         }
     }
 
+    public function info()
+    {
+        $telp_dev = User::where('role', 'dev')->value('telp');
+        $telp_operator = User::where('role', 'operator')->value('telp');
+
+        return view('info', compact('telp_dev', 'telp_operator'));
+    }
+
     public function proposal_get(Request $request)
     {
         $proposal_item = $request->proposal_item ?? array();
@@ -317,7 +329,7 @@ class HomeController extends Controller
                 });
             })
             ->with('peninjau:id,nama')->get();
-        $ketua = User::where('is_ketua', true)->select('nama', 'nipy')->first();
+        $ketua = User::where('is_ketua', true)->select('nama', 'nipy', 'ttd')->first();
         if (Carbon::parse($jadwal->tanggal)->format('m') >= '09') {
             $tahun_akademik = Carbon::parse($jadwal->tanggal)->format('Y') . '/' . Carbon::parse($jadwal->tanggal)->addYear()->format('Y');
         } else {

@@ -27,10 +27,6 @@ class PenelitianRiwayatController extends Controller
             ->with('user:id,nama')
             ->with('jenis_penelitian:id,nama')
             ->with('jenis_pendanaan:id,nama')
-            ->with('penelitian_revisis', function ($query) {
-                $query->select('penelitian_id', 'keterangan', 'file');
-                $query->orderByDesc('id');
-            })
             ->with('personels', function ($query) {
                 $query->select('penelitian_id', 'user_id');
                 $query->with('user', function ($query) {

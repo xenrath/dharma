@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>@yield('title')</title>
-
     <link rel="icon" type="image/x-icon" href="{{ asset('storage/uploads/asset/logo-lppm.png') }}">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -44,7 +44,7 @@
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-2 rounded-0">
                         <a href="{{ url('profile') }}"
                             class="dropdown-item {{ request()->is('profile*') ? 'active' : '' }}">
-                            <i class="fas fa-sm fa-user-edit mr-2"></i>
+                            <i class=   "fas fa-sm fa-user-edit mr-2"></i>
                             <small class="text-bold">Perbarui Profil</small>
                         </a>
                         <div class="dropdown-divider my-2"></div>
@@ -52,6 +52,12 @@
                             class="dropdown-item {{ request()->is('ubah-password*') ? 'active' : '' }}">
                             <i class="fas fa-sm fa-user-lock mr-2"></i>
                             <small class="text-bold">Ganti Password</small>
+                        </a>
+                        <div class="dropdown-divider my-2"></div>
+                        <a href="{{ url('info') }}"
+                            class="dropdown-item {{ request()->is('info*') ? 'active' : '' }}">
+                            <i class="fas fa-sm fa-info-circle mr-2"></i>
+                            <small class="text-bold">Informasi Sistem</small>
                         </a>
                         <div class="dropdown-divider my-2"></div>
                         <button type="button" class="btn btn-danger btn-sm btn-block btn-flat" data-toggle="modal"

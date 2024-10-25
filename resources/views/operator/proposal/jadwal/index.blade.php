@@ -42,7 +42,7 @@
                             </a>
                             <a href="{{ url('operator/proposal-jadwal/create') }}"
                                 class="btn btn-primary btn-sm btn-flat">Buat
-                                Laporan</a>
+                                Jadwal</a>
                         </div>
                     </div>
                     <!-- /.card-header -->
@@ -116,7 +116,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Kirim Laporan</h4>
+                        <h4 class="modal-title">Kirim Jadwal</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -128,8 +128,7 @@
                             $peninjau_id = \App\Models\Proposal::where('jadwal_id', $jadwal->id)->pluck('peninjau_id');
                             $peninjaus = \App\Models\User::whereIn('id', $peninjau_id)->select('nama', 'telp')->get();
                         @endphp
-                        Kirim pemberitahuan Penjadwal Proposal
-                        <hr class="my-2">
+                        <p>Kirim pemberitahuan Penjadwal Proposal</p>
                         <strong>Dosen Penerima:</strong>
                         <ol class="px-3 mb-0">
                             @foreach ($users as $user)
@@ -169,7 +168,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Hapus Laporan</h4>
+                        <h4 class="modal-title">Hapus Jadwal</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

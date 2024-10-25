@@ -32,7 +32,7 @@ return new class extends Migration
             $table->foreign('peninjau_id')->references('id')->on('users')->restrictOnDelete();
             $table->unsignedBigInteger('jadwal_id')->nullable();
             $table->string('mou')->nullable(); // MOU Proposal
-            $table->enum('status', ['menunggu', 'proses', 'revisi1', 'setuju', 'revisi2', 'pendanaan', 'mou', 'selesai']);
+            $table->enum('status', ['menunggu', 'proses', 'revisi1', 'setuju1', 'revisi2', 'pendanaan', 'mou', 'setuju2', 'selesai']);
             $table->timestamps();
         });
     }
