@@ -15,13 +15,12 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
             $table->string('tahun');
             $table->text('judul');
-            $table->unsignedBigInteger('jenis_pendanaan_id');
-            $table->foreign('jenis_pendanaan_id')->references('id')->on('jenis_pendanaans')->restrictOnDelete();
             $table->unsignedBigInteger('jenis_penelitian_id')->nullable();
             $table->foreign('jenis_penelitian_id')->references('id')->on('jenis_penelitians')->restrictOnDelete();
             $table->unsignedBigInteger('jenis_pengabdian_id')->nullable();
             $table->foreign('jenis_pengabdian_id')->references('id')->on('jenis_pengabdians')->restrictOnDelete();
-            $table->string('dana_sumber');
+            $table->unsignedBigInteger('jenis_pendanaan_id');
+            $table->foreign('jenis_pendanaan_id')->references('id')->on('jenis_pendanaans')->restrictOnDelete();
             $table->string('dana_usulan');
             $table->string('dana_setuju')->nullable();
             $table->string('file'); // Laporan Proposal

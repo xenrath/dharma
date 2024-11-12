@@ -8,7 +8,7 @@
 @php
     $proposal_list = \App\Models\Proposal::where('status', 'menunggu')->count();
     $proposal_pendanaan = \App\Models\Proposal::where(function ($query) {
-        $query->where('status', 'setuju');
+        $query->where('status', 'setuju1');
         $query->orWhere('status', 'revisi2');
     })->count();
     $proposal_mou = \App\Models\Proposal::where('status', 'mou')->count();

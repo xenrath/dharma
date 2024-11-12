@@ -42,25 +42,102 @@
                                     </div>
                                 @enderror
                             </div>
-                            @if (auth()->user()->isDosen() || auth()->user()->isKetua())
-                                <div class="form-group mb-2">
-                                    <label for="nidn">
-                                        NIDN
-                                        <small class="text-muted">(untuk login)</small>
-                                    </label>
-                                    <input type="text" class="form-control rounded-0 @error('nidn') is-invalid @enderror"
-                                        id="nidn" name="nidn" value="{{ old('nidn', $user->nidn) }}">
-                                    @error('nidn')
-                                        <div class="text-danger">
-                                            <small>{{ $message }}</small>
+                            @if (auth()->user()->isDosen())
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="nidn">
+                                                NIDN
+                                                <small class="text-muted">(untuk login)</small>
+                                            </label>
+                                            <input type="text"
+                                                class="form-control rounded-0 @error('nidn') is-invalid @enderror"
+                                                id="nidn" name="nidn" value="{{ old('nidn', $user->nidn) }}">
+                                            @error('nidn')
+                                                <div class="text-danger">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
                                         </div>
-                                    @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="nipy">NIPY</label>
+                                            <input type="text"
+                                                class="form-control rounded-0 @error('nipy') is-invalid @enderror"
+                                                id="nipy" name="nipy" value="{{ old('nipy', $user->nipy) }}">
+                                            @error('nipy')
+                                                <div class="text-danger">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="id_sinta">ID Sinta</label>
+                                            <input type="text"
+                                                class="form-control rounded-0 @error('id_sinta') is-invalid @enderror"
+                                                id="id_sinta" name="id_sinta"
+                                                value="{{ old('id_sinta', $user->id_sinta) }}">
+                                            @error('id_sinta')
+                                                <div class="text-danger">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="id_scopus">ID Scopus</label>
+                                            <input type="text"
+                                                class="form-control rounded-0 @error('id_scopus') is-invalid @enderror"
+                                                id="id_scopus" name="id_scopus"
+                                                value="{{ old('id_scopus', $user->id_scopus) }}">
+                                            @error('id_scopus')
+                                                <div class="text-danger">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="golongan">Pangkat/Golongan</label>
+                                            <input type="text"
+                                                class="form-control rounded-0 @error('golongan') is-invalid @enderror"
+                                                id="golongan" name="golongan"
+                                                value="{{ old('golongan', $user->golongan) }}">
+                                            @error('golongan')
+                                                <div class="text-danger">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="jabatan">Jabatan</label>
+                                            <input type="text"
+                                                class="form-control rounded-0 @error('jabatan') is-invalid @enderror"
+                                                id="jabatan" name="jabatan" value="{{ old('jabatan', $user->jabatan) }}">
+                                            @error('jabatan')
+                                                <div class="text-danger">
+                                                    <small>{{ $message }}</small>
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label for="nipy">NIPY</label>
-                                    <input type="text" class="form-control rounded-0 @error('nipy') is-invalid @enderror"
-                                        id="nipy" name="nipy" value="{{ old('nipy', $user->nipy) }}">
-                                    @error('nipy')
+                                    <label for="alamat">Alamat</label>
+                                    <textarea class="form-control rounded-0 @error('alamat') is-invalid @enderror" name="alamat" id="alamat"
+                                        cols="30" rows="4">{{ $user->alamat }}</textarea>
+                                    @error('alamat')
                                         <div class="text-danger">
                                             <small>{{ $message }}</small>
                                         </div>
@@ -82,15 +159,15 @@
                             </div>
                             @if (auth()->user()->isKetua())
                                 <div class="form-group mb-2">
-                                    <label for="telp">
+                                    <label for="ttd">
                                         Tanda Tangan
                                         @if ($user->ttd)
                                             <small class="text-muted">(kosongkan jika tidak ingin diubah)</small>
                                         @endif
                                     </label>
                                     <input type="file"
-                                        class="form-control rounded-0 @error('ttd') is-invalid @enderror"
-                                        id="ttd" name="ttd" accept="image/png" onchange="getTtd()"
+                                        class="form-control rounded-0 @error('ttd') is-invalid @enderror" id="ttd"
+                                        name="ttd" accept="image/png" onchange="getTtd()"
                                         value="{{ old('ttd', $user->ttd) }}">
                                     @error('ttd')
                                         <div class="invalid-feedback">

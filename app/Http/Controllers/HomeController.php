@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fakultas;
+use App\Models\Penelitian;
+use App\Models\Pengabdian;
+use App\Models\Prodi;
 use App\Models\Proposal;
 use App\Models\ProposalJadwal;
 use App\Models\User;
@@ -27,9 +30,12 @@ class HomeController extends Controller
                 'nama',
                 'nidn',
                 'nipy',
-                'prodi_id',
+                'id_sinta',
+                'id_scopus',
+                'golongan',
+                'jabatan',
+                'alamat',
                 'telp',
-                'role'
             )
             ->first();
 
@@ -205,6 +211,7 @@ class HomeController extends Controller
             })
             ->select('id', 'nidn', 'nama')
             ->orderBy('nama')
+            ->take(10)
             ->get();
 
         return $dosens;
@@ -338,5 +345,28 @@ class HomeController extends Controller
 
         $pdf = Pdf::loadview('jadwal', compact('jadwal', 'fakultases', 'proposals', 'ketua', 'tahun_akademik'));
         return $pdf->stream('Surat Undangan Presentasi Proposal LP2M - ' . Carbon::parse($jadwal->tanggal)->format('d M Y') . '.pdf');
+    }
+
+    public function pengesahan($jenis, $id)
+    {
+        if ($jenis == 'penelitian') {
+            $data = Penelitian::where('id', $id)->first();
+        } else {
+            $data = Pengabdian::where('id', $id)->first();
+        }
+        $ketua = User::where('id', $data->user_id)->first();
+        $kepala = User::where('is_ketua', true)->first();
+
+        $pdf = Pdf::loadview('pengesahan', compact('data', 'ketua', 'kepala'));
+        return $pdf->stream('Lembar Pengesahan');
+    }
+
+    public function statistik()
+    {
+        $penelitians = Penelitian::where('status', 'selesai')->paginate(10);
+        $prodis = Prodi::get();
+        $pengabdians = Penelitian::where('status', 'selesai')->get();
+
+        return view('statistik', compact('penelitians', 'prodis', 'pengabdians'));
     }
 }

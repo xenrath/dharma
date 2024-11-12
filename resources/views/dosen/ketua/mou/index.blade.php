@@ -75,10 +75,13 @@
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $proposal->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-primary btn-sm btn-flat btn-block"
-                                                    data-toggle="modal" data-target="#modal-selesai-{{ $proposal->id }}">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
+                                                @if ($proposal->status == 'setuju2')
+                                                    <button type="button" class="btn btn-primary btn-sm btn-flat btn-block"
+                                                        data-toggle="modal"
+                                                        data-target="#modal-selesai-{{ $proposal->id }}">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
@@ -258,9 +261,15 @@
                         </div>
                     </div>
                     <div class="modal-body border-top">
-                        <div class="alert alert-light text-center rounded-0 mb-2">
-                            <span class="text-muted">- Menunggu Anda mengonfirmasi MOU Proposal -</span>
-                        </div>
+                        @if ($proposal->status == 'mou')
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Menunggu proses MOU Proposal dari Operator -</span>
+                            </div>
+                        @else
+                            <div class="alert alert-light text-center rounded-0 mb-2">
+                                <span class="text-muted">- Menunggu Anda mengonfirmasi MOU Proposal -</span>
+                            </div>
+                        @endif
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm btn-flat"
@@ -286,7 +295,7 @@
                             <strong>File Persetujuan MOU</strong>
                             <br>
                             <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
-                                class="btn btn-secondary btn-xs btn-flat">
+                                class="btn btn-secondary btn-xs btn-flat" target="_blank">
                                 Lihat File
                             </a>
                         </div>

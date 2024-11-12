@@ -152,6 +152,14 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
+                                <strong>NIPY</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $dosen->nipy }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
                                 <strong>Prodi</strong>
                             </div>
                             <div class="col-md-6">
@@ -170,7 +178,8 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
                         <button type="button" class="btn btn-danger btn-sm btn-flat" data-dismiss="modal"
                             data-target="#modal-reset-{{ $dosen->id }}" data-toggle="modal">Reset Password</button>
                     </div>

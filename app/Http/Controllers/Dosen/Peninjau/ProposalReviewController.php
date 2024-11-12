@@ -111,7 +111,7 @@ class ProposalReviewController extends Controller
     public function setujui($id)
     {
         $proposal = Proposal::where('id', $id)->update([
-            'status' => 'setuju'
+            'status' => 'setuju1'
         ]);
         // 
         if (!$proposal) {

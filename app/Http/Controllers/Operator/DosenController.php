@@ -23,7 +23,22 @@ class DosenController extends Controller
                 $query->where('nama', 'like', "%$keyword%");
                 $query->orWhere('nidn', 'like', "%$keyword%");
             })
-                ->select('id', 'nama', 'nidn', 'prodi_id', 'telp', 'is_peninjau')
+                ->select(
+                    'id',
+                    'nama',
+                    'gender',
+                    'nidn',
+                    'nipy',
+                    'prodi_id',
+                    'id_sinta',
+                    'id_scopus',
+                    'golongan',
+                    'jabatan',
+                    'alamat',
+                    'telp',
+                    'is_ketua',
+                    'is_peninjau',
+                )
                 ->with('prodi', function ($query) {
                     $query->select('id', 'nama', 'fakultas_id');
                     $query->with('fakultas:id,kode');
@@ -35,7 +50,22 @@ class DosenController extends Controller
                 $query->where('nama', 'like', "%$keyword%");
                 $query->orWhere('nidn', 'like', "%$keyword%");
             })
-                ->select('id', 'nama', 'nidn', 'prodi_id', 'telp', 'is_peninjau')
+                ->select(
+                    'id',
+                    'nama',
+                    'gender',
+                    'nidn',
+                    'nipy',
+                    'prodi_id',
+                    'id_sinta',
+                    'id_scopus',
+                    'golongan',
+                    'jabatan',
+                    'alamat',
+                    'telp',
+                    'is_ketua',
+                    'is_peninjau',
+                )
                 ->with('prodi', function ($query) {
                     $query->select('id', 'nama', 'fakultas_id');
                     $query->with('fakultas:id,kode');
@@ -62,40 +92,39 @@ class DosenController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required',
             'nidn' => 'required|unique:users,nidn',
-            'telp' => 'nullable|unique:users,telp',
+            'gender' => 'required',
             'prodi_id' => 'required',
         ], [
             'nama.required' => 'Nama Dosen tidak boleh kosong!',
             'nidn.required' => 'NIDN tidak boleh kosong!',
             'nidn.unique' => 'NIDN sudah digunakan!',
-            'telp.unique' => 'Nomor WhatsApp sudah digunakan!',
+            'gender.required' => 'Jenis Kelamin harus dipilih!',
             'prodi_id.required' => 'Prodi harus dipilih!',
         ]);
-
+        // 
         if ($validator->fails()) {
             alert()->error('Error', 'Gagal menambahkan Dosen!');
             return back()->withInput()->withErrors($validator);
         }
-
+        // 
         $user = User::create([
             'nama' => $request->nama,
             'username' => $request->nidn,
             'password' => bcrypt('bhamada'),
+            'gender' => $request->gender,
             'nidn' => $request->nidn,
             'prodi_id' => $request->prodi_id,
-            'telp' => $request->telp,
             'is_ketua' => false,
             'is_peninjau' => $request->is_peninjau,
             'role' => 'dosen',
         ]);
-
+        // 
         if (!$user) {
             alert()->error('Error', 'Gagal menambahkan Dosen!');
             return back();
         }
-
+        // 
         alert()->success('Success', 'Berhasil menambahkan Dosen');
-
         return redirect('operator/dosen');
     }
 

@@ -22,7 +22,6 @@ class ProposalListController extends Controller
                 'jenis_penelitian_id',
                 'jenis_pengabdian_id',
                 'jenis_pendanaan_id',
-                'dana_sumber',
                 'dana_usulan',
                 'file',
                 'mahasiswas',
@@ -42,7 +41,7 @@ class ProposalListController extends Controller
         ])
             ->select('id', 'nama')
             ->orderBy('nama')
-            ->paginate(10);
+            ->get();
 
         return view('operator.proposal.list.index', compact('proposals', 'peninjaus'));
     }

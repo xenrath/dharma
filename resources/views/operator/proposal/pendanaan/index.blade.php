@@ -60,7 +60,7 @@
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $proposal->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                @if ($proposal->status == 'setuju1' || $proposal->status == 'revisi1')
+                                                @if ($proposal->status == 'setuju1' || $proposal->status == 'revisi2')
                                                     <button type="button" class="btn btn-warning btn-sm btn-flat btn-block"
                                                         data-toggle="modal" data-target="#modal-revisi-{{ $proposal->id }}">
                                                         <i class="fas fa-undo"></i>
@@ -154,14 +154,6 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Sumber Dana</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ $proposal->dana_sumber }}
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
                                 <strong>Dana Usulan</strong>
                             </div>
                             <div class="col-md-6">
@@ -183,12 +175,12 @@
                         @endif
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Laporan Proposal</strong>
+                                <strong>Dokumen Proposal</strong>
                             </div>
                             <div class="col-md-6">
                                 <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
-                                    Lihat Laporan
+                                    Lihat Dokumen
                                 </a>
                             </div>
                         </div>
@@ -203,8 +195,13 @@
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
                                         @endforeach
-                                        @foreach ($proposal->mahasiswas as $mahasiswa)
-                                            <li>{{ $mahasiswa }}</li>
+                                        @foreach ($proposal->mahasiswas as $nama => $prodi)
+                                            <li>
+                                                {{ $nama }}
+                                                @if ($prodi)
+                                                    ({{ $prodi }})
+                                                @endif
+                                            </li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -252,7 +249,7 @@
                 </div>
             </div>
         </div>
-        @if ($proposal->status == 'setuju1' || $proposal->status == 'revisi1')
+        @if ($proposal->status == 'setuju1' || $proposal->status == 'revisi2')
             @php
                 $revisi = \App\Models\ProposalRevisi::where([
                     ['proposal_id', $proposal->id],

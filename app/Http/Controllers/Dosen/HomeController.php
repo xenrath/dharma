@@ -73,37 +73,4 @@ class HomeController extends Controller
             'browser',
         ));
     }
-
-    public function jadwal($id)
-    {
-        $jadwal = ProposalJadwal::where('id', $id)->select('tanggal', 'nomor', 'perihal', 'kepadas', 'proposal_ids')->first();
-        $fakultases = Fakultas::whereIn('id', $jadwal->kepadas)->select('nama')->get();
-        $proposals = Proposal::whereIn('id', $jadwal->proposal_ids)
-            ->select(
-                'id',
-                'jenis',
-                'user_id',
-                'judul',
-                'tanggal',
-                'jam',
-                'peninjau_id',
-            )
-            ->with('user', function ($query) {
-                $query->select('id', 'nama', 'prodi_id')->with('prodi:id,nama');
-            })
-            ->with('personels', function ($query) {
-                $query->select('proposal_id', 'user_id');
-                $query->with('user:id,nama');
-            })
-            ->with('peninjau:id,nama')->get();
-        $ketua = User::where('is_ketua', true)->select('nama', 'nipy')->first();
-        if (Carbon::parse($jadwal->tanggal)->format('m') >= '09') {
-            $tahun_akademik = Carbon::parse($jadwal->tanggal)->format('Y') . '/' . Carbon::parse($jadwal->tanggal)->addYear()->format('Y');
-        } else {
-            $tahun_akademik = Carbon::parse($jadwal->tanggal)->addYears(-1)->format('Y') . '/' . Carbon::parse($jadwal->tanggal)->format('Y');
-        }
-
-        $pdf = Pdf::loadview('dosen.jadwal', compact('jadwal', 'fakultases', 'proposals', 'ketua', 'tahun_akademik'));
-        return $pdf->stream('Surat Undangan Presentasi Proposal P2M 2024');
-    }
 }

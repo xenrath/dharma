@@ -13,7 +13,7 @@ class HomeController extends Controller
         $proposal_penelitian = Proposal::where('jenis', 'penelitian')->count();
         $proposal_pengabdian = Proposal::where('jenis', 'pengabdian')->count();
 
-        return view('operator.index', compact(
+        return view('dev.index', compact(
             'proposal_penelitian',
             'proposal_pengabdian'
         ));

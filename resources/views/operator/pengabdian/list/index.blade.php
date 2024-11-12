@@ -166,18 +166,10 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Jenis Pendanaan</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ $pengabdian->jenis_pendanaan->nama }}
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
                                 <strong>Sumber Dana</strong>
                             </div>
                             <div class="col-md-6">
-                                {{ $pengabdian->dana_sumber }}
+                                {{ $pengabdian->jenis_pendanaan->nama }}
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -213,8 +205,13 @@
                                         @foreach ($pengabdian->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
                                         @endforeach
-                                        @foreach ($pengabdian->mahasiswas as $mahasiswa)
-                                            <li>{{ $mahasiswa }}</li>
+                                        @foreach ($pengabdian->mahasiswas as $nama => $prodi)
+                                            <li>
+                                                {{ $nama }}
+                                                @if ($prodi)
+                                                    ({{ $prodi }})
+                                                @endif
+                                            </li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -222,7 +219,8 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         @if ($pengabdian->status == 'menunggu')
                             @if ($pengabdian->file)
                                 <div class="alert alert-light text-center rounded-0 mb-0">

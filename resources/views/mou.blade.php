@@ -838,6 +838,9 @@
                             <td>{{ Carbon\Carbon::now()->translatedFormat('d F Y') }}</td>
                         </tr>
                     </table>
+                    <img src="{{ public_path('storage/uploads/asset/stempel.png') }}"
+                        style="max-width: 140px; max-height: 140px; transform: rotate(-2deg); position: absolute; z-index: -1; right: 200px; margin-top: 20px; opacity: 0.7;"
+                        alt="Stempel">
                     <p class="ttd-p">
                         <strong>PIHAK PERTAMA</strong>
                         <br>

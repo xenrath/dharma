@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreign('jenis_pendanaan_id')->references('id')->on('jenis_pendanaans')->restrictOnDelete();
             $table->unsignedBigInteger('jenis_pengabdian_id')->nullable();
             $table->foreign('jenis_pengabdian_id')->references('id')->on('jenis_pengabdians')->restrictOnDelete();
-            $table->string('dana_sumber');
             $table->string('dana_setuju');
             $table->string('file')->nullable();
             $table->json('mahasiswas')->nullable();

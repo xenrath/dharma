@@ -15,7 +15,6 @@ class Penelitian extends Model
         'judul',
         'jenis_penelitian_id',
         'jenis_pendanaan_id',
-        'dana_sumber',
         'dana_setuju',
         'file',
         'mahasiswas',

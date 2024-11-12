@@ -21,7 +21,6 @@ class PengabdianListController extends Controller
                 'judul',
                 'jenis_pengabdian_id',
                 'jenis_pendanaan_id',
-                'dana_sumber',
                 'dana_setuju',
                 'file',
                 'mahasiswas',

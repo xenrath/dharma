@@ -283,36 +283,84 @@
                             <div class="modal-body">
                                 @if ($penelitian->file)
                                     <div class="alert alert-light text-center rounded-0 mb-2">
-                                        <span class="text-muted">- Menunggu respon dari Operator -</span>
-                                    </div>
-                                @else
-                                    <div class="form-group mb-2">
-                                        <label for="file">Laporan Penelitian</label>
-                                        <input type="file"
-                                            class="form-control rounded-0 @if (session('id') == $penelitian->id) @error('file') is-invalid @enderror @endif"
-                                            id="file" name="file" accept=".pdf">
-                                        @if (session('id') == $penelitian->id)
-                                            @error('file')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        @endif
+                                        <span class="text-muted">- Menunggu persetujuan MOU -</span>
                                     </div>
                                 @endif
+                                <div class="form-group mb-2">
+                                    <strong>Laporan Penelitian</strong>
+                                    @if ($penelitian->file)
+                                        <div>
+                                            <a href="{{ asset('storage/uploads/' . $penelitian->file) }}"
+                                                class="btn btn-secondary btn-xs btn-flat" target="_blank">
+                                                Lihat File
+                                            </a>
+                                        </div>
+                                    @else
+                                        <div class="mt-2">
+                                            <input type="file"
+                                                class="form-control rounded-0 @if (session('id') == $penelitian->id) @error('file') is-invalid @enderror @endif"
+                                                id="file" name="file" accept=".pdf">
+                                            @if (session('id') == $penelitian->id)
+                                                @error('file')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
-                            @if ($penelitian->file)
-                                <div class="modal-body border-top">
-                                    <div class="mb-2">
-                                        <strong>Laporan Penelitian</strong>
-                                        <br>
-                                        <a href="{{ asset('storage/uploads/' . $penelitian->file) }}"
-                                            class="btn btn-secondary btn-xs btn-flat" target="_blank">
-                                            Lihat Laporan
-                                        </a>
+                            <div class="modal-body border-top">
+                                <div class="mb-2">
+                                    <strong>File Lembar Pengesahan</strong>
+                                    <br>
+                                    <a href="{{ url('pengesahan/penelitian/' . $penelitian->id) }}"
+                                        class="btn btn-secondary btn-xs btn-flat" target="_blank">
+                                        Lihat File
+                                    </a>
+                                </div>
+                                <div id="accordion">
+                                    <div class="card rounded-0">
+                                        <div class="card-header">
+                                            <h4 class="card-title w-100" style="font-size: 16px;">
+                                                <a class="d-block w-100" data-toggle="collapse" href="#collapseOne">
+                                                    Cara melakukan persetujuan MOU Proposal
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseOne" class="collapse" data-parent="#accordion">
+                                            <div class="card-body">
+                                                <span>
+                                                    Beberapa tahapan untuk melakukan persetujuan MOU Proposal:
+                                                </span>
+                                                <ol class="px-3 mb-2">
+                                                    <li>Unduh <u>File Draft MOU</u> terlebih dahulu</li>
+                                                    <li>
+                                                        Print halaman terakhir dari File Draft (yang terdapat tanda
+                                                        tangan Ka.
+                                                        LPPM dan Dosen)
+                                                    </li>
+                                                    <li>
+                                                        Lakukan persetujuan dengan memberikan materai pada berkas
+                                                        serta
+                                                        tanda tangan
+                                                    </li>
+                                                    <li>
+                                                        Scan satu lembar file draft tersebut dan jadikan format .pdf
+                                                    </li>
+                                                    <li>
+                                                        Unggah file di kolom <u>File Persetujuan MOU</u>
+                                                    </li>
+                                                    <li>
+                                                        Tekan tombol <u>Kirim</u> dan tunggu konfirmasi Ka. LPPM
+                                                    </li>
+                                                </ol>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            @endif
+                            </div>
                             <div class="modal-footer justify-content-between">
                                 <button type="button" class="btn btn-default btn-sm btn-flat"
                                     data-dismiss="modal">Tutup</button>

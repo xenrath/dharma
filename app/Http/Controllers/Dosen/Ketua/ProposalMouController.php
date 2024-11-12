@@ -16,7 +16,11 @@ class ProposalMouController extends Controller
 {
     public function index()
     {
-        $proposals = Proposal::where('status', 'setuju2')
+        $proposals = Proposal::where(function ($query) {
+            $query->where('status', 'mou');
+            $query->where('mou', null);
+        })
+            ->orWhere('status', 'setuju2')
             ->select(
                 'id',
                 'jenis',

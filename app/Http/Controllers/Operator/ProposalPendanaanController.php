@@ -27,7 +27,6 @@ class ProposalPendanaanController extends Controller
                 'jenis_penelitian_id',
                 'jenis_pengabdian_id',
                 'jenis_pendanaan_id',
-                'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
                 'file',

@@ -19,11 +19,17 @@ class User extends Authenticatable
         'password',
         'nidn',
         'nipy',
-        'fakultas_id',
+        'gender',
         'prodi_id',
         'telp',
+        'id_sinta',
+        'id_scopus',
+        'golongan',
+        'jabatan',
+        'alamat',
         'is_ketua',
         'is_peninjau',
+        'ttd',
         'role',
     ];
 

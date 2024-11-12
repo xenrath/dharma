@@ -75,22 +75,27 @@
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $proposal->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                @if ($proposal->status == 'mou')
-                                                    @if ($proposal->mou)
+                                                @php
+                                                    $proposal_mou = \App\Models\ProposalMou::where(
+                                                        'proposal_id',
+                                                        $proposal->id,
+                                                    )->exists();
+                                                @endphp
+                                                @if ($proposal_mou)
+                                                    @if ($proposal->status == 'mou')
                                                         <button type="button"
                                                             class="btn btn-primary btn-sm btn-flat btn-block"
                                                             data-toggle="modal"
                                                             data-target="#modal-setuju-{{ $proposal->id }}">
                                                             <i class="fas fa-check"></i>
                                                         </button>
-                                                    @else
-                                                        <button type="button"
-                                                            class="btn btn-secondary btn-sm btn-flat btn-block"
-                                                            data-toggle="modal"
-                                                            data-target="#modal-mou-{{ $proposal->id }}">
-                                                            <i class="fas fa-file-signature"></i>
-                                                        </button>
                                                     @endif
+                                                @else
+                                                    <button type="button"
+                                                        class="btn btn-secondary btn-sm btn-flat btn-block"
+                                                        data-toggle="modal" data-target="#modal-mou-{{ $proposal->id }}">
+                                                        <i class="fas fa-file-signature"></i>
+                                                    </button>
                                                 @endif
                                             </td>
                                         </tr>
@@ -168,18 +173,10 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Jenis Pendanaan</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ $proposal->jenis_pendanaan->nama }}
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
                                 <strong>Sumber Dana</strong>
                             </div>
                             <div class="col-md-6">
-                                {{ $proposal->dana_sumber }}
+                                {{ $proposal->jenis_pendanaan->nama }}
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -209,12 +206,12 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Laporan Proposal</strong>
+                                <strong>Dokumen Proposal</strong>
                             </div>
                             <div class="col-md-6">
                                 <a href="{{ asset('storage/uploads/' . $proposal->file) }}"
                                     class="btn btn-info btn-xs btn-flat" target="_blank">
-                                    Lihat Laporan
+                                    Lihat Dokumen
                                 </a>
                             </div>
                         </div>
@@ -229,8 +226,13 @@
                                         @foreach ($proposal->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
                                         @endforeach
-                                        @foreach ($proposal->mahasiswas as $mahasiswa)
-                                            <li>{{ $mahasiswa }}</li>
+                                        @foreach ($proposal->mahasiswas as $nama => $prodi)
+                                            <li>
+                                                {{ $nama }}
+                                                @if ($prodi)
+                                                    ({{ $prodi }})
+                                                @endif
+                                            </li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -351,38 +353,59 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="modal-setuju-{{ $proposal->id }}">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Konfirmasi MOU</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Yakin konfirmasi Proposal MOU dari <strong>{{ $proposal->user->nama }}</strong>?
-                    </div>
-                    <div class="modal-body border-top">
-                        <div class="mb-2">
-                            <strong>File Persetujuan MOU</strong>
-                            <br>
-                            <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
-                                class="btn btn-secondary btn-xs btn-flat" target="_blank">
-                                Lihat File
-                            </a>
+        @php
+            $proposal_mou = \App\Models\ProposalMou::where('proposal_id', $proposal->id)->first();
+        @endphp
+        @if ($proposal_mou)
+            <div class="modal fade" id="modal-setuju-{{ $proposal->id }}">
+                <div class="modal-dialog">
+                    <div class="modal-content rounded-0">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Konfirmasi MOU</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat"
-                            data-dismiss="modal">Tutup</button>
-                        <form action="{{ url('operator/proposal-mou/setujui/' . $proposal->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-primary btn-sm btn-flat">Konfirmasi</button>
-                        </form>
+                        <div class="modal-body">
+                            Yakin konfirmasi Proposal MOU dari <strong>{{ $proposal->user->nama }}</strong>?
+                        </div>
+                        <div class="modal-body border-top">
+                            <div class="mb-2">
+                                <strong>File Draft</strong>
+                                <br>
+                                <a href="{{ asset('storage/uploads/' . $proposal_mou->draft) }}"
+                                    class="btn btn-secondary btn-xs btn-flat" target="_blank">
+                                    Lihat File
+                                </a>
+                            </div>
+                            <div class="mb-2">
+                                <strong>File Persetujuan MOU</strong>
+                                <br>
+                                @if ($proposal->mou)
+                                    <a href="{{ asset('storage/uploads/' . $proposal->mou) }}"
+                                        class="btn btn-secondary btn-xs btn-flat" target="_blank">
+                                        Lihat File
+                                    </a>
+                                @else
+                                    <button type="button" class="btn btn-default btn-xs btn-flat"
+                                        style="pointer-events: none">File MOU belum diunggah</button>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default btn-sm btn-flat"
+                                data-dismiss="modal">Tutup</button>
+                            @if ($proposal->mou)
+                                <form action="{{ url('operator/proposal-mou/setujui/' . $proposal->id) }}"
+                                    method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary btn-sm btn-flat">Konfirmasi</button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     @endforeach
 @endsection

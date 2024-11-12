@@ -79,46 +79,15 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                @if (auth()->user()->isOperator())
-                                    <div class="mb-2">
-                                        <strong>Pedoman Operator</strong>
-                                        <br>
-                                        <a href="" class="btn btn-xs btn-secondary btn-flat" target="_blank">
-                                            <i class="fas fa-download"></i>
-                                            Unduh Pedoman
-                                        </a>
-                                    </div>
-                                @endif
-                                @if (auth()->user()->isDosen())
-                                    <div class="mb-2">
-                                        <strong>Pedoman Dosen</strong>
-                                        <br>
-                                        <a href="" class="btn btn-xs btn-secondary btn-flat" target="_blank">
-                                            <i class="fas fa-download"></i>
-                                            Unduh Pedoman
-                                        </a>
-                                    </div>
-                                @endif
-                                <div class="mb-2">
-                                    <strong>Pedoman Ketua</strong>
-                                    <br>
-                                    <a href="" class="btn btn-xs btn-secondary btn-flat" target="_blank">
-                                        <i class="fas fa-download"></i>
-                                        Unduh Pedoman
-                                    </a>
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Pedoman Reviewer</strong>
-                                    <br>
-                                    <a href="" class="btn btn-xs btn-secondary btn-flat" target="_blank">
-                                        <i class="fas fa-download"></i>
-                                        Unduh Pedoman
-                                    </a>
-                                </div>
+                                <a href="{{ url('statistik') }}" class="btn btn-outline-primary btn-flat btn-block"
+                                    target="_blank">
+                                    <i class="fas fa-chart-pie"></i>
+                                    Statistik SIDHARMA
+                                </a>
                             </div>
                             <div class="card-body border-top">
                                 <div class="mb-2">
-                                    <strong>Reno Arkan Pratama (Developer)</strong>
+                                    <strong>Reno Arkan Pratama (Operator)</strong>
                                     <br>
                                     <a href="{{ url('hubungi/' . $telp_operator) }}" class="btn btn-success btn-sm btn-flat"
                                         target="_blank">
@@ -136,6 +105,42 @@
                                     </a>
                                 </div>
                             </div>
+                            @if (auth()->user()->isOperator())
+                                <div class="card-body border-top">
+                                    <a href="{{ asset('storage/uploads/asset/operator.pdf') }}"
+                                        class="btn btn-outline-info btn-flat btn-block" target="_blank">
+                                        <i class="fas fa-download"></i>
+                                        Pedoman Operator
+                                    </a>
+                                </div>
+                            @endif
+                            @if (auth()->user()->isDosen())
+                                <div class="card-body border-top">
+                                    <a href="{{ asset('storage/uploads/asset/dosen.pdf') }}"
+                                        class="btn btn-outline-info btn-flat btn-block" target="_blank">
+                                        <i class="fas fa-download"></i>
+                                        Pedoman Dosen
+                                    </a>
+                                </div>
+                            @endif
+                            @if (auth()->user()->isKetua())
+                                <div class="card-body border-top">
+                                    <a href="{{ asset('storage/uploads/asset/ketua.pdf') }}"
+                                        class="btn btn-outline-info btn-flat btn-block" target="_blank">
+                                        <i class="fas fa-download"></i>
+                                        Pedoman Ketua
+                                    </a>
+                                </div>
+                            @endif
+                            @if (auth()->user()->isPeninjau())
+                                <div class="card-body border-top">
+                                    <a href="{{ asset('storage/uploads/asset/reviewer.pdf') }}"
+                                        class="btn btn-outline-info btn-flat btn-block" target="_blank">
+                                        <i class="fas fa-download"></i>
+                                        Pedoman Reviewer
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

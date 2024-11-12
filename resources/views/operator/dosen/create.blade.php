@@ -46,6 +46,20 @@
                                 @enderror
                             </div>
                             <div class="form-group mb-2">
+                                <label for="gender">Jenis Kelamin</label>
+                                <select class="custom-select rounded-0 @error('gender') is-invalid @enderror" name="gender"
+                                    id="gender">
+                                    <option value="">- Pilih -</option>
+                                    <option value="L">Laki-laki</option>
+                                    <option value="P">Perempuan</option>
+                                </select>
+                                @error('gender')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="form-group mb-2">
                                 <label for="nidn">NIDN</label>
                                 <input type="text" class="form-control rounded-0 @error('nidn') is-invalid @enderror"
                                     id="nidn" name="nidn" value="{{ old('nidn') }}">
@@ -73,19 +87,6 @@
                                 @enderror
                             </div>
                             <div class="form-group mb-2">
-                                <label for="telp">
-                                    Nomor WhatsApp
-                                    <small class="text-muted">(08xxxxxxxxxx)</small>
-                                </label>
-                                <input type="tel" class="form-control rounded-0 @error('telp') is-invalid @enderror"
-                                    id="telp" name="telp" value="{{ old('telp') }}">
-                                @error('telp')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-                            <div class="form-group mb-2">
                                 <label for="is_peninjau">Jadikan Reviewer</label>
                                 <select class="custom-select rounded-0" name="is_peninjau" id="is_peninjau">
                                     <option value="0" {{ old('is_peninjau') ? 'selected' : '' }}>
@@ -94,6 +95,8 @@
                                         Ya</option>
                                 </select>
                             </div>
+                            <br>
+                            <small class="text-muted"><strong>* note : </strong> password default dosen baru <i>bhamada</i></small>
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer text-right">

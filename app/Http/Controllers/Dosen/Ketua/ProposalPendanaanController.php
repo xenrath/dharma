@@ -12,11 +12,6 @@ class ProposalPendanaanController extends Controller
     public function index()
     {
         $proposals = Proposal::where('status', 'pendanaan')
-            ->orWhere('status', 'revisi2')
-            ->orWhere(function ($query) {
-                $query->where('status', 'mou');
-                $query->where('mou', null);
-            })
             ->select(
                 'id',
                 'jenis',

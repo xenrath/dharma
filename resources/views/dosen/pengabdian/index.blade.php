@@ -233,7 +233,8 @@
                                 @endif
                             </div>
                         </div>
-                        <hr class="my-2">
+                    </div>
+                    <div class="modal-body border-top">
                         @if ($pengabdian->status == 'menunggu')
                             @if ($pengabdian->file)
                                 <div class="alert alert-light text-center rounded-0 mb-2">

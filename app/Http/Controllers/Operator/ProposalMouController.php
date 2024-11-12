@@ -27,7 +27,6 @@ class ProposalMouController extends Controller
                 'jenis_penelitian_id',
                 'jenis_pengabdian_id',
                 'jenis_pendanaan_id',
-                'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
                 'file',
@@ -90,7 +89,7 @@ class ProposalMouController extends Controller
             'status' => 'mou'
         ]);
         // 
-        if ($proposal) {
+        if (!$proposal) {
             alert()->error('Error', 'Gagal membuat MOU Proposal!');
             return back();
         }
