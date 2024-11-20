@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ProposalController extends Controller
 {
@@ -136,7 +137,9 @@ class ProposalController extends Controller
             $jenis_pengabdian_id = $request->jenis_pengabdian_id;
         }
         // 
+        $kode = strtoupper(Str::random(6));
         $proposal = Proposal::create([
+            'kode' => $kode,
             'jenis' => $request->jenis,
             'user_id' => $request->user_id,
             'tahun' => $request->tahun,

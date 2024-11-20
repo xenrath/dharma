@@ -23,9 +23,8 @@ return new class extends Migration
             $table->string('halaman_awal');
             $table->string('halaman_akhir');
             $table->string('url');
-            $table->string('file');
+            $table->string('file')->nullable();
             $table->json('mahasiswas')->nullable();
-            $table->enum('status', ['menunggu', 'revisi', 'selesai']);
             $table->timestamps();
         });
     }

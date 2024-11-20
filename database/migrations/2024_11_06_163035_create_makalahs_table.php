@@ -8,21 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('forums', function (Blueprint $table) {
+        Schema::create('makalahs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
-            $table->enum('tingkat', ['regional', 'internasional', 'nasional']);
+            $table->enum('tingkat', ['regional', 'nasional', 'internasional']);
             $table->string('tahun');
             $table->text('judul');
-            $table->string('nama');
+            $table->string('forum');
             $table->string('institusi');
-            $table->string('tanggal_awal');
-            $table->string('tanggal_akhir');
+            $table->date('tanggal_awal');
+            $table->date('tanggal_akhir');
             $table->string('tempat');
-            $table->enum('keterangan', ['invited', 'pemakalah']);
-            $table->json('mahasiswas')->nullable();
-            $table->enum('status', ['menunggu', 'revisi', 'selesai']);
+            $table->enum('status', ['biasa', 'spesial']);
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

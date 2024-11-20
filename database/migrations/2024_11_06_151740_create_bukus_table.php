@@ -12,10 +12,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
+            $table->string('tahun');
             $table->text('judul');
             $table->string('isbn');
             $table->string('jumlah');
             $table->string('penerbit');
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

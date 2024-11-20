@@ -309,10 +309,14 @@ class HomeController extends Controller
         }
     }
 
-    // ID = PROPOSAL JADWAL ID
-    public function jadwal($id)
+    // KODE = PROPOSAL JADWAL KODE
+    public function jadwal($kode)
     {
-        $jadwal = ProposalJadwal::where('id', $id)->select('tanggal', 'nomor', 'perihal', 'kepadas', 'proposal_ids')->first();
+        $jadwal = ProposalJadwal::where('kode', $kode)->select('tanggal', 'nomor', 'perihal', 'kepadas', 'proposal_ids')->first();
+        if (!$jadwal) {
+            alert()->error('Error', 'Tidak dapat menemukan Jadwal!');
+            return back();
+        }
         $fakultases = Fakultas::whereIn('id', $jadwal->kepadas)->select('nama')->get();
         $proposals = Proposal::whereIn('id', $jadwal->proposal_ids)
             ->select(

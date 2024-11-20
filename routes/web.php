@@ -21,7 +21,7 @@ Route::post('personel-get', [\App\Http\Controllers\HomeController::class, 'perso
 Route::get('hubungi/{telp}', [\App\Http\Controllers\HomeController::class, 'hubungi']);
 Route::post('proposal-get', [\App\Http\Controllers\HomeController::class, 'proposal_get']);
 // 
-Route::get('jadwal/{id}', [\App\Http\Controllers\HomeController::class, 'jadwal']);
+Route::get('jadwal/{kode}', [\App\Http\Controllers\HomeController::class, 'jadwal']);
 Route::get('pengesahan/{jenis}/{id}', [\App\Http\Controllers\HomeController::class, 'pengesahan']);
 Route::get('statistik', [\App\Http\Controllers\HomeController::class, 'statistik']);
 // 
@@ -31,6 +31,16 @@ Route::middleware('dev')->prefix('dev')->group(function () {
     Route::resource('proposal', \App\Http\Controllers\Dev\ProposalController::class);
     Route::resource('penelitian', \App\Http\Controllers\Dev\PenelitianController::class);
     Route::resource('pengabdian', \App\Http\Controllers\Dev\PengabdianController::class);
+    // 
+    Route::resource('jurnal', \App\Http\Controllers\Dev\JurnalController::class);
+    // 
+    Route::resource('buku', \App\Http\Controllers\Dev\BukuController::class);
+    // 
+    Route::resource('makalah', \App\Http\Controllers\Dev\MakalahController::class);
+    // 
+    Route::resource('hki', \App\Http\Controllers\Dev\HkiController::class);
+    // 
+    Route::resource('luaran', \App\Http\Controllers\Dev\LuaranController::class);
     // 
     Route::get('user/operator', [\App\Http\Controllers\Dev\UserController::class, 'create_operator']);
     Route::post('user/operator', [\App\Http\Controllers\Dev\UserController::class, 'store_operator']);
@@ -55,7 +65,17 @@ Route::middleware('dev')->prefix('dev')->group(function () {
     // 
     Route::resource('prodi', \App\Http\Controllers\Dev\ProdiController::class);
     // 
-    Route::resource('jurnal', \App\Http\Controllers\Dev\JurnalController::class);
+    Route::resource('jenis-penelitian', \App\Http\Controllers\Dev\ProdiController::class);
+    // 
+    Route::resource('jenis-pengabdian', \App\Http\Controllers\Dev\ProdiController::class);
+    // 
+    Route::resource('jenis-pendanaan', \App\Http\Controllers\Dev\ProdiController::class);
+    // 
+    Route::resource('jenis-jurnal', \App\Http\Controllers\Dev\ProdiController::class);
+    // 
+    Route::resource('jenis-hki', \App\Http\Controllers\Dev\ProdiController::class);
+    // 
+    Route::resource('jenis-luaran', \App\Http\Controllers\Dev\ProdiController::class);
 });
 
 Route::middleware('operator')->prefix('operator')->group(function () {
@@ -87,6 +107,16 @@ Route::middleware('operator')->prefix('operator')->group(function () {
     Route::post('pengabdian-list/setujui/{id}', [\App\Http\Controllers\Operator\PengabdianListController::class, 'setujui']);
     Route::resource('pengabdian-list', \App\Http\Controllers\Operator\PengabdianListController::class);
     Route::resource('pengabdian-riwayat', \App\Http\Controllers\Operator\PengabdianRiwayatController::class);
+    // 
+    Route::resource('jurnal', \App\Http\Controllers\Operator\JurnalController::class);
+    // 
+    Route::resource('buku', \App\Http\Controllers\Operator\BukuController::class);
+    // 
+    Route::resource('makalah', \App\Http\Controllers\Operator\MakalahController::class);
+    // 
+    Route::resource('hki', \App\Http\Controllers\Operator\HkiController::class);
+    // 
+    Route::resource('luaran', \App\Http\Controllers\Operator\LuaranController::class);
     // 
     Route::get('dosen/reset/{id}', [\App\Http\Controllers\Operator\DosenController::class, 'reset']);
     Route::resource('dosen', \App\Http\Controllers\Operator\DosenController::class);
@@ -122,6 +152,16 @@ Route::middleware('dosen')->prefix('dosen')->group(function () {
     Route::resource('pengabdian-list', \App\Http\Controllers\Dosen\PengabdianListController::class);
     // 
     Route::resource('pengabdian-riwayat', \App\Http\Controllers\Dosen\PengabdianRiwayatController::class);
+    // 
+    Route::resource('jurnal', \App\Http\Controllers\Dosen\JurnalController::class);
+    // 
+    Route::resource('buku', \App\Http\Controllers\Dosen\BukuController::class);
+    // 
+    Route::resource('makalah', \App\Http\Controllers\Dosen\MakalahController::class);
+    // 
+    Route::resource('hki', \App\Http\Controllers\Dosen\HkiController::class);
+    // 
+    Route::resource('luaran', \App\Http\Controllers\Dosen\LuaranController::class);
     // 
     Route::middleware('ketua')->prefix('ketua')->group(function () {
         Route::resource('proposal-pendanaan', \App\Http\Controllers\Dosen\Ketua\ProposalPendanaanController::class);

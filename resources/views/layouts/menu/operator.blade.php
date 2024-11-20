@@ -125,7 +125,7 @@
                 class="nav-link rounded-0 {{ request()->is('operator/penelitian-riwayat*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle"></i>
                 <p>
-                    Riwayat Penelitian
+                    Arsip Penelitian
                 </p>
             </a>
         </li>
@@ -159,13 +159,53 @@
                 class="nav-link rounded-0 {{ request()->is('operator/pengabdian-riwayat*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle"></i>
                 <p>
-                    Riwayat Pengabdian
+                    Arsip Pengabdian
                 </p>
             </a>
         </li>
     </ul>
 </li>
 <li class="nav-header">Lainnya</li>
+<li class="nav-item">
+    <a href="{{ url('operator/jurnal') }}"
+        class="nav-link rounded-0 {{ request()->is('operator/jurnal*') ? 'active' : '' }}">
+        <i class="nav-icon far fa-circle"></i>
+        <p>Publikasi Jurnal</p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ url('operator/buku') }}"
+        class="nav-link rounded-0 {{ request()->is('operator/buku*') ? 'active' : '' }}">
+        <i class="nav-icon far fa-circle"></i>
+        <p>Buku Ajar</p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ url('operator/makalah') }}"
+        class="nav-link rounded-0 {{ request()->is('operator/makalah*') ? 'active' : '' }}">
+        <i class="nav-icon far fa-circle"></i>
+        <p>
+            Pemakalah Forum Ilmiah
+        </p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ url('operator/hki') }}" class="nav-link rounded-0 {{ request()->is('operator/hki*') ? 'active' : '' }}">
+        <i class="nav-icon far fa-circle"></i>
+        <p>
+            HKI
+        </p>
+    </a>
+</li>
+<li class="nav-item">
+    <a href="{{ url('operator/luaran') }}"
+        class="nav-link rounded-0 {{ request()->is('operator/luaran*') ? 'active' : '' }}">
+        <i class="nav-icon far fa-circle"></i>
+        <p>
+            Luaran Lain
+        </p>
+    </a>
+</li>
 <li class="nav-item">
     <a href="{{ url('operator/dosen') }}"
         class="nav-link rounded-0 {{ request()->is('operator/dosen*') ? 'active' : '' }}">

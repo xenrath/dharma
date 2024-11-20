@@ -24,7 +24,8 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <form action="{{ url('dev/jurnal/' . $jurnal->id) }}" method="POST" enctype="multipart/form-data" autocomplete="off">
+                <form action="{{ url('dev/jurnal/' . $jurnal->id) }}" method="POST" enctype="multipart/form-data"
+                    autocomplete="off">
                     @csrf
                     @method('PUT')
                     <div class="card rounded-0">
@@ -188,7 +189,9 @@
                                     <div class="form-group mb-2">
                                         <label for="file">
                                             File Jurnal
-                                            <small class="text-muted">(kosongkan jika tidak ingin iubah)</small>
+                                            @if ($jurnal->file)
+                                                <small class="text-muted">(kosongkan jika tidak ingin iubah)</small>
+                                            @endif
                                         </label>
                                         <input type="file"
                                             class="form-control rounded-0 @error('file') is-invalid @enderror"
@@ -206,27 +209,6 @@
                                         </a>
                                     @endif
                                 </div>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="status">Status</label>
-                                <select class="custom-select rounded-0 @error('status') is-invalid @enderror"
-                                    name="status" id="status">
-                                    <option value="">- Pilih -</option>
-                                    <option value="menunggu"
-                                        {{ old('status', $jurnal->status) == 'menunggu' ? 'selected' : '' }}>Menunggu
-                                    </option>
-                                    <option value="revisi"
-                                        {{ old('status', $jurnal->status) == 'revisi' ? 'selected' : '' }}>Revisi
-                                    </option>
-                                    <option value="selesai"
-                                        {{ old('status', $jurnal->status) == 'selesai' ? 'selected' : '' }}>Selesai
-                                    </option>
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
                             </div>
                         </div>
                         <!-- /.card-body -->

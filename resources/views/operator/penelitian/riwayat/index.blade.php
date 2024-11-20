@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Penelitian')
+@section('title', 'Arsip Penelitian')
 
 @section('loader')
     <!-- Preloader -->
@@ -16,7 +16,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Data Penelitian</h1>
+                        <h1>Arsip Penelitian</h1>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -31,7 +31,11 @@
             <div class="container-fluid">
                 <div class="card rounded-0">
                     <div class="card-header">
-                        <h3 class="card-title">Data Penelitian</h3>
+                        <h3 class="card-title">Arsip Penelitian</h3>
+                        <a href="{{ url('operator/penelitian-riwayat/create') }}"
+                            class="btn btn-primary btn-sm btn-flat float-right">
+                            Buat Penelitian
+                        </a>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -67,8 +71,13 @@
                                                             @foreach ($penelitian->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
                                                             @endforeach
-                                                            @foreach ($penelitian->mahasiswas as $mahasiswa)
-                                                                <li>{{ $mahasiswa }}</li>
+                                                            @foreach ($penelitian->mahasiswas as $nama => $prodi)
+                                                                <li>
+                                                                    {{ $nama }}
+                                                                    @if ($prodi)
+                                                                        ({{ $prodi }})
+                                                                    @endif
+                                                                </li>
                                                             @endforeach
                                                         </ol>
                                                     @else
@@ -80,6 +89,14 @@
                                                 <button type="button" class="btn btn-info btn-sm btn-flat btn-block"
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $penelitian->id }}">
                                                     <i class="fas fa-eye"></i>
+                                                </button>
+                                                <a href="{{ url('operator/penelitian-riwayat/' . $penelitian->id . '/edit') }}"
+                                                    class="btn btn-warning btn-sm btn-flat btn-block">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-danger btn-sm btn-flat btn-block"
+                                                    data-toggle="modal" data-target="#modal-hapus-{{ $penelitian->id }}">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -108,7 +125,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Data Penelitian</h4>
+                        <h4 class="modal-title">Arsip Penelitian</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -149,18 +166,10 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Jenis Pendanaan</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ $penelitian->jenis_pendanaan->nama }}
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
                                 <strong>Sumber Dana</strong>
                             </div>
                             <div class="col-md-6">
-                                {{ $penelitian->dana_sumber }}
+                                {{ $penelitian->jenis_pendanaan->nama }}
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -176,10 +185,15 @@
                                 <strong>Laporan Penelitian</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ asset('storage/uploads/' . $penelitian->file) }}"
-                                    class="btn btn-info btn-xs btn-flat" target="_blank">
-                                    Lihat Laporan
-                                </a>
+                                @if ($penelitian->file)
+                                    <a href="{{ asset('storage/uploads/' . $penelitian->file) }}"
+                                        class="btn btn-info btn-xs btn-flat" target="_blank">
+                                        Lihat Laporan
+                                    </a>
+                                @else
+                                    <button type="button" class="btn btn-default btn-xs btn-flat"
+                                        style="pointer-events: none">File laporan belum diunggah</button>
+                                @endif
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -193,8 +207,13 @@
                                         @foreach ($penelitian->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
                                         @endforeach
-                                        @foreach ($penelitian->mahasiswas as $mahasiswa)
-                                            <li>{{ $mahasiswa }}</li>
+                                        @foreach ($penelitian->mahasiswas as $nama => $prodi)
+                                            <li>
+                                                {{ $nama }}
+                                                @if ($prodi)
+                                                    ({{ $prodi }})
+                                                @endif
+                                            </li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -205,6 +224,30 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal-hapus-{{ $penelitian->id }}">
+            <div class="modal-dialog">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Hapus Penelitian</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Yakin hapus penelitian dari <strong>{{ $penelitian->user->nama }}</strong>?
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
+                        <form action="{{ url('operator/penelitian-riwayat/' . $penelitian->id) }}" method="POST">
+                            @csrf
+                            @method('delete')
+                            <button type="submit" class="btn btn-danger btn-sm btn-flat">Hapus</button>
+                        </form>
                     </div>
                 </div>
             </div>

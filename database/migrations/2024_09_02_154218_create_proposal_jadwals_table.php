@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('proposal_jadwals', function (Blueprint $table) {
             $table->id();
+            $table->string('kode')->unique();
             $table->date('tanggal');
             $table->string('nomor')->unique();
             $table->string('perihal');

@@ -62,6 +62,11 @@ class Proposal extends Model
     {
         return $this->belongsTo(User::class);
     }
+    
+    public function jadwal()
+    {
+        return $this->belongsTo(ProposalJadwal::class);
+    }
 
     public function proposal_revisis()
     {

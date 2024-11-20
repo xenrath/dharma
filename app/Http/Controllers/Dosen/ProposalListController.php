@@ -53,6 +53,7 @@ class ProposalListController extends Controller
             ->with('jenis_penelitian:id,nama')
             ->with('jenis_pengabdian:id,nama')
             ->with('peninjau:id,nama')
+            ->with('jadwal:id,kode')
             ->with('personels', function ($query) {
                 $query->select('proposal_id', 'user_id');
                 $query->with('user', function ($query) {
@@ -105,7 +106,6 @@ class ProposalListController extends Controller
             'judul' => 'required',
             'jenis_penelitian_id' => 'required',
             'jenis_pendanaan_id' => 'required',
-            'dana_sumber' => 'required',
             'dana_usulan' => 'required',
             'file' => 'required|mimes:pdf|max:2048',
         ], [
@@ -113,28 +113,30 @@ class ProposalListController extends Controller
             'judul.required' => 'Judul Proposal harus diisi!',
             'jenis_penelitian_id.required' => 'Jenis Penelitian harus dipilih!',
             'jenis_pendanaan_id.required' => 'Jenis Pendanaan harus dipilih!',
-            'dana_sumber.required' => 'Sumber Dana harus diisi!',
             'dana_usulan.required' => 'Dana Usulan harus diisi!',
             'file.required' => 'Laporan Proposal harus ditambahkan!',
             'file.mimes' => 'Laporan Proposal harus berformat .pdf!',
             'file.max' => 'Laporan Proposal yang ditambahkan terlalu besar!',
         ]);
         // 
+        $mahasiswas = [];
+        if ($request->mahasiswas) {
+            foreach ($request->mahasiswas as $mahasiswa) {
+                if ($mahasiswa['nama']) {
+                    $mahasiswas[$mahasiswa['nama']] = $mahasiswa['prodi'];
+                }
+            }
+        }
+        // 
         if ($validator->fails()) {
             alert()->error('Error', 'Gagal membuat Proposal!');
-            return back()->withInput()->withErrors($validator->errors());
+            return back()->withInput()->withErrors($validator->errors())->with('old_mahasiswas', $mahasiswas);
         }
         // 
         $waktu = Carbon::now()->format('ymdhis');
         $random = rand(10, 99);
         $file = 'proposal/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
         $request->file->storeAs('public/uploads/', $file);
-        // 
-        if ($request->mahasiswas) {
-            $mahasiswas = array_filter($request->mahasiswas);
-        } else {
-            $mahasiswas = array();
-        }
         // 
         $proposal = Proposal::create([
             'jenis' => 'penelitian',
@@ -143,7 +145,6 @@ class ProposalListController extends Controller
             'judul' => $request->judul,
             'jenis_penelitian_id' => $request->jenis_penelitian_id,
             'jenis_pendanaan_id' => $request->jenis_pendanaan_id,
-            'dana_sumber' => $request->dana_sumber,
             'dana_usulan' => $request->dana_usulan,
             'file' => $file,
             'mahasiswas' => $mahasiswas,
@@ -179,7 +180,7 @@ class ProposalListController extends Controller
         // }
         // 
         alert()->success('Success', 'Berhasil membuat Proposal');
-        return redirect('dosen/proposal');
+        return redirect('dosen/proposal-list');
     }
 
     public function create_pengabdian()
@@ -273,7 +274,7 @@ class ProposalListController extends Controller
         // }
         // 
         alert()->success('Success', 'Berhasil membuat Proposal');
-        return redirect('dosen/proposal');
+        return redirect('dosen/proposal-list');
     }
 
     public function edit($id)
@@ -308,7 +309,6 @@ class ProposalListController extends Controller
                 'judul',
                 'jenis_penelitian_id',
                 'jenis_pendanaan_id',
-                'dana_sumber',
                 'dana_usulan',
                 'dana_setuju',
                 'file',
@@ -339,7 +339,6 @@ class ProposalListController extends Controller
             'judul' => 'required',
             'jenis_penelitian_id' => 'required',
             'jenis_pendanaan_id' => 'required',
-            'dana_sumber' => 'required',
             'dana_usulan' => 'required',
             'file' => 'nullable|mimes:pdf|max:2048',
         ], [
@@ -347,15 +346,23 @@ class ProposalListController extends Controller
             'judul.required' => 'Judul Proposal harus diisi!',
             'jenis_penelitian_id.required' => 'Jenis Penelitian harus dipilih!',
             'jenis_pendanaan_id.required' => 'Jenis Pendanaan harus dipilih!',
-            'dana_sumber.required' => 'Sumber Dana harus diisi!',
             'dana_usulan.required' => 'Dana Usulan harus diisi!',
             'file.mimes' => 'Berkas harus berformat .pdf!',
             'file.max' => 'Berkas yang ditambahkan terlalu besar!',
         ]);
         // 
+        $mahasiswas = [];
+        if ($request->mahasiswas) {
+            foreach ($request->mahasiswas as $mahasiswa) {
+                if ($mahasiswa['nama']) {
+                    $mahasiswas[$mahasiswa['nama']] = $mahasiswa['prodi'];
+                }
+            }
+        }
+        // 
         if ($validator->fails()) {
             alert()->error('Error', 'Gagal memperbarui Proposal!');
-            return back()->withInput()->withErrors($validator->errors());
+            return back()->withInput()->withErrors($validator->errors())->with('old_mahasiswas', $mahasiswas);
         }
         // 
         if ($request->file) {
@@ -373,10 +380,9 @@ class ProposalListController extends Controller
             'judul' => $request->judul,
             'jenis_penelitian_id' => $request->jenis_penelitian_id,
             'jenis_pendanaan_id' => $request->jenis_pendanaan_id,
-            'dana_sumber' => $request->dana_sumber,
             'dana_usulan' => $request->dana_usulan,
             'file' => $file,
-            'mahasiswas' => array_filter($request->mahasiswas),
+            'mahasiswas' => $mahasiswas,
         ]);
         // 
         if (!$proposal) {
@@ -412,7 +418,7 @@ class ProposalListController extends Controller
         // 
         alert()->success('Success', 'Berhasil memperbarui Proposal');
         // 
-        return redirect('dosen/proposal');
+        return redirect('dosen/proposal-list');
     }
 
     public function edit_pengabdian($id)
@@ -533,7 +539,7 @@ class ProposalListController extends Controller
         // 
         alert()->success('Success', 'Berhasil memperbarui Proposal');
         // 
-        return redirect('dosen/proposal');
+        return redirect('dosen/proposal-list');
     }
 
     public function destroy($id)

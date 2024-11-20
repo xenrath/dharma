@@ -19,7 +19,7 @@
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <div class="container-fluid">
-                <div class="row mb-2">
+                <div class="row">
                     <div class="col-sm-6">
                         <h1 class="m-0">Dashboard</h1>
                     </div><!-- /.col -->
@@ -31,8 +31,132 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+                <div class="callout callout-warning text-center rounded-0 mb-2">
+                    <p>
+                        Untuk keperluan Anda, lengkapi data diri terlebih dahulu
+                    </p>
+                    <a href="{{ url('profile') }}" class="btn btn-outline-info btn-flat" style="text-decoration: none;">
+                        <i class="fas fa-user"></i>
+                        Lengkapi Data
+                    </a>
+                </div>
+                <div class="callout callout-info rounded-0 mb-2">
+                    <h5>
+                        <i class="fas fa-user"></i>
+                        <strong>Profile Saya</strong>
+                    </h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>Nama Lengkap</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->nama }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>Jenis Kelamin</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>Program Studi</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->prodi->nama }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>No. Telepon</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->telp ?? '-' }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>Alamat</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->alamat ?? '-' }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>Role</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    <span class="badge badge-info rounded-0">Dosen</span>
+                                    @if ($user->is_peninjau)
+                                        <span class="badge badge-primary rounded-0">Reviewer</span>
+                                    @endif
+                                    @if ($user->is_ketua)
+                                        <span class="badge badge-warning rounded-0">Ka. LPPM</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>NIDN</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->nidn }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>NIPY</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->nipy ?? '-' }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>ID Sinta</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->id_sinta ?? '-' }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>ID Scopus</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->id_scopus ?? '-' }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>Jabatan</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->jabatan ?? '-' }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <strong>Pangkat / Golongan</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    {{ $user->golongan ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 @if (!$is_chrome)
-                    <div class="callout callout-warning text-center rounded-0">
+                    <div class="callout callout-warning text-center rounded-0 mb-2">
                         <p>
                             Kami menyarankan Anda untuk membuka
                             <strong>SIDHARMA</strong>
@@ -43,188 +167,6 @@
                                 Chrome
                             </strong>
                         </p>
-                    </div>
-                @endif
-                @if (!auth()->user()->telp || (auth()->user()->isKetua() && !auth()->user()->nipy))
-                    <div class="callout callout-info rounded-0">
-                        <h5>
-                            <i class="fas fa-info"></i>
-                            Perhatian
-                        </h5>
-                        <p>Untuk keperluan Anda, lengkapi data diri terlebih dahulu</p>
-                        <a href="{{ url('profile') }}" class="btn btn-outline-info btn-flat" style="text-decoration: none;">
-                            <i class="fas fa-user"></i>
-                            Lengkapi Data
-                        </a>
-                    </div>
-                @endif
-                @if (auth()->user()->isKetua() || auth()->user()->isPeninjau())
-                    <h5>Dosen</h5>
-                @endif
-                <div class="row mb-2">
-                    <div class="col-lg-4 col-12">
-                        <div class="small-box bg-info rounded-0 mb-2">
-                            <div class="inner">
-                                <h3>
-                                    {{ $proposal }}
-                                    data
-                                </h3>
-                                <p>Data Proposal</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-document-text"></i>
-                            </div>
-                            <a href="{{ url('dosen/proposal') }}" class="small-box-footer">
-                                Lihat Data
-                                <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-12">
-                        <div class="small-box bg-info rounded-0 mb-2">
-                            <div class="inner">
-                                <h3>
-                                    {{ $penelitian }}
-                                    data
-                                </h3>
-                                <p>Data Penelitian</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-document-text"></i>
-                            </div>
-                            <a href="{{ url('dosen/penelitian') }}" class="small-box-footer">
-                                Lihat Data
-                                <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-12">
-                        <div class="small-box bg-info rounded-0 mb-2">
-                            <div class="inner">
-                                <h3>
-                                    {{ $pengabdian }}
-                                    data
-                                </h3>
-                                <p>Data Pengabdian</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-document-text"></i>
-                            </div>
-                            <a href="{{ url('dosen/pengabdian') }}" class="small-box-footer">
-                                Lihat Data
-                                <i class="fas fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                @if (auth()->user()->isKetua())
-                    <h5>Ketua</h5>
-                    <div class="row mb-2">
-                        <div class="col-lg-4 col-12">
-                            <div class="callout callout-info rounded-0">
-                                <h6>Data Proposal</h6>
-                                <h2 class="text-bold">
-                                    @if ($ketua_proposal)
-                                        {{ $ketua_proposal }}
-                                        data
-                                    @else
-                                        -
-                                    @endif
-                                </h2>
-                                <div class="text-center">
-                                    <a href="{{ url('dosen/ketua/proposal') }}" class="btn btn-outline-info btn-sm btn-flat"
-                                        style="text-decoration: none;">
-                                        Lihat Data
-                                        <i class="fas fa-chevron-circle-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-12">
-                            <div class="callout callout-info rounded-0">
-                                <h6>Riwayat Proposal</h6>
-                                <h2 class="text-bold">
-                                    @if ($ketua_riwayat)
-                                        {{ $ketua_riwayat }}
-                                        data
-                                    @else
-                                        -
-                                    @endif
-                                </h2>
-                                <div class="text-center">
-                                    <a href="{{ url('dosen/ketua/riwayat') }}" class="btn btn-outline-info btn-sm btn-flat"
-                                        style="text-decoration: none;">
-                                        Lihat Data
-                                        <i class="fas fa-chevron-circle-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-                @if (auth()->user()->isPeninjau())
-                    <h5>Reviewer</h5>
-                    <div class="row mb-2">
-                        <div class="col-lg-4 col-12">
-                            <div class="callout callout-info rounded-0">
-                                <h6>Data Review</h6>
-                                <h2 class="text-bold">
-                                    @if ($peninjau_review)
-                                        {{ $peninjau_review }}
-                                        data
-                                    @else
-                                        -
-                                    @endif
-                                </h2>
-                                <div class="text-center">
-                                    <a href="{{ url('dosen/peninjau/review') }}"
-                                        class="btn btn-outline-info btn-sm btn-flat" style="text-decoration: none;">
-                                        Lihat Data
-                                        <i class="fas fa-chevron-circle-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-12">
-                            <div class="callout callout-info rounded-0">
-                                <h6>Data Revisi</h6>
-                                <h2 class="text-bold">
-                                    @if ($peninjau_revisi)
-                                        {{ $peninjau_revisi }}
-                                        data
-                                    @else
-                                        -
-                                    @endif
-                                </h2>
-                                <div class="text-center">
-                                    <a href="{{ url('dosen/peninjau/revisi') }}"
-                                        class="btn btn-outline-info btn-sm btn-flat" style="text-decoration: none;">
-                                        Lihat Data
-                                        <i class="fas fa-chevron-circle-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-12">
-                            <div class="callout callout-info rounded-0">
-                                <h6>Riwayat Review</h6>
-                                <h2 class="text-bold">
-                                    @if ($peninjau_riwayat)
-                                        {{ $peninjau_riwayat }}
-                                        data
-                                    @else
-                                        -
-                                    @endif
-                                </h2>
-                                <div class="text-center">
-                                    <a href="{{ url('dosen/peninjau/riwayat') }}"
-                                        class="btn btn-outline-info btn-sm btn-flat" style="text-decoration: none;">
-                                        Lihat Data
-                                        <i class="fas fa-chevron-circle-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 @endif
             </div>

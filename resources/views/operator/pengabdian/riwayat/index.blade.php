@@ -32,6 +32,10 @@
                 <div class="card rounded-0">
                     <div class="card-header">
                         <h3 class="card-title">Data Pengabdian</h3>
+                        <a href="{{ url('operator/pengabdian-riwayat/create') }}"
+                            class="btn btn-primary btn-sm btn-flat float-right">
+                            Buat Pengabdian
+                        </a>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -67,8 +71,13 @@
                                                             @foreach ($pengabdian->personels as $personel)
                                                                 <li>{{ $personel->user->nama }}</li>
                                                             @endforeach
-                                                            @foreach ($pengabdian->mahasiswas as $mahasiswa)
-                                                                <li>{{ $mahasiswa }}</li>
+                                                            @foreach ($pengabdian->mahasiswas as $nama => $prodi)
+                                                                <li>
+                                                                    {{ $nama }}
+                                                                    @if ($prodi)
+                                                                        ({{ $prodi }})
+                                                                    @endif
+                                                                </li>
                                                             @endforeach
                                                         </ol>
                                                     @else
@@ -182,10 +191,15 @@
                                 <strong>Laporan Pengabdian</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}"
-                                    class="btn btn-info btn-xs btn-flat" target="_blank">
-                                    Lihat Laporan
-                                </a>
+                                @if ($pengabdian->file)
+                                    <a href="{{ asset('storage/uploads/' . $pengabdian->file) }}"
+                                        class="btn btn-info btn-xs btn-flat" target="_blank">
+                                        Lihat Laporan
+                                    </a>
+                                @else
+                                    <button type="button" class="btn btn-default btn-xs btn-flat"
+                                        style="pointer-events: none">File laporan belum diunggah</button>
+                                @endif
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -199,8 +213,13 @@
                                         @foreach ($pengabdian->personels as $personel)
                                             <li>{{ $personel->user->nama }}</li>
                                         @endforeach
-                                        @foreach ($pengabdian->mahasiswas as $mahasiswa)
-                                            <li>{{ $mahasiswa }}</li>
+                                        @foreach ($pengabdian->mahasiswas as $nama => $prodi)
+                                            <li>
+                                                {{ $nama }}
+                                                @if ($prodi)
+                                                    ({{ $prodi }})
+                                                @endif
+                                            </li>
                                         @endforeach
                                     </ol>
                                 @else
@@ -211,47 +230,6 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="modal-revisi-{{ $pengabdian->id }}">
-            <div class="modal-dialog">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Revisi Pengabdian</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body border-top">
-                        @if (count($pengabdian->pengabdian_revisis))
-                            @foreach ($pengabdian->pengabdian_revisis as $key => $pengabdian_revisi)
-                                <div class="mb-2">
-                                    <strong>Revisi {{ count($pengabdian->pengabdian_revisis) - $key }}</strong>
-                                    <br>
-                                    <span>{{ $pengabdian_revisi->keterangan }}</span>
-                                    <br>
-                                    @if ($pengabdian_revisi->file)
-                                        <a href="{{ asset('storage/uploads/' . $pengabdian_revisi->file) }}"
-                                            target="_blank" class="btn btn-secondary btn-xs btn-flat">
-                                            Lihat Laporan
-                                        </a>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span>
-                                    Proposal disetujui <strong>tanpa</strong> revisi
-                                    <i class="far fa-thumbs-up"></i>
-                                </span>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat"
-                            data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>

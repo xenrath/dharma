@@ -12,13 +12,14 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
-            $table->string('no_hki');
-            $table->string('tahun');
-            $table->text('judul');
             $table->unsignedBigInteger('jenis_hki_id');
             $table->foreign('jenis_hki_id')->references('id')->on('jenis_hkis')->restrictOnDelete();
-            $table->string('no_pendaftaran');
-            $table->enum('keterangan', ['terdaftar', 'granted']);
+            $table->text('judul');
+            $table->string('tahun');
+            $table->string('nomor');
+            $table->string('pendaftaran');
+            $table->enum('status', ['terdaftar', 'granted']);
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

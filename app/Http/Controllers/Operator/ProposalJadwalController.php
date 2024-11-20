@@ -10,12 +10,20 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ProposalJadwalController extends Controller
 {
     public function index(Request $request)
     {
-        $jadwals = ProposalJadwal::select('id', 'tanggal', 'nomor')->orderByDesc('tanggal')->paginate(10);
+        $jadwals = ProposalJadwal::select(
+            'id',
+            'kode',
+            'tanggal',
+            'nomor'
+        )
+            ->orderByDesc('tanggal')
+            ->paginate(10);
         $proposal_menunggu = Proposal::where([
             ['status', 'proses'],
             ['jadwal_id', null],
@@ -57,13 +65,15 @@ class ProposalJadwalController extends Controller
             'kepadas.required' => 'Fakultas harus dipilih!',
             'proposal_ids.required' => 'Proposal harus ditambahkan!',
         ]);
-
+        // 
         if ($validator->fails()) {
             alert()->error('Error', 'Gagal membuat Proposal!');
             return back()->withInput()->withErrors($validator->errors());
         }
-
-        $laporan = ProposalJadwal::create([
+        // 
+        $kode = strtoupper(Str::random(6));
+        $jadwal = ProposalJadwal::create([
+            'kode' => $kode,
             'tanggal' => Carbon::now()->format('Y-m-d'),
             'nomor' => $request->nomor,
             'perihal' => $request->perihal,
@@ -73,7 +83,7 @@ class ProposalJadwalController extends Controller
 
         foreach ($request->proposal_ids as $proposal_id) {
             Proposal::where('id', $proposal_id)->update([
-                'jadwal_id' => $laporan->id,
+                'jadwal_id' => $jadwal->id,
             ]);
         }
 
@@ -84,8 +94,8 @@ class ProposalJadwalController extends Controller
 
     public function edit($id)
     {
-        $laporan = ProposalJadwal::where('id', $id)->first();
-        $laporan_proposals = Proposal::whereIn('id', $laporan->proposal_ids)
+        $jadwal = ProposalJadwal::where('id', $id)->first();
+        $jadwal_proposals = Proposal::whereIn('id', $jadwal->proposal_ids)
             ->select(
                 'id',
                 'user_id',
@@ -98,7 +108,7 @@ class ProposalJadwalController extends Controller
             ['status', 'proses'],
             ['jadwal_id', null],
         ])
-            ->orWhereIn('id', $laporan->proposal_ids)
+            ->orWhereIn('id', $jadwal->proposal_ids)
             ->select(
                 'id',
                 'user_id',
@@ -109,13 +119,13 @@ class ProposalJadwalController extends Controller
             ->get();
         $fakultases = Fakultas::select('id', 'nama')->get();
 
-        return view('operator.proposal.jadwal.edit', compact('laporan', 'laporan_proposals', 'proposals', 'fakultases'));
+        return view('operator.proposal.jadwal.edit', compact('jadwal', 'jadwal_proposals', 'proposals', 'fakultases'));
     }
 
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nomor' => 'required|unique:proposal_laporans,nomor,' . $id . ',id',
+            'nomor' => 'required|unique:proposal_jadwals,nomor,' . $id . ',id',
             'perihal' => 'required',
             'kepadas' => 'required',
             'proposal_ids' => 'required',
@@ -131,7 +141,7 @@ class ProposalJadwalController extends Controller
             return back()->withInput()->withErrors($validator->errors());
         }
 
-        $laporan = ProposalJadwal::where('id', $id)->update([
+        $jadwal = ProposalJadwal::where('id', $id)->update([
             'tanggal' => Carbon::now()->format('Y-m-d'),
             'nomor' => $request->nomor,
             'perihal' => $request->perihal,
@@ -139,7 +149,7 @@ class ProposalJadwalController extends Controller
             'proposal_ids' => $request->proposal_ids,
         ]);
 
-        if ($laporan) {
+        if ($jadwal) {
             $proposal_delete = array_diff(ProposalJadwal::where('id', $id)->value('proposal_ids'), $request->proposal_ids);
             if ($proposal_delete) {
                 foreach ($proposal_delete as $proposal) {
@@ -175,9 +185,9 @@ class ProposalJadwalController extends Controller
             ]);
         }
 
-        $laporan = ProposalJadwal::where('id', $id)->delete();
+        $jadwal = ProposalJadwal::where('id', $id)->delete();
 
-        if (!$laporan) {
+        if (!$jadwal) {
             alert()->error('Error', 'Gagal menghapus Laporan!');
             return back();
         }

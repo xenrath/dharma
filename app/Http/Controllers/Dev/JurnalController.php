@@ -16,14 +16,36 @@ class JurnalController extends Controller
 {
     public function index()
     {
-        $jurnals = Jurnal::paginate(10);
+        $jurnals = Jurnal::select(
+            'id',
+            'user_id',
+            'jenis_jurnal_id',
+            'tahun',
+            'nama',
+            'judul',
+            'issn',
+            'volume',
+            'nomor',
+            'halaman_awal',
+            'halaman_akhir',
+            'url',
+            'file',
+            'mahasiswas',
+        )
+            ->with('user:id,nama')
+            ->with('jenis_jurnal:id,nama')
+            ->with('jurnal_personels', function ($query) {
+                $query->select('jurnal_id', 'user_id');
+                $query->with('user:id,nama');
+            })
+            ->paginate(10);
         // 
         return view('dev.jurnal.index', compact('jurnals'));
     }
 
     public function create()
     {
-        $jenis_jurnals = JenisJurnal::get();
+        $jenis_jurnals = JenisJurnal::select('id', 'nama')->get();
         $dosens = User::where('role', 'dosen')
             ->select('id', 'nidn', 'nama')
             ->orderBy('nama')
@@ -47,7 +69,8 @@ class JurnalController extends Controller
             'halaman_awal' => 'required',
             'halaman_akhir' => 'required',
             'url' => 'required',
-            'file' => 'required|mimes:pdf|max:2048',
+            // 'file' => 'required|mimes:pdf|max:2048',
+            'file' => 'nullable|mimes:pdf|max:2048',
         ], [
             'user_id.required' => 'Dosen harus dipilih!',
             'jenis_jurnal_id.required' => 'Jenis Jurnal harus dipilih!',
@@ -60,7 +83,7 @@ class JurnalController extends Controller
             'halaman_awal.required' => 'Halaman harus diisi!',
             'halaman_akhir.required' => 'Halaman harus diisi!',
             'url.required' => 'URL harus diisi!',
-            'file.required' => 'File Jurnal harus ditambahkan!',
+            // 'file.required' => 'File Jurnal harus ditambahkan!',
             'file.mimes' => 'File Jurnal harus berformat .pdf!',
             'file.max' => 'File Jurnal yang ditambahkan terlalu besar!',
         ]);
@@ -79,10 +102,14 @@ class JurnalController extends Controller
             return back()->withInput()->withErrors($validator->errors())->with('old_mahasiswas', $mahasiswas);
         }
         // 
-        $waktu = Carbon::now()->format('ymdhis');
-        $random = rand(10, 99);
-        $file = 'jurnal/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
-        $request->file->storeAs('public/uploads/', $file);
+        if ($request->file) {
+            $waktu = Carbon::now()->format('ymdhis');
+            $random = rand(10, 99);
+            $file = 'jurnal/' . $waktu . $random . '.' . $request->file->getClientOriginalExtension();
+            $request->file->storeAs('public/uploads/', $file);
+        } else {
+            $file = null;
+        }
         // 
         $jurnal = Jurnal::create([
             'user_id' => $request->user_id,
@@ -98,7 +125,6 @@ class JurnalController extends Controller
             'url' => $request->url,
             'file' => $file,
             'mahasiswas' => $mahasiswas,
-            'status' => $request->status,
         ]);
         // 
         if (!$jurnal) {
@@ -136,7 +162,6 @@ class JurnalController extends Controller
                 'halaman_akhir',
                 'url',
                 'file',
-                'status',
             )
             ->with('user:id,nama')
             ->with('jurnal_personels:jurnal_id,user_id')
@@ -217,7 +242,6 @@ class JurnalController extends Controller
             'url' => $request->url,
             'file' => $file,
             'mahasiswas' => $mahasiswas,
-            'status' => $request->status,
         ]);
         // 
         if (!$jurnal) {
@@ -253,5 +277,16 @@ class JurnalController extends Controller
         // 
         alert()->success('Success', 'Berhasil memperbarui Publikasi Jurnal');
         return redirect('dev/jurnal');
+    }
+
+    public function destroy($id)
+    {
+        JurnalPersonel::where('jurnal_id', $id)->delete();
+        // 
+        Storage::disk('local')->delete('public/uploads/' . Jurnal::where('id', $id)->value('file'));
+        Jurnal::where('id', $id)->delete();
+        // 
+        alert()->success('Success', 'Berhasil menghapus Publikasi Jurnal');
+        return back();
     }
 }

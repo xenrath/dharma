@@ -100,7 +100,6 @@
                                                                 <li>
                                                                     {{ $nama }}
                                                                     @if ($prodi)
-                                                                        <br>
                                                                         ({{ $prodi }})
                                                                     @endif
                                                                 </li>
@@ -353,7 +352,6 @@
                                             <li>
                                                 {{ $nama }}
                                                 @if ($prodi)
-                                                    <br>
                                                     ({{ $prodi }})
                                                 @endif
                                             </li>
@@ -398,7 +396,7 @@
                                     <strong>Jadwal</strong>
                                 </div>
                                 <div class="col-md-6">
-                                    <a href="{{ url('jadwal/' . $proposal->jadwal_id) }}"
+                                    <a href="{{ url('jadwal/' . $proposal->jadwal->kode) }}"
                                         class="btn btn-info btn-xs btn-flat" target="_blank">
                                         Lihat Jadwal
                                     </a>

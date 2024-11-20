@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             JenisPengabdianSeeder::class,
             JenisJurnalSeeder::class,
             JenisHkiSeeder::class,
+            JenisLuaranSeeder::class,
         ]);
     }
 }

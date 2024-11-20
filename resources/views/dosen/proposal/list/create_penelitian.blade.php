@@ -274,9 +274,9 @@
         $('#keyword-personel').on('search', function() {
             personel_search();
         });
-
+        // 
         var personel_item = [];
-
+        // 
         function personel_search() {
             $('#modal-card-personel').empty();
             $('#modal-batas-personel').hide();
@@ -304,14 +304,13 @@
                 },
             });
         }
-
+        // 
         function personel_modal(data, is_selected) {
             if (is_selected) {
                 var checked = 'checked';
             } else {
                 var checked = '';
             }
-
             var personel_card = '<div class="card rounded-0 mb-2">';
             personel_card += '<label for="personel-checkbox-' + data.id +
                 '" class="card-body d-flex align-center justify-content-between align-items-center py-2 px-3 mb-0">';
@@ -324,10 +323,9 @@
             personel_card += '</div>';
             personel_card += '</label>';
             personel_card += '</div>';
-
             $('#modal-card-personel').append(personel_card);
         }
-
+        // 
         function personel_check(id) {
             var check = $('#personel-checkbox-' + id).prop('checked');
             if (check) {
@@ -342,7 +340,7 @@
                 $('#btn-personel').prop('disabled', false);
             }
         }
-
+        // 
         function personel_get(is_old = false) {
             $.ajax({
                 url: "{{ url('personel-get') }}",
@@ -369,7 +367,7 @@
                 },
             });
         }
-
+        // 
         function personel_set(key, value, is_old = false) {
             if (is_old) {
                 $('#personel-checkbox-' + value.id).prop('checked', true);
@@ -383,7 +381,7 @@
             tbody += '</tr>';
             $('#tbody-personel').append(tbody);
         }
-
+        // 
         var personels = @json(old('personels'));
         if (personels !== null) {
             if (personels.length > 0) {
@@ -395,34 +393,53 @@
                 personel_get(true);
             }
         }
-
-        var old_mahasiswa = @json(old('mahasiswas'));
-        var jumlah_mahasiswa = old_mahasiswa == null ? 0 : old_mahasiswa.length;
-        console.log(jumlah_mahasiswa);
-
+        // 
+        var old_mahasiswa = @json(session('old_mahasiswas'));
+        var jumlah_mahasiswa = old_mahasiswa == null ? 0 : Object.keys(old_mahasiswa).length;
         if (old_mahasiswa) {
-            for (let i = 0; i < old_mahasiswa.length; i++) {
-                tambahMahasiswa(old_mahasiswa[i], i + 1);
-            }
+            Object.keys(old_mahasiswa).forEach((key, i) => {
+                tambahMahasiswa(key, old_mahasiswa[key], i + 1, true);
+            });
         }
-
-        function tambahMahasiswa(params, urutan) {
+        // 
+        function tambahMahasiswa(param_nama, param_prodi, param_urutan, is_old) {
             var nama = "";
-            jumlah_mahasiswa = jumlah_mahasiswa + 1;
-            if (urutan) {
-                nama = params ?? "";
-                jumlah_mahasiswa = urutan
+            var prodi = "";
+            var urutan = jumlah_mahasiswa + 1;
+            // 
+            if (is_old) {
+                nama = param_nama;
+                prodi = param_prodi;
+                urutan = param_urutan;
+            } else {
+                jumlah_mahasiswa += 1;
             }
             // 
             $('#mahasiswa-kosong').hide();
             // 
-            var input_mahasiswa = '<div class="form-group mb-2" id="mahasiswa-' + jumlah_mahasiswa + '">';
+            var input_mahasiswa = '<div class="form-group mb-2" id="mahasiswa-' + urutan + '">';
             input_mahasiswa += '<div class="input-group">';
-            input_mahasiswa += '<input type="text" class="form-control rounded-0 mr-2" name="mahasiswas[]" value="' + nama +
+            input_mahasiswa += '<input type="text" class="form-control rounded-0 mr-2" name="mahasiswas[' + urutan +
+                '][nama]" value="' +
+                nama +
                 '">';
+            input_mahasiswa += '<select class="custom-select rounded-0 mr-2" name="mahasiswas[' + urutan +
+                '][prodi]" id="mahasiswas-' + urutan + '">';
+            input_mahasiswa += '<option value="">- Pilih -</option>';
+            input_mahasiswa += '<option value="Profesi Ners">Profesi Ners</option>';
+            input_mahasiswa += '<option value="S1 Ilmu Keperawatan">S1 Ilmu Keperawatan</option>';
+            input_mahasiswa += '<option value="S1 Farmasi">S1 Farmasi</option>';
+            input_mahasiswa +=
+                '<option value="D4 Keselamatan dan Kesehatan Kerja">D4 Keselamatan dan Kesehatan Kerja</option>';
+            input_mahasiswa += '<option value="D3 Kebidanan">D3 Kebidanan</option>';
+            input_mahasiswa += '<option value="D3 Keperawatan">D3 Keperawatan</option>';
+            input_mahasiswa += '<option value="S1 Bisnis Digital">S1 Bisnis Digital</option>';
+            input_mahasiswa += '<option value="S1 Kewirausahaan">S1 Kewirausahaan</option>';
+            input_mahasiswa += '<option value="S1 Informatika">S1 Informatika</option>';
+            input_mahasiswa += '</select>';
             input_mahasiswa += '<div class="input-group-append">';
             input_mahasiswa += '<button type="button" class="btn btn-danger btn-flat" onclick="hapusMahasiswa(' +
-                jumlah_mahasiswa + ')">';
+                urutan + ')">';
             input_mahasiswa += '<i class="fas fa-trash"></i>';
             input_mahasiswa += '</button>';
             input_mahasiswa += '</div>';
@@ -430,9 +447,12 @@
             input_mahasiswa += '</div>';
             // 
             $('#card-mahasiswa').append(input_mahasiswa);
-            console.log(jumlah_mahasiswa);
+            // 
+            if (is_old) {
+                $('#mahasiswas-' + urutan).val(prodi);
+            }
         }
-
+        // 
         function hapusMahasiswa(id) {
             jumlah_mahasiswa -= 1;
             // 

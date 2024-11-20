@@ -75,7 +75,7 @@
                                                 </button>
                                             </td>
                                             <td class="text-center">
-                                                <a href="{{ url('jadwal/' . $jadwal->id) }}" target="_blank"
+                                                <a href="{{ url('jadwal/' . $jadwal->kode) }}" target="_blank"
                                                     class="btn btn-info btn-sm btn-flat btn-block">
                                                     <i class="fas fa-print"></i>
                                                 </a>

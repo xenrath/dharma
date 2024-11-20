@@ -162,7 +162,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-2">
-                                        <label for="halaman">Halaman</label>
+                                        <label for="halaman_awal">Halaman</label>
                                         <div class="input-group">
                                             <input type="number"
                                                 class="form-control rounded-0 @error('halaman_awal') is-invalid @enderror"
@@ -170,7 +170,7 @@
                                             <div class="input-group-append mx-2">
                                                 <span class="input-group-text">s/d</span>
                                             </div>
-                                            <input type="text"
+                                            <input type="number"
                                                 class="form-control rounded-0 @error('halaman_akhir') is-invalid @enderror"
                                                 id="halaman_akhir" name="halaman_akhir"
                                                 value="{{ old('halaman_akhir') }}">
@@ -210,24 +210,6 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="status">Status</label>
-                                <select class="custom-select rounded-0 @error('status') is-invalid @enderror"
-                                    name="status" id="status">
-                                    <option value="">- Pilih -</option>
-                                    <option value="menunggu" {{ old('status') == 'menunggu' ? 'selected' : '' }}>Menunggu
-                                    </option>
-                                    <option value="revisi" {{ old('status') == 'revisi' ? 'selected' : '' }}>Revisi
-                                    </option>
-                                    <option value="selesai" {{ old('status') == 'selesai' ? 'selected' : '' }}>Selesai
-                                    </option>
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
                             </div>
                         </div>
                         <!-- /.card-body -->

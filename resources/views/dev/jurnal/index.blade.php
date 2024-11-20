@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Jurnal')
+@section('title', 'Data Publikasi Jurnal')
 
 @section('loader')
     <!-- Preloader -->
@@ -16,7 +16,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Data Jurnal</h1>
+                        <h1>Data Publikasi Jurnal</h1>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -31,10 +31,10 @@
             <div class="container-fluid">
                 <div class="card rounded-0">
                     <div class="card-header">
-                        <h3 class="card-title">Data Jurnal</h3>
+                        <h3 class="card-title">Data Publikasi Jurnal</h3>
                         <div class="text-right">
                             <a href="{{ url('dev/jurnal/create') }}" class="btn btn-primary btn-sm btn-flat">
-                                Buat Jurnal
+                                Tambah Jurnal
                             </a>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Detail Jurnal</h4>
+                        <h4 class="modal-title">Detail Publikasi Jurnal</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -226,6 +226,30 @@
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal-hapus-{{ $jurnal->id }}">
+            <div class="modal-dialog">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Hapus Publikasi Jurnal</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Yakin hapus jurnal dari <strong>{{ $jurnal->user->nama }}</strong>?
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
+                        <form action="{{ url('dev/jurnal/' . $jurnal->id) }}" method="POST">
+                            @csrf
+                            @method('delete')
+                            <button type="submit" class="btn btn-danger btn-sm btn-flat">Hapus</button>
+                        </form>
                     </div>
                 </div>
             </div>

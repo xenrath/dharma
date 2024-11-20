@@ -10,6 +10,7 @@ class ProposalJadwal extends Model
     use HasFactory;
 
     protected $fillable = [
+        'kode',
         'tanggal',
         'nomor',
         'perihal',

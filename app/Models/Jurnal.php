@@ -23,7 +23,6 @@ class Jurnal extends Model
         'url',
         'file',
         'mahasiswas',
-        'status',
     ];
 
     protected $casts = [
@@ -33,6 +32,11 @@ class Jurnal extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    
+    public function jenis_jurnal()
+    {
+        return $this->belongsTo(JenisJurnal::class);
     }
 
     public function jurnal_personels()
