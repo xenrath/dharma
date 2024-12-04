@@ -45,8 +45,8 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 20px">No</th>
-                                        <th>Jurnal</th>
                                         <th>Penulis</th>
+                                        <th>Judul Jurnal</th>
                                         <th class="text-center" style="width: 40px">Opsi</th>
                                     </tr>
                                 </thead>
@@ -55,14 +55,7 @@
                                         <tr>
                                             <td class="text-center">{{ $jurnals->firstItem() + $key }}</td>
                                             <td>
-                                                <strong>{{ $jurnal->nama }}</strong>
-                                                <br>
-                                                {{ $jurnal->judul }}
-                                                <br>
-                                                <small class="text-muted">({{ $jurnal->tahun }})</small>
-                                            </td>
-                                            <td>
-                                                <ol class="px-3 mb-0">
+                                                <ul class="px-3 mb-0">
                                                     <li>{{ $jurnal->user->nama }}</li>
                                                     @foreach ($jurnal->jurnal_personels as $personel)
                                                         <li>{{ $personel->user->nama }}</li>
@@ -75,7 +68,14 @@
                                                             @endif
                                                         </li>
                                                     @endforeach
-                                                </ol>
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                <strong>{{ $jurnal->nama }}</strong>
+                                                <br>
+                                                {{ $jurnal->judul }}
+                                                <br>
+                                                <small class="text-muted">({{ $jurnal->tahun }})</small>
                                             </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-info btn-sm btn-flat btn-block"
@@ -211,7 +211,7 @@
                                 <strong>Penulis</strong>
                             </div>
                             <div class="col-md-6">
-                                <ol class="px-3 mb-0">
+                                <ul class="px-3 mb-0">
                                     <li>{{ $jurnal->user->nama }}</li>
                                     @foreach ($jurnal->jurnal_personels as $personel)
                                         <li>{{ $personel->user->nama }}</li>
@@ -224,7 +224,7 @@
                                             @endif
                                         </li>
                                     @endforeach
-                                </ol>
+                                </ul>
                             </div>
                         </div>
                     </div>

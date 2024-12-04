@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Penelitian')
+@section('title', 'Arsip Penelitian')
 
 @section('loader')
     <!-- Preloader -->
@@ -16,7 +16,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Data Penelitian</h1>
+                        <h1>Arsip Penelitian</h1>
                     </div>
                     <!-- /.col -->
                 </div>
@@ -31,7 +31,7 @@
             <div class="container-fluid">
                 <div class="card rounded-0">
                     <div class="card-header">
-                        <h3 class="card-title">Data Penelitian</h3>
+                        <h3 class="card-title">Arsip Penelitian</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -40,8 +40,8 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center align-top" style="width: 20px">No</th>
-                                        <th class="align-top">Judul</th>
                                         <th class="align-top">Dosen / Personel</th>
+                                        <th class="align-top">Judul Penelitian</th>
                                         <th class="text-center align-top" style="width: 40px">Opsi</th>
                                     </tr>
                                 </thead>
@@ -49,11 +49,6 @@
                                     @forelse ($penelitians as $key => $penelitian)
                                         <tr>
                                             <td class="text-center">{{ $penelitians->firstItem() + $key }}</td>
-                                            <td>
-                                                {{ $penelitian->judul }}
-                                                <hr class="my-2">
-                                                @rupiah($penelitian->dana_setuju)
-                                            </td>
                                             <td>
                                                 <div class="mb-2">
                                                     <strong>Ketua Peneliti:</strong>
@@ -75,6 +70,13 @@
                                                         -
                                                     @endif
                                                 </div>
+                                            </td>
+                                            <td>
+                                                {{ $penelitian->judul }}
+                                                <br>
+                                                <small class="text-muted">({{ $penelitian->tahun }})</small>
+                                                <hr class="my-2">
+                                                @rupiah($penelitian->dana_setuju)
                                             </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-info btn-sm btn-flat btn-block"
@@ -138,7 +140,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Data Penelitian</h4>
+                        <h4 class="modal-title">Detail Penelitian</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -179,18 +181,10 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>Jenis Pendanaan</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ $penelitian->jenis_pendanaan->nama }}
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
                                 <strong>Sumber Dana</strong>
                             </div>
                             <div class="col-md-6">
-                                {{ $penelitian->dana_sumber }}
+                                {{ $penelitian->jenis_pendanaan->nama }}
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -236,32 +230,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-body border-top">
-                        @if ($penelitian->status == 'menunggu')
-                            @if ($penelitian->file)
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Operator sedang mengecek laporan Anda -</span>
-                                </div>
-                            @else
-                                <div class="alert alert-light text-center rounded-0 mb-2">
-                                    <span class="text-muted">- Menunggu Anda mengunggah file -</span>
-                                </div>
-                            @endif
-                        @endif
-                        @if ($penelitian->status == 'revisi')
-                            <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Penelitian dalam tahap revisi oleh Operator -</span>
-                            </div>
-                        @endif
-                        @if ($penelitian->status == 'selesai')
-                            <div class="alert alert-light text-center rounded-0 mb-2">
-                                <span class="text-muted">- Penelitian telah disetujui -</span>
-                            </div>
-                        @endif
-                    </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat"
-                            data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>

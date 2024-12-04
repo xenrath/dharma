@@ -39,13 +39,34 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
+                        <div class="row mb-2 justify-content-between">
+                            <div class="col-md-3">
+
+                            </div>
+                            <div class="col-md-4">
+                                <form action="{{ url('operator/penelitian-riwayat') }}" id="form-search" method="GET">
+                                    <div class="form-group mb-2">
+                                        <div class="input-group">
+                                            <input type="search" class="form-control rounded-0" id="keyword"
+                                                name="keyword" placeholder="cari nama / judul" autocomplete="off"
+                                                value="{{ request()->get('keyword') }}">
+                                            <div class="input-group-append rounded-0">
+                                                <button type="submit" class="btn btn-default btn-flat" onclick="search()">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped mb-4">
+                            <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th class="text-center align-top" style="width: 20px">No</th>
-                                        <th class="align-top">Judul</th>
                                         <th class="align-top">Dosen / Personel</th>
+                                        <th class="align-top">Judul Penelitian</th>
                                         <th class="text-center align-top" style="width: 40px">Opsi</th>
                                     </tr>
                                 </thead>
@@ -53,11 +74,6 @@
                                     @forelse ($penelitians as $key => $penelitian)
                                         <tr>
                                             <td class="text-center">{{ $penelitians->firstItem() + $key }}</td>
-                                            <td>
-                                                {{ $penelitian->judul }}
-                                                <hr class="my-2">
-                                                @rupiah($penelitian->dana_setuju)
-                                            </td>
                                             <td>
                                                 <div class="mb-2">
                                                     <strong>Ketua Peneliti:</strong>
@@ -85,6 +101,13 @@
                                                     @endif
                                                 </div>
                                             </td>
+                                            <td>
+                                                {{ $penelitian->judul }}
+                                                <br>
+                                                <small class="text-muted">({{ $penelitian->tahun }})</small>
+                                                <hr class="my-2">
+                                                @rupiah($penelitian->dana_setuju)
+                                            </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-info btn-sm btn-flat btn-block"
                                                     data-toggle="modal" data-target="#modal-lihat-{{ $penelitian->id }}">
@@ -109,9 +132,11 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            <div class="pagination pagination-sm float-right">
-                                {{ $penelitians->appends(Request::all())->links('pagination::bootstrap-4') }}
-                            </div>
+                            @if ($penelitians->total() > 10)
+                                <div class="pagination float-right">
+                                    {{ $penelitians->appends(Request::all())->links('pagination::bootstrap-4') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -125,7 +150,7 @@
             <div class="modal-dialog">
                 <div class="modal-content rounded-0">
                     <div class="modal-header">
-                        <h4 class="modal-title">Arsip Penelitian</h4>
+                        <h4 class="modal-title">Detail Penelitian</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -223,7 +248,8 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
@@ -253,4 +279,16 @@
             </div>
         </div>
     @endforeach
+@endsection
+
+@section('script')
+    <script>
+        $('#keyword').on('search', function() {
+            search();
+        });
+
+        function search() {
+            $('#form-search').submit();
+        }
+    </script>
 @endsection

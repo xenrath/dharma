@@ -13,9 +13,49 @@ use Illuminate\Support\Facades\Validator;
 
 class BukuController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $bukus = Buku::paginate(10);
+        $keyword = $request->keyword;
+        if ($keyword) {
+            $bukus = Buku::whereHas('user', function ($query) use ($keyword) {
+                $query->where('nama', 'LIKE', "%$keyword%");
+            })
+                ->orWhereHas('buku_personels', function ($query) use ($keyword) {
+                    $query->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('nama', 'LIKE', "%$keyword%");
+                    });
+                })
+                ->orWhere('judul', 'LIKE', "%$keyword%")
+                ->select(
+                    'id',
+                    'user_id',
+                    'tahun',
+                    'judul',
+                    'isbn',
+                    'jumlah',
+                    'penerbit',
+                    'file',
+                )
+                ->with('user:id,nama')
+                ->with('buku_personels:buku_id,user_id')
+                ->orderByDesc('tahun')
+                ->paginate(10);
+        } else {
+            $bukus = Buku::select(
+                'id',
+                'user_id',
+                'tahun',
+                'judul',
+                'isbn',
+                'jumlah',
+                'penerbit',
+                'file',
+            )
+                ->with('user:id,nama')
+                ->with('buku_personels:buku_id,user_id')
+                ->orderByDesc('tahun')
+                ->paginate(10);
+        }
         // 
         return view('operator.buku.index', compact('bukus'));
     }
@@ -40,8 +80,8 @@ class BukuController extends Controller
             'isbn' => 'required',
             'jumlah' => 'required',
             'penerbit' => 'required',
-            // 'file' => 'required|mimes:pdf|max:2048',
-            'file' => 'nullable|mimes:pdf|max:2048',
+            // 'file' => 'required|mimes:pdf|max:5120',
+            'file' => 'nullable|mimes:pdf|max:5120',
         ], [
             'user_id.required' => 'Dosen harus dipilih!',
             'tahun.required' => 'Tahun Penerbitan harus diisi!',
@@ -129,7 +169,7 @@ class BukuController extends Controller
             'isbn' => 'required',
             'jumlah' => 'required',
             'penerbit' => 'required',
-            'file' => 'nullable|mimes:pdf|max:2048',
+            'file' => 'nullable|mimes:pdf|max:5120',
         ], [
             'tahun.required' => 'Tahun Penerbitan harus diisi!',
             'judul.required' => 'Judul Buku harus diisi!',

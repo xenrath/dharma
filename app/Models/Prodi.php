@@ -18,4 +18,9 @@ class Prodi extends Model
     {
         return $this->belongsTo(Fakultas::class);
     }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

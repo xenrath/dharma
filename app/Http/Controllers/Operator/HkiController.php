@@ -14,23 +14,51 @@ use Illuminate\Support\Facades\Validator;
 
 class HkiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $hkis = Hki::select(
-            'id',
-            'user_id',
-            'jenis_hki_id',
-            'tahun',
-            'judul',
-            'nomor',
-            'pendaftaran',
-            'status',
-            'file',
-        )
-            ->with('user:id,nama')
-            ->with('jenis_hki:id,nama')
-            ->with('hki_personels:hki_id,user_id')
-            ->paginate(10);
+        $keyword = $request->keyword;
+        if ($keyword) {
+            $hkis = Hki::whereHas('user', function ($query) use ($keyword) {
+                $query->where('nama', 'LIKE', "%$keyword%");
+            })
+                ->orWhereHas('hki_personels', function ($query) use ($keyword) {
+                    $query->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('nama', 'LIKE', "%$keyword%");
+                    });
+                })
+                ->orWhere('judul', 'LIKE', "%$keyword%")
+                ->select(
+                    'id',
+                    'user_id',
+                    'jenis_hki_id',
+                    'tahun',
+                    'judul',
+                    'nomor',
+                    'pendaftaran',
+                    'status',
+                    'file',
+                )
+                ->with('user:id,nama')
+                ->with('jenis_hki:id,nama')
+                ->with('hki_personels:hki_id,user_id')
+                ->paginate(10);
+        } else {
+            $hkis = Hki::select(
+                'id',
+                'user_id',
+                'jenis_hki_id',
+                'tahun',
+                'judul',
+                'nomor',
+                'pendaftaran',
+                'status',
+                'file',
+            )
+                ->with('user:id,nama')
+                ->with('jenis_hki:id,nama')
+                ->with('hki_personels:hki_id,user_id')
+                ->paginate(10);
+        }
         // 
         return view('operator.hki.index', compact('hkis'));
     }

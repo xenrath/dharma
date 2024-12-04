@@ -23,7 +23,24 @@ Route::post('proposal-get', [\App\Http\Controllers\HomeController::class, 'propo
 // 
 Route::get('jadwal/{kode}', [\App\Http\Controllers\HomeController::class, 'jadwal']);
 Route::get('pengesahan/{jenis}/{id}', [\App\Http\Controllers\HomeController::class, 'pengesahan']);
-Route::get('statistik', [\App\Http\Controllers\HomeController::class, 'statistik']);
+// 
+Route::get('statistik/penelitian', [\App\Http\Controllers\StatistikController::class, 'penelitian']);
+Route::get('statistik/pengabdian', [\App\Http\Controllers\StatistikController::class, 'pengabdian']);
+Route::get('statistik/jurnal', [\App\Http\Controllers\StatistikController::class, 'jurnal']);
+Route::get('statistik/buku', [\App\Http\Controllers\StatistikController::class, 'buku']);
+Route::get('statistik/makalah', [\App\Http\Controllers\StatistikController::class, 'makalah']);
+Route::get('statistik/hki', [\App\Http\Controllers\StatistikController::class, 'hki']);
+Route::get('statistik/luaran', [\App\Http\Controllers\StatistikController::class, 'luaran']);
+Route::get('statistik/prodi/{id}', [\App\Http\Controllers\StatistikController::class, 'prodi']);
+Route::get('statistik/prodi/{id}/penelitian', [\App\Http\Controllers\StatistikController::class, 'prodi_penelitian']);
+Route::get('statistik/prodi/{id}/pengabdian', [\App\Http\Controllers\StatistikController::class, 'prodi_pengabdian']);
+Route::get('statistik/prodi/{id}/jurnal', [\App\Http\Controllers\StatistikController::class, 'prodi_jurnal']);
+Route::get('statistik/prodi/{id}/buku', [\App\Http\Controllers\StatistikController::class, 'prodi_buku']);
+Route::get('statistik/prodi/{id}/makalah', [\App\Http\Controllers\StatistikController::class, 'prodi_makalah']);
+Route::get('statistik/prodi/{id}/hki', [\App\Http\Controllers\StatistikController::class, 'prodi_hki']);
+Route::get('statistik/prodi/{id}/luaran', [\App\Http\Controllers\StatistikController::class, 'prodi_luaran']);
+Route::get('statistik/dosen/{id}', [\App\Http\Controllers\StatistikController::class, 'dosen']);
+Route::get('statistik', [\App\Http\Controllers\StatistikController::class, 'index']);
 // 
 Route::middleware('dev')->prefix('dev')->group(function () {
     Route::get('/', [\App\Http\Controllers\Dev\HomeController::class, 'index']);

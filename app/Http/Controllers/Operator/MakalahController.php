@@ -13,25 +13,55 @@ use Illuminate\Support\Facades\Validator;
 
 class MakalahController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $makalahs = Makalah::select(
-            'id',
-            'user_id',
-            'tahun',
-            'judul',
-            'forum',
-            'institusi',
-            'tempat',
-            'tanggal_awal',
-            'tanggal_akhir',
-            'tingkat',
-            'status',
-            'file',
-        )
-            ->with('user:id,nama')
-            ->with('makalah_personels:makalah_id,user_id')
-            ->paginate(10);
+        $keyword = $request->keyword;
+        if ($keyword) {
+            $makalahs = Makalah::whereHas('user', function ($query) use ($keyword) {
+                $query->where('nama', 'LIKE', "%$keyword%");
+            })
+                ->orWhereHas('makalah_personels', function ($query) use ($keyword) {
+                    $query->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('nama', 'LIKE', "%$keyword%");
+                    });
+                })
+                ->orWhere('judul', 'LIKE', "%$keyword%")
+                ->select(
+                    'id',
+                    'user_id',
+                    'tahun',
+                    'judul',
+                    'forum',
+                    'institusi',
+                    'tempat',
+                    'tanggal_awal',
+                    'tanggal_akhir',
+                    'tingkat',
+                    'status',
+                    'file',
+                )
+                ->with('user:id,nama')
+                ->with('makalah_personels:makalah_id,user_id')
+                ->paginate(10);
+        } else {
+            $makalahs = Makalah::select(
+                'id',
+                'user_id',
+                'tahun',
+                'judul',
+                'forum',
+                'institusi',
+                'tempat',
+                'tanggal_awal',
+                'tanggal_akhir',
+                'tingkat',
+                'status',
+                'file',
+            )
+                ->with('user:id,nama')
+                ->with('makalah_personels:makalah_id,user_id')
+                ->paginate(10);
+        }
         // 
         return view('operator.makalah.index', compact('makalahs'));
     }

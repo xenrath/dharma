@@ -16,32 +16,73 @@ use Illuminate\Support\Facades\Validator;
 
 class PenelitianRiwayatController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $penelitians = Penelitian::where('status', 'selesai')
-            ->select(
-                'id',
-                'user_id',
-                'tahun',
-                'judul',
-                'jenis_penelitian_id',
-                'jenis_pendanaan_id',
-                'dana_setuju',
-                'file',
-                'mahasiswas',
-                'status',
-            )
-            ->with('user:id,nama')
-            ->with('jenis_penelitian:id,nama')
-            ->with('jenis_pendanaan:id,nama')
-            ->with('personels', function ($query) {
-                $query->select('penelitian_id', 'user_id');
-                $query->with('user', function ($query) {
-                    $query->select('id', 'nama');
-                    $query->withTrashed();
-                });
-            })
-            ->paginate(10);
+        $keyword = $request->keyword;
+        if ($keyword) {
+            $penelitians = Penelitian::where('status', 'selesai')
+                ->where(function ($query) use ($keyword) {
+                    $query->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('nama', 'LIKE', "%$keyword%");
+                    });
+                    $query->orWhereHas('personels', function ($query) use ($keyword) {
+                        $query->whereHas('user', function ($query) use ($keyword) {
+                            $query->where('nama', 'LIKE', "%$keyword%");
+                        });
+                    });
+                    $query->orWhere('judul', 'LIKE', "%$keyword%");
+                })
+                ->select(
+                    'id',
+                    'user_id',
+                    'tahun',
+                    'judul',
+                    'jenis_penelitian_id',
+                    'jenis_pendanaan_id',
+                    'dana_setuju',
+                    'file',
+                    'mahasiswas',
+                    'status',
+                )
+                ->with('user:id,nama')
+                ->with('jenis_penelitian:id,nama')
+                ->with('jenis_pendanaan:id,nama')
+                ->with('personels', function ($query) {
+                    $query->select('penelitian_id', 'user_id');
+                    $query->with('user', function ($query) {
+                        $query->select('id', 'nama');
+                        $query->withTrashed();
+                    });
+                })
+                ->orderByDesc('tahun')
+                ->paginate(10);
+        } else {
+            $penelitians = Penelitian::where('status', 'selesai')
+                ->select(
+                    'id',
+                    'user_id',
+                    'tahun',
+                    'judul',
+                    'jenis_penelitian_id',
+                    'jenis_pendanaan_id',
+                    'dana_setuju',
+                    'file',
+                    'mahasiswas',
+                    'status',
+                )
+                ->with('user:id,nama')
+                ->with('jenis_penelitian:id,nama')
+                ->with('jenis_pendanaan:id,nama')
+                ->with('personels', function ($query) {
+                    $query->select('penelitian_id', 'user_id');
+                    $query->with('user', function ($query) {
+                        $query->select('id', 'nama');
+                        $query->withTrashed();
+                    });
+                })
+                ->orderByDesc('tahun')
+                ->paginate(10);
+        }
         // 
         return view('operator.penelitian.riwayat.index', compact('penelitians'));
     }

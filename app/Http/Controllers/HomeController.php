@@ -364,13 +364,4 @@ class HomeController extends Controller
         $pdf = Pdf::loadview('pengesahan', compact('data', 'ketua', 'kepala'));
         return $pdf->stream('Lembar Pengesahan');
     }
-
-    public function statistik()
-    {
-        $penelitians = Penelitian::where('status', 'selesai')->paginate(10);
-        $prodis = Prodi::get();
-        $pengabdians = Penelitian::where('status', 'selesai')->get();
-
-        return view('statistik', compact('penelitians', 'prodis', 'pengabdians'));
-    }
 }

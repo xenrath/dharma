@@ -14,31 +14,69 @@ use Illuminate\Support\Facades\Validator;
 
 class JurnalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jurnals = Jurnal::select(
-            'id',
-            'user_id',
-            'jenis_jurnal_id',
-            'tahun',
-            'nama',
-            'judul',
-            'issn',
-            'volume',
-            'nomor',
-            'halaman_awal',
-            'halaman_akhir',
-            'url',
-            'file',
-            'mahasiswas',
-        )
-            ->with('user:id,nama')
-            ->with('jenis_jurnal:id,nama')
-            ->with('jurnal_personels', function ($query) {
-                $query->select('jurnal_id', 'user_id');
-                $query->with('user:id,nama');
+        $keyword = $request->keyword;
+        if ($keyword) {
+            $jurnals = Jurnal::whereHas('user', function ($query) use ($keyword) {
+                $query->where('nama', 'LIKE', "%$keyword%");
             })
-            ->paginate(10);
+                ->orWhereHas('jurnal_personels', function ($query) use ($keyword) {
+                    $query->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('nama', 'LIKE', "%$keyword%");
+                    });
+                })
+                ->orWhere('judul', 'LIKE', "%$keyword%")
+                ->select(
+                    'id',
+                    'user_id',
+                    'jenis_jurnal_id',
+                    'tahun',
+                    'nama',
+                    'judul',
+                    'issn',
+                    'volume',
+                    'nomor',
+                    'halaman_awal',
+                    'halaman_akhir',
+                    'url',
+                    'file',
+                    'mahasiswas',
+                )
+                ->with('user:id,nama')
+                ->with('jenis_jurnal:id,nama')
+                ->with('jurnal_personels', function ($query) {
+                    $query->select('jurnal_id', 'user_id');
+                    $query->with('user:id,nama');
+                })
+                ->orderByDesc('tahun')
+                ->paginate(10);
+        } else {
+            $jurnals = Jurnal::select(
+                'id',
+                'user_id',
+                'jenis_jurnal_id',
+                'tahun',
+                'nama',
+                'judul',
+                'issn',
+                'volume',
+                'nomor',
+                'halaman_awal',
+                'halaman_akhir',
+                'url',
+                'file',
+                'mahasiswas',
+            )
+                ->with('user:id,nama')
+                ->with('jenis_jurnal:id,nama')
+                ->with('jurnal_personels', function ($query) {
+                    $query->select('jurnal_id', 'user_id');
+                    $query->with('user:id,nama');
+                })
+                ->orderByDesc('tahun')
+                ->paginate(10);
+        }
         // 
         return view('operator.jurnal.index', compact('jurnals'));
     }

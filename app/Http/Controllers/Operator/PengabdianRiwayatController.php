@@ -7,6 +7,7 @@ use App\Models\JenisPendanaan;
 use App\Models\JenisPengabdian;
 use App\Models\Pengabdian;
 use App\Models\PengabdianPersonel;
+use App\Models\PengabdianRevisi;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,37 +16,81 @@ use Illuminate\Support\Facades\Validator;
 
 class PengabdianRiwayatController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pengabdians = Pengabdian::where('status', 'selesai')
-            ->select(
-                'id',
-                'user_id',
-                'tahun',
-                'judul',
-                'jenis_pengabdian_id',
-                'jenis_pendanaan_id',
-                'dana_setuju',
-                'file',
-                'mahasiswas',
-                'status',
-            )
-            ->with('user:id,nama')
-            ->with('jenis_pengabdian:id,nama')
-            ->with('jenis_pendanaan:id,nama')
-            ->with('pengabdian_revisis', function ($query) {
-                $query->select('pengabdian_id', 'keterangan', 'file');
-                $query->orderByDesc('id');
-            })
-            ->with('personels', function ($query) {
-                $query->select('pengabdian_id', 'user_id');
-                $query->with('user', function ($query) {
-                    $query->select('id', 'nama');
-                    $query->withTrashed();
-                });
-            })
-            ->orderByDesc('id')
-            ->paginate(10);
+        $keyword = $request->keyword;
+        if ($keyword) {
+            $pengabdians = Pengabdian::where('status', 'selesai')
+                ->where(function ($query) use ($keyword) {
+                    $query->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('nama', 'LIKE', "%$keyword%");
+                    });
+                    $query->orWhereHas('personels', function ($query) use ($keyword) {
+                        $query->whereHas('user', function ($query) use ($keyword) {
+                            $query->where('nama', 'LIKE', "%$keyword%");
+                        });
+                    });
+                    $query->orWhere('judul', 'LIKE', "%$keyword%");
+                })
+                ->select(
+                    'id',
+                    'user_id',
+                    'tahun',
+                    'judul',
+                    'jenis_pengabdian_id',
+                    'jenis_pendanaan_id',
+                    'dana_setuju',
+                    'file',
+                    'mahasiswas',
+                    'status',
+                )
+                ->with('user:id,nama')
+                ->with('jenis_pengabdian:id,nama')
+                ->with('jenis_pendanaan:id,nama')
+                ->with('pengabdian_revisis', function ($query) {
+                    $query->select('pengabdian_id', 'keterangan', 'file');
+                    $query->orderByDesc('id');
+                })
+                ->with('personels', function ($query) {
+                    $query->select('pengabdian_id', 'user_id');
+                    $query->with('user', function ($query) {
+                        $query->select('id', 'nama');
+                        $query->withTrashed();
+                    });
+                })
+                ->orderByDesc('tahun')
+                ->paginate(10);
+        } else {
+            $pengabdians = Pengabdian::where('status', 'selesai')
+                ->select(
+                    'id',
+                    'user_id',
+                    'tahun',
+                    'judul',
+                    'jenis_pengabdian_id',
+                    'jenis_pendanaan_id',
+                    'dana_setuju',
+                    'file',
+                    'mahasiswas',
+                    'status',
+                )
+                ->with('user:id,nama')
+                ->with('jenis_pengabdian:id,nama')
+                ->with('jenis_pendanaan:id,nama')
+                ->with('pengabdian_revisis', function ($query) {
+                    $query->select('pengabdian_id', 'keterangan', 'file');
+                    $query->orderByDesc('id');
+                })
+                ->with('personels', function ($query) {
+                    $query->select('pengabdian_id', 'user_id');
+                    $query->with('user', function ($query) {
+                        $query->select('id', 'nama');
+                        $query->withTrashed();
+                    });
+                })
+                ->orderByDesc('tahun')
+                ->paginate(10);
+        }
 
         return view('operator.pengabdian.riwayat.index', compact('pengabdians'));
     }
@@ -76,9 +121,8 @@ class PengabdianRiwayatController extends Controller
             'jenis_pengabdian_id' => 'required',
             'jenis_pendanaan_id' => 'required',
             'dana_setuju' => 'required',
-            // 'file' => 'required|mimes:pdf|max:2048',
-            'file' => 'nullable|mimes:pdf|max:2048',
-            'status' => 'required',
+            // 'file' => 'required|mimes:pdf|max:4096',
+            'file' => 'nullable|mimes:pdf|max:4096',
         ], [
             'user_id.required' => 'Dosen harus dipilih!',
             'tahun.required' => 'Tahun Kegiatan harus diisi!',
@@ -89,7 +133,6 @@ class PengabdianRiwayatController extends Controller
             // 'file.required' => 'Laporan Pengabdian harus ditambahkan!',
             'file.mimes' => 'Laporan Pengabdian harus berformat .pdf!',
             'file.max' => 'Laporan Pengabdian yang ditambahkan terlalu besar!',
-            'status.required' => 'Status harus dipilih!',
         ]);
         // 
         $mahasiswas = [];
@@ -124,7 +167,7 @@ class PengabdianRiwayatController extends Controller
             'dana_setuju' => $request->dana_setuju,
             'file' => $file,
             'mahasiswas' => $mahasiswas,
-            'status' => $request->status,
+            'status' => 'selesai',
         ]);
         // 
         if (!$pengabdian) {
@@ -142,7 +185,7 @@ class PengabdianRiwayatController extends Controller
         }
         // 
         alert()->success('Success', 'Berhasil membuat Pengabdian');
-        return redirect('dev/pengabdian');
+        return redirect('operator/pengabdian-riwayat');
     }
 
     public function edit($id)
@@ -200,8 +243,7 @@ class PengabdianRiwayatController extends Controller
             'jenis_pengabdian_id' => 'required',
             'jenis_pendanaan_id' => 'required',
             'dana_setuju' => 'required',
-            'file' => 'nullable|mimes:pdf|max:2048',
-            'status' => 'required',
+            'file' => 'nullable|mimes:pdf|max:4096',
         ], [
             'tahun.required' => 'Tahun Kegiatan harus diisi!',
             'judul.required' => 'Judul Pengabdian harus diisi!',
@@ -210,7 +252,6 @@ class PengabdianRiwayatController extends Controller
             'dana_setuju.required' => 'Dana Disetuju harus diisi!',
             'file.mimes' => 'Laporan Pengabdian harus berformat .pdf!',
             'file.max' => 'Laporan Pengabdian yang ditambahkan terlalu besar!',
-            'status.required' => 'Status harus dipilih!',
         ]);
         // 
         $mahasiswas = [];
@@ -245,7 +286,6 @@ class PengabdianRiwayatController extends Controller
             'dana_setuju' => $request->dana_setuju,
             'file' => $file,
             'mahasiswas' => $mahasiswas,
-            'status' => $request->status,
         ]);
         // 
         if (!$pengabdian) {
@@ -280,7 +320,7 @@ class PengabdianRiwayatController extends Controller
         }
         // 
         alert()->success('Success', 'Berhasil memperbarui Pengabdian');
-        return redirect('dev/pengabdian');
+        return redirect('operator/pengabdian-riwayat');
     }
 
     public function destroy($id)
@@ -300,6 +340,6 @@ class PengabdianRiwayatController extends Controller
         Pengabdian::where('id', $id)->delete();
         // 
         alert()->success('Success', 'Berhasil menghapus Pengabdian');
-        return redirect('dev/pengabdian');
+        return redirect('operator/pengabdian-riwayat');
     }
 }

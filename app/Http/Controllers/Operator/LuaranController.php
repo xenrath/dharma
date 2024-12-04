@@ -14,9 +14,49 @@ use Illuminate\Support\Facades\Validator;
 
 class LuaranController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $luarans = Luaran::paginate(10);
+        $keyword = $request->keyword;
+        if ($keyword) {
+            $luarans = Luaran::whereHas('user', function ($query) use ($keyword) {
+                $query->where('nama', 'LIKE', "%$keyword%");
+            })
+                ->orWhereHas('buku_personels', function ($query) use ($keyword) {
+                    $query->whereHas('user', function ($query) use ($keyword) {
+                        $query->where('nama', 'LIKE', "%$keyword%");
+                    });
+                })
+                ->orWhere('judul', 'LIKE', "%$keyword%")
+                ->select(
+                    'id',
+                    'user_id',
+                    'jenis_luaran_id',
+                    'tahun',
+                    'judul',
+                    'deskripsi',
+                    'url',
+                    'file',
+                )
+                ->with('user:id,nama')
+                ->with('jenis_luaran:id,nama')
+                ->with('luaran_personels:luaran_id,user_id')
+                ->paginate(10);
+        } else {
+            $luarans = Luaran::select(
+                'id',
+                'user_id',
+                'jenis_luaran_id',
+                'tahun',
+                'judul',
+                'deskripsi',
+                'url',
+                'file',
+            )
+                ->with('user:id,nama')
+                ->with('jenis_luaran:id,nama')
+                ->with('luaran_personels:luaran_id,user_id')
+                ->paginate(10);
+        }
         // 
         return view('operator.luaran.index', compact('luarans'));
     }

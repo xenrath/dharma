@@ -24,8 +24,8 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <form action="{{ url('operator/pengabdian-riwayat/' . $pengabdian->id) }}" method="POST" enctype="multipart/form-data"
-                    autocomplete="off">
+                <form action="{{ url('operator/pengabdian-riwayat/' . $pengabdian->id) }}" method="POST"
+                    enctype="multipart/form-data" autocomplete="off">
                     @csrf
                     @method('PUT')
                     <div class="card rounded-0">
@@ -159,30 +159,6 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="form-group mb-2">
-                                <label for="status">Status</label>
-                                <select class="custom-select rounded-0 @error('status') is-invalid @enderror" name="status"
-                                    id="status">
-                                    <option value="">- Pilih -</option>
-                                    <option value="menunggu"
-                                        {{ old('status', $pengabdian->status) == 'menunggu' ? 'selected' : '' }}>
-                                        Menunggu
-                                    </option>
-                                    <option value="revisi"
-                                        {{ old('status', $pengabdian->status) == 'revisi' ? 'selected' : '' }}>
-                                        Revisi
-                                    </option>
-                                    <option value="selesai"
-                                        {{ old('status', $pengabdian->status) == 'selesai' ? 'selected' : '' }}>
-                                        Selesai
-                                    </option>
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -192,8 +168,8 @@
                                 Personel Dosen
                                 <small>(opsional)</small>
                             </h3>
-                            <button type="button" class="btn btn-secondary btn-sm btn-flat float-right"
-                                data-toggle="modal" data-target="#modal-personel">
+                            <button type="button" class="btn btn-secondary btn-sm btn-flat float-right" data-toggle="modal"
+                                data-target="#modal-personel">
                                 Pilih Anggota
                             </button>
                         </div>

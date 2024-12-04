@@ -13,9 +13,12 @@ class PenelitianListController extends Controller
 {
     public function index()
     {
-        $penelitians = Penelitian::where('user_id', auth()->user()->id)
-            ->orWhereHas('personels', function ($query) {
-                $query->where('user_id', auth()->user()->id);
+        $penelitians = Penelitian::where('status', '!=', 'selesai')
+            ->where(function ($query) {
+                $query->where('user_id', auth()->user()->id);;
+                $query->orWhereHas('personels', function ($query) {
+                    $query->where('user_id', auth()->user()->id);
+                });
             })
             ->select(
                 'id',
@@ -24,7 +27,6 @@ class PenelitianListController extends Controller
                 'judul',
                 'jenis_penelitian_id',
                 'jenis_pendanaan_id',
-                'dana_sumber',
                 'dana_setuju',
                 'file',
                 'mahasiswas',
@@ -37,10 +39,10 @@ class PenelitianListController extends Controller
                 $query->select('penelitian_id', 'user_id');
                 $query->with('user:id,nama');
             })
-            ->orderByDesc('id')
+            ->orderByDesc('tahun')
             ->paginate(10);
-
-        return view('dosen.penelitian.index', compact('penelitians'));
+        // 
+        return view('dosen.penelitian.list.index', compact('penelitians'));
     }
 
     public function update(Request $request, $id)

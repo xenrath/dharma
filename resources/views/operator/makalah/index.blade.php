@@ -40,13 +40,32 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
+                        <div class="row mb-2 justify-content-between">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-4">
+                                <form action="{{ url('operator/makalah') }}" id="form-search" method="GET">
+                                    <div class="form-group mb-2">
+                                        <div class="input-group">
+                                            <input type="search" class="form-control rounded-0" id="keyword"
+                                                name="keyword" placeholder="cari nama / judul" autocomplete="off"
+                                                value="{{ request()->get('keyword') }}">
+                                            <div class="input-group-append rounded-0">
+                                                <button type="submit" class="btn btn-default btn-flat" onclick="search()">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped mb-4">
+                            <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 20px">No</th>
-                                        <th>Makalah</th>
                                         <th>Dosen</th>
+                                        <th>Judul Makalah</th>
                                         <th class="text-center" style="width: 40px">Opsi</th>
                                     </tr>
                                 </thead>
@@ -55,8 +74,6 @@
                                         <tr>
                                             <td class="text-center">{{ $makalahs->firstItem() + $key }}</td>
                                             <td>
-                                                <strong>{{ $makalah->forum }}</strong>
-                                                <br>
                                                 {{ $makalah->judul }}
                                                 <br>
                                                 <small class="text-muted">({{ $makalah->tahun }})</small>
@@ -93,9 +110,11 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            <div class="pagination pagination-sm float-right">
-                                {{ $makalahs->appends(Request::all())->links('pagination::bootstrap-4') }}
-                            </div>
+                            @if ($makalahs->total() > 10)
+                                <div class="pagination float-right">
+                                    {{ $makalahs->appends(Request::all())->links('pagination::bootstrap-4') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -221,7 +240,8 @@
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
@@ -251,4 +271,16 @@
             </div>
         </div>
     @endforeach
+@endsection
+
+@section('script')
+    <script>
+        $('#keyword').on('search', function() {
+            search();
+        });
+
+        function search() {
+            $('#form-search').submit();
+        }
+    </script>
 @endsection

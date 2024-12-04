@@ -40,13 +40,32 @@
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
+                        <div class="row mb-2 justify-content-between">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-4">
+                                <form action="{{ url('operator/buku') }}" id="form-search" method="GET">
+                                    <div class="form-group mb-2">
+                                        <div class="input-group">
+                                            <input type="search" class="form-control rounded-0" id="keyword"
+                                                name="keyword" placeholder="cari nama / judul" autocomplete="off"
+                                                value="{{ request()->get('keyword') }}">
+                                            <div class="input-group-append rounded-0">
+                                                <button type="submit" class="btn btn-default btn-flat" onclick="search()">
+                                                    <i class="fas fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped mb-4">
+                            <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 20px">No</th>
-                                        <th>Judul Buku</th>
                                         <th>Penulis</th>
+                                        <th>Judul Buku</th>
                                         <th class="text-center" style="width: 40px">Opsi</th>
                                     </tr>
                                 </thead>
@@ -55,17 +74,17 @@
                                         <tr>
                                             <td class="text-center">{{ $bukus->firstItem() + $key }}</td>
                                             <td>
-                                                {{ $buku->judul }}
-                                                <br>
-                                                <small class="text-muted">({{ $buku->tahun }})</small>
-                                            </td>
-                                            <td>
-                                                <ol class="px-3 mb-0">
+                                                <ul class="px-3 mb-0">
                                                     <li>{{ $buku->user->nama }}</li>
                                                     @foreach ($buku->buku_personels as $personel)
                                                         <li>{{ $personel->user->nama }}</li>
                                                     @endforeach
-                                                </ol>
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                {{ $buku->judul }}
+                                                <br>
+                                                <small class="text-muted">({{ $buku->tahun }})</small>
                                             </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-info btn-sm btn-flat btn-block"
@@ -91,9 +110,11 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            <div class="pagination pagination-sm float-right">
-                                {{ $bukus->appends(Request::all())->links('pagination::bootstrap-4') }}
-                            </div>
+                            @if ($bukus->total() > 10)
+                                <div class="pagination float-right">
+                                    {{ $bukus->appends(Request::all())->links('pagination::bootstrap-4') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -174,17 +195,18 @@
                                 <strong>Penulis</strong>
                             </div>
                             <div class="col-md-6">
-                                <ol class="px-3 mb-0">
+                                <ul class="px-3 mb-0">
                                     <li>{{ $buku->user->nama }}</li>
                                     @foreach ($buku->buku_personels as $personel)
                                         <li>{{ $personel->user->nama }}</li>
                                     @endforeach
-                                </ol>
+                                </ul>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default btn-sm btn-flat" data-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-default btn-sm btn-flat"
+                            data-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
@@ -214,4 +236,16 @@
             </div>
         </div>
     @endforeach
+@endsection
+
+@section('script')
+    <script>
+        $('#keyword').on('search', function() {
+            search();
+        });
+
+        function search() {
+            $('#form-search').submit();
+        }
+    </script>
 @endsection

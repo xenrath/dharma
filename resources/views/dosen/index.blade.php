@@ -94,11 +94,11 @@
                                 </div>
                                 <div class="col-md-8">
                                     <span class="badge badge-info rounded-0">Dosen</span>
-                                    @if ($user->is_peninjau)
-                                        <span class="badge badge-primary rounded-0">Reviewer</span>
-                                    @endif
                                     @if ($user->is_ketua)
                                         <span class="badge badge-warning rounded-0">Ka. LPPM</span>
+                                    @endif
+                                    @if ($user->is_peninjau)
+                                        <span class="badge badge-primary rounded-0">Reviewer</span>
                                     @endif
                                 </div>
                             </div>

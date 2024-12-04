@@ -159,27 +159,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group mb-2">
-                                <label for="status">Status</label>
-                                <select class="custom-select rounded-0 @error('status') is-invalid @enderror" name="status"
-                                    id="status">
-                                    <option value="">- Pilih -</option>
-                                    <option value="menunggu" {{ old('status') == 'menunggu' ? 'selected' : '' }}>
-                                        Menunggu
-                                    </option>
-                                    <option value="revisi" {{ old('status') == 'revisi' ? 'selected' : '' }}>
-                                        Revisi
-                                    </option>
-                                    <option value="selesai" {{ old('status') == 'selesai' ? 'selected' : '' }}>
-                                        Selesai
-                                    </option>
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
                         </div>
                         <!-- /.card-body -->
                     </div>

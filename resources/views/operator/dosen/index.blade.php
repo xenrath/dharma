@@ -65,7 +65,7 @@
                             </div>
                         </form>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped mb-4">
+                            <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 20px">No</th>
@@ -109,9 +109,11 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            <div class="pagination pagination-sm float-right">
-                                {{ $dosens->appends(Request::all())->links('pagination::bootstrap-4') }}
-                            </div>
+                            @if ($dosens->total() > 10)
+                                <div class="pagination float-right">
+                                    {{ $dosens->appends(Request::all())->links('pagination::bootstrap-4') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -141,29 +143,18 @@
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>NIDN</strong>
+                                <strong>Jenis Kelamin</strong>
                             </div>
                             <div class="col-md-6">
-                                {{ $dosen->nidn }}
-                                @if ($dosen->is_peninjau)
-                                    <span class="badge badge-primary rounded-0">Reviewer</span>
-                                @endif
+                                {{ $dosen->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
                             </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-6">
-                                <strong>NIPY</strong>
+                                <strong>Program Studi</strong>
                             </div>
                             <div class="col-md-6">
-                                {{ $dosen->nipy }}
-                            </div>
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <strong>Prodi</strong>
-                            </div>
-                            <div class="col-md-6">
-                                {{ $dosen->prodi->fakultas->kode }} - {{ $dosen->prodi->nama }}
+                                {{ $dosen->prodi->nama }}
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -171,9 +162,82 @@
                                 <strong>Nomor WhatsApp</strong>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ url('hubungi/' . $dosen->telp) }}" target="_blank">
-                                    {{ $dosen->telp }}
-                                </a>
+                                @if ($dosen->telp)
+                                    <a href="{{ url('hubungi/' . $dosen->telp) }}" target="_blank">
+                                        {{ $dosen->telp }}
+                                    </a>
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Alamat</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $dosen->alamat ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>NIDN</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $dosen->nidn }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>NIPY</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $dosen->nipy ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>ID Sinta</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $dosen->id_sinta ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>ID Scopus</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $dosen->id_scopus ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Jabatan</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $dosen->jabatan ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Pangkat / Golongan</strong>
+                            </div>
+                            <div class="col-md-6">
+                                {{ $dosen->golongan ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Role</strong>
+                            </div>
+                            <div class="col-md-6">
+                                @if ($dosen->is_ketua)
+                                    <span class="badge badge-warning rounded-0">Ka. LPPM</span>
+                                @endif
+                                @if ($dosen->is_peninjau)
+                                    <span class="badge badge-primary rounded-0">Reviewer</span>
+                                @endif
                             </div>
                         </div>
                     </div>

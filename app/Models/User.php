@@ -50,6 +50,16 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Prodi::class);
     }
+    
+    public function penelitians()
+    {
+        return $this->hasMany(Penelitian::class);
+    }
+    
+    public function pengabdians()
+    {
+        return $this->hasMany(Pengabdian::class);
+    }
 
     public function isDev()
     {
